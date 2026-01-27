@@ -1,0 +1,9 @@
+
+{
+  "name": "MFitPersonal Dashboard",
+  "description": "A high-performance dashboard for personal trainers to manage students, workouts, and performance metrics with AI-powered insights.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
