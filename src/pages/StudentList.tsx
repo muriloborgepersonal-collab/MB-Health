@@ -25,67 +25,79 @@ export default function StudentList() {
     );
 
     return (
-        <div className="flex flex-col min-h-screen">
+        <div className="flex flex-col min-h-screen bg-black text-white selection:bg-primary/30">
             <TopBar
-                title={<span className="font-bold text-lg">MFITPERSONAL</span>}
+                title={<span className="font-black text-lg tracking-[0.2em] italic uppercase">ALUNOS</span>}
                 showBack
-                className="bg-surface border-b border-white/5"
+                className="bg-surface border-b border-primary/10 rounded-b-[40px] shadow-neon z-10"
             />
 
-            <div className="flex-1 p-4 space-y-6">
+            <div className="flex-1 p-6 space-y-8 animate-kinetic-reveal">
                 {/* Search */}
-                <Input
-                    placeholder="Pesquise por nome, email ou telefone"
-                    icon={<Search className="h-5 w-5" />}
-                    className="rounded-full bg-white text-black placeholder:text-gray-500 border-none"
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                />
+                <div className="relative group">
+                    <div className="absolute inset-0 bg-primary/20 blur-xl opacity-0 group-focus-within:opacity-100 transition-opacity rounded-full"></div>
+                    <Input
+                        placeholder="Pesquisar por nome ou status..."
+                        icon={<Search className="h-5 w-5 text-primary" />}
+                        className="rounded-3xl bg-surface text-white placeholder:text-text-muted border-white/5 focus:border-primary/50 transition-all h-14 pl-12"
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                    />
+                </div>
 
                 {/* Filters */}
-                <div className="flex gap-2 justify-center">
-                    <FilterPill label="Ativos: 71" active={filter === 'active'} onClick={() => setFilter('active')} />
-                    <FilterPill label="Inativos: 77" active={filter === 'inactive'} onClick={() => setFilter('inactive')} />
+                <div className="flex gap-3 justify-center overflow-x-auto hide-scrollbar py-2">
+                    <FilterPill label={`Ativos: 71`} active={filter === 'active'} onClick={() => setFilter('active')} />
+                    <FilterPill label={`Inativos: 77`} active={filter === 'inactive'} onClick={() => setFilter('inactive')} />
                     <FilterPill label="Excluídos" active={filter === 'deleted'} onClick={() => setFilter('deleted')} />
                 </div>
 
                 {/* Add Button */}
                 <div className="flex justify-center">
-                    <Button variant="ghost" className="text-primary hover:text-primary-dark hover:bg-primary/5 gap-2" size="sm">
+                    <Button
+                        variant="ghost"
+                        className="text-primary hover:text-white hover:bg-primary/10 gap-3 px-8 h-12 rounded-2xl border-2 border-primary/20 border-dashed hover:border-solid hover:border-primary transition-all duration-500 font-black uppercase tracking-widest text-xs"
+                        size="sm"
+                    >
                         <UserPlus className="h-5 w-5" />
-                        <span className="font-bold">+ Adicionar aluno</span>
+                        <span>+ Adicionar aluno</span>
                     </Button>
                 </div>
 
                 {/* List */}
-                <div className="space-y-3">
-                    {filteredStudents.map(student => (
+                <div className="space-y-4">
+                    {filteredStudents.map((student, index) => (
                         <Card
                             key={student.id}
-                            className="bg-white hover:bg-white/90 cursor-pointer flex items-center justify-between p-3 active:scale-[0.98]"
-                            onClick={() => navigate('/profile')} // Navigate to mock profile
+                            className="bg-surface border-white/5 hover:border-primary/40 cursor-pointer flex items-center justify-between p-4 rounded-3xl active:scale-[0.98] transition-all duration-500 group relative overflow-hidden animate-kinetic-reveal"
+                            style={{ animationDelay: `${index * 50}ms` }}
+                            onClick={() => navigate('/student')} // Navigate to mock profile
                         >
-                            <div className="flex items-center gap-4">
-                                <div className="h-12 w-12 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
+                            <div className="flex items-center gap-5">
+                                <div className="h-16 w-16 rounded-2xl bg-black border border-white/10 flex items-center justify-center overflow-hidden shadow-glow group-hover:border-primary/50 transition-all">
                                     {/* Placeholder avatar */}
-                                    <span className="text-gray-500 font-bold text-lg">{student.name.charAt(0)}</span>
+                                    <span className="text-primary font-black text-2xl tracking-tighter italic">{student.name.charAt(0)}</span>
                                 </div>
-                                <span className="text-black font-bold text-base">{student.name}</span>
+                                <div className="flex flex-col gap-0.5">
+                                    <span className="text-white font-black text-lg tracking-tight uppercase group-hover:text-primary transition-colors">{student.name}</span>
+                                    <span className="text-[10px] font-black tracking-widest uppercase text-text-muted group-hover:text-white/50 transition-colors">ID: #00{student.id}</span>
+                                </div>
                             </div>
                             <button
-                                className="p-2 rounded-full hover:bg-green-100 transition-colors"
+                                className="p-3 rounded-2xl bg-primary/5 text-primary hover:bg-primary hover:text-black transition-all duration-500 shadow-glow"
                                 onClick={(e) => {
                                     e.stopPropagation();
                                     // Handle WhatsApp click
                                 }}
                             >
-                                <MessageCircle className="h-6 w-6 text-status-active fill-current" />
+                                <MessageCircle className="h-6 w-6" />
                             </button>
                         </Card>
                     ))}
                     {filteredStudents.length === 0 && (
-                        <div className="text-center text-text-muted py-8">
-                            Nenhum aluno encontrado.
+                        <div className="text-center text-text-muted py-12 flex flex-col items-center gap-4 opacity-50">
+                            <Search className="h-12 w-12 text-primary" />
+                            <p className="font-black uppercase tracking-widest text-xs">Nenhum aluno encontrado</p>
                         </div>
                     )}
                 </div>
@@ -99,10 +111,10 @@ function FilterPill({ label, active, onClick }: { label: string, active: boolean
         <button
             onClick={onClick}
             className={cn(
-                "px-4 py-1.5 rounded-full text-xs font-medium transition-all",
+                "px-6 py-2.5 rounded-2xl text-[10px] uppercase tracking-widest font-black transition-all duration-500 border whitespace-nowrap",
                 active
-                    ? "bg-primary text-black font-bold shadow-lg shadow-primary/20"
-                    : "bg-surface text-text-muted hover:bg-surface/80"
+                    ? "bg-primary text-black border-primary shadow-neon-strong translate-y-[-2px]"
+                    : "bg-surface text-text-muted border-white/5 hover:border-primary/30 hover:text-white"
             )}
         >
             {label}

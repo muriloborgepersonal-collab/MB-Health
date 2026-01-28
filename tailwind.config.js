@@ -7,24 +7,32 @@ export default {
   theme: {
     extend: {
       colors: {
-        background: '#0f0f1a', // Dark background
-        surface: '#1a1a2e', // Card background
+        background: '#000000', // Deep Pitch Black
+        surface: '#0a0a0a', // very dark card
         primary: '#00d4ff', // Electric Blue
-        'primary-dark': '#00a3cc',
-        secondary: '#1e90ff', // Royal Blue
+        'primary-dark': '#0088aa',
+        secondary: '#0055ff', // Kinetic Blue
         text: {
           primary: '#ffffff',
-          secondary: '#e0e0e0',
-          muted: '#9ca3af',
+          secondary: '#a0a0a0',
+          muted: '#555555',
         },
         status: {
-          active: '#10b981', // Green
-          inactive: '#f59e0b', // Orange
-          deleted: '#ef4444', // Red
+          active: '#00ffaa', // Cyber Green
+          inactive: '#ffaa00', // Cyber Orange
+          deleted: '#ff0055', // Cyber Red
         }
+      },
+      borderRadius: {
+        '3xl': '32px',
+        '4xl': '48px',
       },
       fontFamily: {
         sans: ['Inter', 'sans-serif'],
+      },
+      boxShadow: {
+        'neon': '0 0 20px -5px rgba(0, 212, 255, 0.5)',
+        'neon-strong': '0 0 30px -2px rgba(0, 212, 255, 0.6)',
       }
     },
   },

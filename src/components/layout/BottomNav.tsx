@@ -12,25 +12,33 @@ export const BottomNav = () => {
     ];
 
     return (
-        <nav className="fixed bottom-0 left-0 right-0 z-50 h-20 bg-surface border-t border-white/5 pb-safe">
-            <div className="flex h-full items-center justify-around px-2">
+        <nav className="fixed bottom-0 left-0 right-0 z-50 h-24 bg-surface border-t border-primary/10 rounded-t-[40px] shadow-neon pb-6">
+            <div className="flex h-full items-center justify-around px-4">
                 {navItems.map(({ icon: Icon, label, path }) => (
                     <NavLink
                         key={path}
                         to={path}
                         className={({ isActive }) =>
                             cn(
-                                'flex flex-col items-center justify-center space-y-1 w-full h-full transition-colors',
-                                isActive ? 'text-primary' : 'text-text-primary hover:text-text-secondary'
+                                'flex flex-col items-center justify-center gap-1.5 w-full h-full transition-all duration-500 group',
+                                isActive ? 'text-primary scale-110' : 'text-text-muted hover:text-white'
                             )
                         }
                     >
                         {({ isActive }) => (
                             <>
-                                <div className={cn("p-1.5 rounded-xl transition-all", isActive && "bg-primary/10")}>
-                                    <Icon size={24} strokeWidth={isActive ? 2.5 : 2} />
+                                <div className={cn(
+                                    "p-2.5 rounded-2xl transition-all duration-500",
+                                    isActive ? "bg-primary/10 shadow-glow" : "group-hover:bg-white/5"
+                                )}>
+                                    <Icon size={24} strokeWidth={isActive ? 3 : 2} className={cn(isActive && "animate-pulse-neon")} />
                                 </div>
-                                <span className="text-xs font-medium">{label}</span>
+                                <span className={cn(
+                                    "text-[9px] font-black uppercase tracking-widest transition-all",
+                                    isActive ? "opacity-100" : "opacity-50 group-hover:opacity-80"
+                                )}>
+                                    {label}
+                                </span>
                             </>
                         )}
                     </NavLink>

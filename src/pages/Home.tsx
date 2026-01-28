@@ -8,36 +8,38 @@ export default function Home() {
     const [activeTab, setActiveTab] = useState<'inicio' | 'financas'>('inicio');
 
     return (
-        <div className="flex flex-col min-h-screen pb-20">
+        <div className="flex flex-col min-h-screen pb-24 bg-black text-white selection:bg-primary/30">
             {/* Header */}
-            <header className="bg-gradient-to-b from-surface to-background px-6 pt-12 pb-6 rounded-b-3xl shadow-lg border-b border-white/5">
-                <div className="flex flex-col items-center space-y-6">
-                    <div className="flex items-center gap-2">
-                        <Dumbbell className="text-primary h-8 w-8" />
-                        <h1 className="text-2xl font-bold tracking-tight text-white">MFITPERSONAL</h1>
+            <header className="px-6 pt-12 pb-8 bg-surface border-b border-primary/10 rounded-b-[40px] shadow-neon animate-kinetic-reveal">
+                <div className="flex flex-col items-center space-y-8">
+                    <div className="flex items-center gap-3">
+                        <div className="p-2 bg-primary/10 rounded-xl shadow-glow">
+                            <Dumbbell className="text-primary h-8 w-8 animate-pulse-neon" />
+                        </div>
+                        <h1 className="text-2xl font-black tracking-[0.2em] text-white uppercase italic">MFITPERSONAL</h1>
                     </div>
 
                     <div className="flex items-center justify-between w-full">
-                        <div className="flex items-center gap-4">
-                            <div className="h-12 w-12 rounded-full bg-surface border-2 border-primary flex items-center justify-center overflow-hidden">
-                                <UserPlus className="h-6 w-6 text-text-muted" /> {/* Placeholder for profile image */}
+                        <div className="flex items-center gap-5">
+                            <div className="h-16 w-16 rounded-3xl bg-surface border-2 border-primary/20 flex items-center justify-center overflow-hidden shadow-neon group hover:border-primary transition-all duration-500">
+                                <UserPlus className="h-8 w-8 text-text-muted group-hover:text-primary transition-colors" />
                             </div>
                             <div className="flex flex-col">
-                                <span className="text-text-muted text-sm">Boa tarde,</span>
-                                <span className="text-white font-bold text-lg">Adriano Albino</span>
+                                <span className="text-primary font-black text-xs uppercase tracking-widest mb-1">Status: Online</span>
+                                <span className="text-white font-black text-2xl tracking-tight">Adriano Albino</span>
                             </div>
                         </div>
                     </div>
 
                     {/* Navigation Tabs */}
-                    <div className="grid grid-cols-2 w-full gap-4 bg-surface/50 p-1.5 rounded-xl">
+                    <div className="grid grid-cols-2 w-full gap-4 bg-black/40 p-1.5 rounded-3xl border border-white/5">
                         <button
                             onClick={() => setActiveTab('inicio')}
                             className={cn(
-                                "py-2.5 px-4 rounded-lg text-sm font-bold transition-all",
+                                "py-3.5 px-6 rounded-2xl text-sm font-black transition-all duration-500 uppercase tracking-widest",
                                 activeTab === 'inicio'
-                                    ? "bg-white text-black shadow-sm"
-                                    : "text-text-muted hover:text-white"
+                                    ? "bg-primary text-black shadow-neon-strong translate-y-[-2px]"
+                                    : "text-text-muted hover:text-white hover:bg-white/5"
                             )}
                         >
                             Início
@@ -45,10 +47,10 @@ export default function Home() {
                         <button
                             onClick={() => setActiveTab('financas')}
                             className={cn(
-                                "py-2.5 px-4 rounded-lg text-sm font-bold transition-all",
+                                "py-3.5 px-6 rounded-2xl text-sm font-black transition-all duration-500 uppercase tracking-widest",
                                 activeTab === 'financas'
-                                    ? "bg-primary text-white shadow-lg shadow-primary/20"
-                                    : "text-text-muted hover:text-white"
+                                    ? "bg-primary text-black shadow-neon-strong translate-y-[-2px]"
+                                    : "text-text-muted hover:text-white hover:bg-white/5"
                             )}
                         >
                             Finanças
@@ -57,47 +59,54 @@ export default function Home() {
                 </div>
             </header>
 
-            <main className="flex-1 px-4 py-6 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <main className="flex-1 px-4 py-8 space-y-10 animate-kinetic-reveal [animation-delay:200ms]">
 
                 {/* Notifications Grid */}
-                <section className="grid grid-cols-3 gap-3">
-                    <NotificationCard icon={MessageCircle} count={99} label="Feedbacks" />
-                    <NotificationCard icon={Calendar} count={7} label="Atualizações" />
-                    <NotificationCard icon={Send} label="Notificações" />
+                <section className="grid grid-cols-3 gap-4">
+                    <NotificationCard icon={MessageCircle} count={99} label="FEEDBACKS" />
+                    <NotificationCard icon={Calendar} count={7} label="ATUALIZAR" />
+                    <NotificationCard icon={Send} label="ENVIAR" />
                 </section>
 
                 {/* Students Section */}
-                <section className="space-y-4">
-                    <h2 className="text-xl font-bold text-white">Seus alunos</h2>
+                <section className="space-y-6">
+                    <div className="flex items-baseline justify-between px-2">
+                        <h2 className="text-2xl font-black text-white italic uppercase tracking-tighter">Seus alunos</h2>
+                        <span className="text-primary text-[10px] font-black tracking-widest uppercase opacity-50">Painel Geral</span>
+                    </div>
 
                     <div className="grid grid-cols-2 gap-4">
-                        <Card className="bg-gradient-to-br from-primary/20 to-primary/5 border-primary/20 flex flex-col items-center justify-center p-4 gap-3 cursor-pointer hover:bg-primary/20 transition-colors">
-                            <UserPlus className="h-8 w-8 text-primary" />
-                            <span className="text-sm font-bold text-white">Adicionar alunos</span>
+                        <Card className="bg-surface border-white/5 flex flex-col items-center justify-center p-6 gap-4 cursor-pointer hover:border-primary/50 hover:bg-primary/5 transition-all duration-500 active:scale-95 group rounded-3xl">
+                            <div className="p-3 bg-primary/10 rounded-2xl group-hover:shadow-glow transition-all">
+                                <UserPlus className="h-8 w-8 text-primary" />
+                            </div>
+                            <span className="text-xs font-black text-white uppercase tracking-widest">Novo Aluno</span>
                         </Card>
 
-                        <Card className="bg-gradient-to-br from-primary/20 to-primary/5 border-primary/20 flex flex-col items-center justify-center p-4 gap-3 cursor-pointer hover:bg-primary/20 transition-colors relative">
-                            <div className="absolute top-2 right-2 bg-status-deleted text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">1</div>
-                            <LinkIcon className="h-8 w-8 text-primary" />
-                            <span className="text-sm font-bold text-white">Link de cadastro</span>
+                        <Card className="bg-surface border-white/5 flex flex-col items-center justify-center p-6 gap-4 cursor-pointer hover:border-primary/50 hover:bg-primary/5 transition-all duration-500 active:scale-95 group relative rounded-3xl">
+                            <div className="absolute top-3 right-3 bg-status-deleted text-white text-[10px] font-black px-2 py-1 rounded-lg animate-pulse shadow-glow">1</div>
+                            <div className="p-3 bg-primary/10 rounded-2xl group-hover:shadow-glow transition-all">
+                                <LinkIcon className="h-8 w-8 text-primary" />
+                            </div>
+                            <span className="text-xs font-black text-white uppercase tracking-widest">Link Registro</span>
                         </Card>
                     </div>
 
-                    <Card className="bg-gradient-to-r from-surface to-surface/80 border-white/5 p-0 overflow-hidden cursor-pointer hover:border-primary/30 transition-all">
+                    <Card className="bg-surface border-white/5 p-2 rounded-4xl overflow-hidden cursor-pointer hover:border-primary/30 hover:shadow-neon transition-all duration-500 group">
                         <div className="p-5 flex items-center justify-between">
-                            <div className="flex items-center gap-4">
-                                <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
-                                    <Users className="text-primary h-6 w-6" />
+                            <div className="flex items-center gap-5">
+                                <div className="h-14 w-14 rounded-2xl bg-primary/10 flex items-center justify-center shadow-glow group-hover:scale-110 transition-transform">
+                                    <Users className="text-primary h-7 w-7" />
                                 </div>
-                                <div className="flex flex-col gap-1">
-                                    <span className="text-lg font-bold text-white">Alunos</span>
-                                    <div className="flex items-center gap-2 text-xs font-medium">
-                                        <span className="text-status-active bg-status-active/10 px-2 py-0.5 rounded text-nowrap">Ativos: 71</span>
-                                        <span className="text-status-inactive bg-status-inactive/10 px-2 py-0.5 rounded text-nowrap">Inativos: 77</span>
+                                <div className="flex flex-col gap-1.5">
+                                    <span className="text-xl font-black text-white tracking-tight uppercase">Meus Alunos</span>
+                                    <div className="flex items-center gap-3">
+                                        <span className="text-[10px] font-black tracking-widest uppercase text-status-active/80 px-2.5 py-1 bg-status-active/5 rounded-full border border-status-active/20">71 Ativos</span>
+                                        <span className="text-[10px] font-black tracking-widest uppercase text-status-inactive/80 px-2.5 py-1 bg-status-inactive/5 rounded-full border border-status-inactive/20">77 Inativos</span>
                                     </div>
                                 </div>
                             </div>
-                            <ChevronRight className="text-text-muted h-5 w-5" />
+                            <ChevronRight className="text-primary h-6 w-6 opacity-0 group-hover:opacity-100 translate-x-[-10px] group-hover:translate-x-0 transition-all" />
                         </div>
                     </Card>
                 </section>
@@ -109,16 +118,16 @@ export default function Home() {
 
 function NotificationCard({ icon: Icon, count, label }: { icon: any, count?: number, label: string }) {
     return (
-        <div className="flex flex-col items-center gap-2">
-            <div className="h-14 w-14 rounded-full bg-primary/10 flex items-center justify-center relative cursor-pointer hover:bg-primary/20 transition-colors">
+        <div className="flex flex-col items-center gap-3 group cursor-pointer active:scale-90 transition-all">
+            <div className="h-20 w-20 rounded-[32px] bg-surface border border-white/5 flex items-center justify-center relative hover:border-primary/40 hover:shadow-neon transition-all duration-500">
                 {count && (
-                    <div className="absolute -top-1 -right-1 bg-status-deleted text-white text-[10px] font-bold h-5 min-w-[20px] px-1 flex items-center justify-center rounded-full border-2 border-background">
+                    <div className="absolute -top-1.5 -right-1.5 bg-status-deleted text-white text-[10px] font-black h-6 min-w-[24px] px-1.5 flex items-center justify-center rounded-xl border-2 border-black shadow-glow">
                         {count > 99 ? '99+' : count}
                     </div>
                 )}
-                <Icon className="h-6 w-6 text-primary" />
+                <Icon className="h-8 w-8 text-text-muted group-hover:text-primary transition-colors" />
             </div>
-            <span className="text-xs font-medium text-text-secondary">{label}</span>
+            <span className="text-[10px] font-black text-primary tracking-[0.2em] uppercase opacity-70 group-hover:opacity-100 transition-opacity">{label}</span>
         </div>
     )
 }

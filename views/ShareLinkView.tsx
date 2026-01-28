@@ -20,47 +20,51 @@ const ShareLinkView: React.FC = () => {
     };
 
     return (
-        <div className="flex flex-col min-h-screen bg-background-dark text-white p-6 pb-24">
-            <header className="flex items-center justify-between mb-8">
-                <button onClick={() => navigate(-1)} className="text-white hover:text-primary transition-colors">
-                    <span className="material-symbols-outlined text-3xl">arrow_back_ios</span>
+        <div className="flex flex-col min-h-screen bg-black text-white p-6 pb-24 selection:bg-primary/30">
+            <header className="flex items-center justify-between mb-10 animate-kinetic-reveal">
+                <button
+                    onClick={() => navigate(-1)}
+                    className="p-3 bg-surface border border-white/5 rounded-2xl hover:border-primary/50 hover:shadow-glow transition-all active:scale-90"
+                >
+                    <span className="material-symbols-outlined text-2xl text-primary">arrow_back_ios_new</span>
                 </button>
-                <h1 className="text-2xl font-black uppercase tracking-wider">Link de Cadastro</h1>
-                <div className="w-8"></div>
+                <h1 className="text-xl font-black uppercase tracking-[0.2em] italic">Link de Cadastro</h1>
+                <div className="w-12"></div>
             </header>
 
-            <main className="flex-1 flex flex-col items-center justify-center space-y-8 max-w-lg mx-auto w-full">
+            <main className="flex-1 flex flex-col items-center justify-center space-y-10 max-w-lg mx-auto w-full animate-kinetic-reveal [animation-delay:200ms]">
 
-                <div className="w-full bg-white/5 border border-white/10 p-8 rounded-3xl text-center space-y-6">
-                    <div className="w-20 h-20 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <span className="material-symbols-outlined text-primary text-4xl">link</span>
+                <div className="w-full bg-surface border border-white/5 p-10 rounded-[48px] text-center space-y-8 shadow-neon relative overflow-hidden group">
+                    <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+
+                    <div className="w-24 h-24 bg-primary/10 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-glow animate-pulse-neon">
+                        <span className="material-symbols-outlined text-primary text-5xl">link</span>
                     </div>
 
-                    <div>
-                        <h2 className="text-2xl font-black mb-2">Envie para seus alunos</h2>
-                        <p className="text-slate-400">Compartilhe este link para que seus alunos possam realizar o auto-cadastro.</p>
+                    <div className="space-y-3">
+                        <h2 className="text-2xl font-black uppercase tracking-tight italic">Envie para novos alunos</h2>
+                        <p className="text-text-muted font-bold text-sm leading-relaxed max-w-[280px] mx-auto">Compartilhe este link para que seus alunos possam realizar o auto-cadastro.</p>
                     </div>
 
-                    <div className="bg-background-dark/50 p-4 rounded-xl border border-white/5 break-all text-sm font-mono text-primary/80">
+                    <div className="bg-black p-5 rounded-2xl border border-primary/20 break-all text-[11px] font-black tracking-widest text-primary uppercase shadow-inner">
                         {registrationLink}
                     </div>
                 </div>
 
-                <div className="w-full space-y-4">
+                <div className="w-full space-y-5">
                     <button
                         onClick={handleCopy}
-                        className="w-full h-14 bg-white/5 border border-white/10 hover:bg-white/10 rounded-2xl flex items-center justify-center gap-2 font-bold transition-all active:scale-[0.98]"
+                        className="w-full h-16 bg-surface border-2 border-primary/20 border-dashed hover:border-solid hover:border-primary hover:bg-primary/10 rounded-3xl flex items-center justify-center gap-4 font-black uppercase tracking-widest text-xs transition-all duration-500 active:scale-[0.95] group"
                     >
-                        <span className="material-symbols-outlined">{copied ? 'check' : 'content_copy'}</span>
+                        <span className="material-symbols-outlined text-primary group-hover:scale-110 transition-transform">{copied ? 'check_circle' : 'content_copy'}</span>
                         {copied ? 'Link Copiado!' : 'Copiar Link'}
                     </button>
 
                     <button
                         onClick={handleWhatsApp}
-                        className="w-full h-14 bg-[#25D366] hover:bg-[#128C7E] rounded-2xl flex items-center justify-center gap-2 font-bold text-white shadow-lg transition-all active:scale-[0.98]"
+                        className="w-full h-16 bg-[#25D366]/10 border border-[#25D366]/30 hover:bg-[#25D366] hover:text-black rounded-3xl flex items-center justify-center gap-4 font-black uppercase tracking-widest text-xs shadow-lg transition-all duration-500 active:scale-[0.95] group"
                     >
-                        <i className="fa-brands fa-whatsapp text-xl"></i>
-                        <span className="material-symbols-outlined">chat</span>
+                        <span className="material-symbols-outlined group-hover:rotate-12 transition-transform">send</span>
                         Enviar no WhatsApp
                     </button>
                 </div>
