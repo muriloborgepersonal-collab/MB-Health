@@ -58,7 +58,7 @@ const PublicRegistrationView: React.FC = () => {
                     <div className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 border border-primary/20 shadow-glow mb-4">
                         <span className="material-symbols-outlined text-primary text-4xl">fitness_center</span>
                     </div>
-                    <h1 className="text-2xl font-black text-white uppercase tracking-widest">MFitPersonal</h1>
+                    <h1 className="text-2xl font-black text-white uppercase tracking-widest">MBHealth</h1>
                     <p className="text-slate-400 text-sm mt-2">Crie sua conta para acessar seus treinos</p>
                 </div>
 

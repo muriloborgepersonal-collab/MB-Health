@@ -33,7 +33,7 @@ const LoginView: React.FC = () => {
                     <div className="flex h-20 w-20 items-center justify-center rounded-3xl bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/30 shadow-glow mb-6">
                         <span className="material-symbols-outlined text-primary text-5xl">fitness_center</span>
                     </div>
-                    <h1 className="text-3xl font-black text-white tracking-tight">MFITPERSONAL</h1>
+                    <h1 className="text-3xl font-black text-white tracking-tight">MBHealth</h1>
                     <p className="text-slate-400 text-sm font-medium tracking-widest uppercase mt-2">Trainer Dashboard</p>
                 </div>
 

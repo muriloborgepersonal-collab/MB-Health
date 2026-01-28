@@ -16,7 +16,7 @@ export default function Home() {
                         <div className="p-2 bg-primary/10 rounded-xl shadow-glow">
                             <Dumbbell className="text-primary h-8 w-8 animate-pulse-neon" />
                         </div>
-                        <h1 className="text-2xl font-black tracking-[0.2em] text-white uppercase italic">MFITPERSONAL</h1>
+                        <h1 className="text-2xl font-black tracking-[0.2em] text-white uppercase italic">MBHealth</h1>
                     </div>
 
                     <div className="flex items-center justify-between w-full">

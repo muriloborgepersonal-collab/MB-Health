@@ -21,7 +21,7 @@ const HomeView: React.FC = () => {
               <span className="material-symbols-outlined text-primary text-3xl">fitness_center</span>
             </div>
             <div>
-              <p className="text-[10px] uppercase tracking-widest text-primary font-black">MFITPERSONAL</p>
+              <p className="text-[10px] uppercase tracking-widest text-primary font-black">MBHealth</p>
               <h2 className="text-white text-xl font-extrabold leading-tight tracking-tight">Olá, Treinador</h2>
             </div>
           </div>
