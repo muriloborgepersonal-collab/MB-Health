@@ -78,8 +78,11 @@ const HomeView: React.FC = () => {
 
         {/* Main Analytics Card */}
         <section>
-          <div className="bg-card-dark rounded-[2.5rem] p-8 border border-white/5 shadow-2xl relative overflow-hidden">
-            <div className="absolute top-0 right-0 p-6 opacity-5">
+          <div
+            onClick={() => navigate('/students')}
+            className="bg-card-dark rounded-[2.5rem] p-8 border border-white/5 shadow-2xl relative overflow-hidden cursor-pointer hover:border-primary/30 transition-all active:scale-[0.99] group"
+          >
+            <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-10 transition-opacity">
               <span className="material-symbols-outlined text-8xl text-white">analytics</span>
             </div>
             <div className="flex flex-col gap-8">
@@ -104,9 +107,9 @@ const HomeView: React.FC = () => {
                 </div>
               </div>
             </div>
-            <button onClick={() => navigate('/students')} className="w-full mt-10 bg-white/5 hover:bg-white/10 border border-white/10 text-white text-sm font-bold py-4 rounded-2xl transition-all active:scale-[0.98]">
+            <div className="w-full mt-10 bg-white/5 group-hover:bg-white/10 border border-white/10 text-white text-sm font-bold py-4 rounded-2xl text-center transition-all">
               Ver Lista Completa
-            </button>
+            </div>
           </div>
         </section>
 

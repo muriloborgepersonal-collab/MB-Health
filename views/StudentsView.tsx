@@ -7,104 +7,131 @@ const StudentsView: React.FC = () => {
   const navigate = useNavigate();
   const { students, loading } = useStudent();
   const [searchTerm, setSearchTerm] = useState('');
-  const [filter, setFilter] = useState<'active' | 'inactive'>('active');
+  const [filter, setFilter] = useState<'active' | 'inactive' | 'deleted'>('active');
 
-  const filteredStudents = students.filter(s =>
-    s.name.toLowerCase().includes(searchTerm.toLowerCase()) && s.status === filter
-  );
+  const filteredStudents = students.filter(s => {
+    const matchesSearch = s.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (s.email && s.email.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (s.whatsapp && s.whatsapp.includes(searchTerm));
+
+    // For now, 'deleted' will show nothing as the type doesn't support it yet
+    if (filter === 'deleted') return false;
+    return matchesSearch && s.status === filter;
+  });
+
+  const activeCount = students.filter(s => s.status === 'active').length;
+  const inactiveCount = students.filter(s => s.status === 'inactive').length;
+
+  const handleWhatsAppClick = (e: React.MouseEvent, student: any) => {
+    e.stopPropagation();
+    if (student.whatsapp) {
+      const phone = student.whatsapp.replace(/\D/g, '');
+      window.open(`https://wa.me/55${phone}`, '_blank');
+    }
+  };
 
   return (
-    <div className="flex flex-col min-h-screen bg-black text-white selection:bg-primary/30">
-      <header className="sticky top-0 z-50 bg-surface p-6 pb-4 border-b border-primary/10 rounded-b-[40px] shadow-neon">
-        <div className="flex items-center justify-between mb-8 animate-kinetic-reveal">
-          <button onClick={() => navigate('/home')} className="p-2.5 bg-black/20 border border-white/5 rounded-xl hover:border-primary/50 transition-all active:scale-90 text-primary">
-            <span className="material-symbols-outlined text-2xl">arrow_back_ios_new</span>
-          </button>
-          <h2 className="text-xl font-black uppercase tracking-[0.2em] italic text-white">MFITPERSONAL</h2>
-          <button className="text-text-muted hover:text-primary transition-colors">
-            <span className="material-symbols-outlined">more_vert</span>
-          </button>
-        </div>
+    <div className="flex flex-col min-h-screen bg-[#1e2d40]">
+      {/* Navy Header */}
+      <header className="px-6 pt-10 pb-16">
+        <button
+          onClick={() => navigate('/home')}
+          className="flex items-center gap-1 text-white mb-6 hover:opacity-80 transition-opacity"
+        >
+          <span className="material-symbols-outlined !text-xl">chevron_left</span>
+          <span className="text-sm font-medium">Voltar</span>
+        </button>
+        <h2 className="text-white text-[2.5rem] font-bold leading-none">Seus alunos</h2>
+      </header>
 
-        {/* Search */}
-        <div className="mb-6 animate-kinetic-reveal [animation-delay:100ms]">
-          <div className="flex w-full items-stretch rounded-3xl h-14 bg-black border border-white/10 px-4 group focus-within:border-primary/50 transition-all shadow-inner">
-            <div className="flex items-center justify-center text-primary">
-              <span className="material-symbols-outlined">search</span>
-            </div>
-            <input
-              className="flex-1 bg-transparent border-none focus:ring-0 text-white placeholder:text-text-muted font-black uppercase tracking-widest text-[10px] px-4"
-              placeholder="Pesquisar aluno..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
+      {/* Main Content Card */}
+      <main className="flex-1 bg-white rounded-t-[2.5rem] px-6 pt-8 pb-32">
+        {/* Search Bar */}
+        <div className="relative mb-6">
+          <input
+            type="text"
+            className="w-full h-14 bg-white border border-slate-200 rounded-xl px-4 pr-12 text-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all shadow-sm"
+            placeholder="Pesquise por nome, email ou telefone"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+          <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-slate-700">search</span>
         </div>
 
         {/* Filters */}
-        <div className="flex gap-3 overflow-x-auto hide-scrollbar pb-2 animate-kinetic-reveal [animation-delay:200ms]">
+        <div className="flex gap-2 overflow-x-auto hide-scrollbar mb-8">
           <button
             onClick={() => setFilter('active')}
-            className={`flex h-11 shrink-0 items-center justify-center gap-x-2 rounded-2xl px-6 transition-all duration-500 font-black uppercase tracking-widest text-[10px] border ${filter === 'active' ? 'bg-primary text-black border-primary shadow-neon-strong translate-y-[-2px]' : 'bg-black text-text-muted border-white/5 hover:border-primary/30'}`}
+            className={`flex h-8 items-center px-4 rounded-full border text-[11px] font-bold whitespace-nowrap transition-all ${filter === 'active'
+                ? 'bg-[#e0f2fe] border-[#0ea5e9] text-[#0ea5e9]'
+                : 'bg-slate-100 border-[#cbd5e1] text-slate-500'
+              }`}
           >
-            Ativos: {students.filter(s => s.status === 'active').length}
+            Ativos: {activeCount}
           </button>
           <button
             onClick={() => setFilter('inactive')}
-            className={`flex h-11 shrink-0 items-center justify-center gap-x-2 rounded-2xl px-6 transition-all duration-500 font-black uppercase tracking-widest text-[10px] border ${filter === 'inactive' ? 'bg-primary text-black border-primary shadow-neon-strong translate-y-[-2px]' : 'bg-black text-text-muted border-white/5 hover:border-primary/30'}`}
+            className={`flex h-8 items-center px-4 rounded-full border text-[11px] font-bold whitespace-nowrap transition-all ${filter === 'inactive'
+                ? 'bg-[#e0f2fe] border-[#0ea5e9] text-[#0ea5e9]'
+                : 'bg-slate-100 border-[#cbd5e1] text-slate-500'
+              }`}
           >
-            Inativos: {students.filter(s => s.status === 'inactive').length}
+            Inativos: {inactiveCount}
+          </button>
+          <button
+            onClick={() => setFilter('deleted')}
+            className={`flex h-8 items-center px-4 rounded-full border text-[11px] font-bold whitespace-nowrap transition-all ${filter === 'deleted'
+                ? 'bg-[#e0f2fe] border-[#0ea5e9] text-[#0ea5e9]'
+                : 'bg-slate-100 border-[#cbd5e1] text-slate-500'
+              }`}
+          >
+            Excluídos
           </button>
         </div>
-      </header>
 
-      <main className="px-6 py-10 space-y-8 pb-32 animate-kinetic-reveal [animation-delay:300ms]">
+        {/* Add Student Link */}
         <button
           onClick={() => navigate('/students/new')}
-          className="w-full h-16 border-2 border-primary/20 border-dashed rounded-3xl text-primary font-black uppercase tracking-widest text-xs hover:border-solid hover:border-primary hover:bg-primary/5 hover:text-white transition-all duration-500 active:scale-[0.95] shadow-lg group"
+          className="flex items-center justify-center gap-2 w-full text-[#0ea5e9] font-bold text-lg mb-8"
         >
-          <span className="group-hover:scale-125 transition-transform inline-block mr-2">+</span> ADICIONAR ALUNO
+          <span className="material-symbols-outlined">person_add</span>
+          Adicionar aluno
         </button>
 
-        <div className="flex items-baseline justify-between px-2">
-          <h3 className="text-2xl font-black tracking-tighter text-white uppercase italic">Meus Alunos</h3>
-          <span className="text-primary text-[10px] font-black uppercase tracking-widest opacity-50">Ordem A-Z</span>
-        </div>
-
-        <div className="space-y-4">
+        {/* Student List */}
+        <div className="space-y-0 divide-y divide-slate-100">
           {loading ? (
             <div className="flex justify-center py-12">
-              <span className="material-symbols-outlined animate-spin text-primary text-4xl shadow-glow">progress_activity</span>
+              <span className="material-symbols-outlined animate-spin text-primary text-4xl">progress_activity</span>
             </div>
           ) : filteredStudents.length === 0 ? (
-            <div className="text-center py-20 opacity-30 flex flex-col items-center gap-4">
-              <span className="material-symbols-outlined text-7xl">group_off</span>
-              <p className="text-white font-black uppercase tracking-widest text-xs">Nenhum aluno encontrado</p>
+            <div className="text-center py-20 text-slate-400">
+              <p className="font-medium">Nenhum aluno encontrado</p>
             </div>
           ) : (
-            filteredStudents.map((student, index) => (
+            filteredStudents.map((student) => (
               <div
                 key={student.id}
                 onClick={() => navigate(`/student/${student.id}`)}
-                className="flex items-center justify-between bg-surface p-5 rounded-4xl border border-white/5 shadow-lg active:scale-[0.98] transition-all duration-500 cursor-pointer group hover:border-primary/40 hover:shadow-neon relative overflow-hidden animate-kinetic-reveal"
-                style={{ animationDelay: `${index * 50}ms` }}
+                className="flex items-center justify-between py-5 group cursor-pointer active:bg-slate-50 transition-colors"
               >
-                <div className="flex items-center gap-5">
-                  <div className="relative">
-                    <img
-                      className="size-16 rounded-2xl object-cover border-2 border-primary/20 group-hover:border-primary group-hover:scale-105 transition-all shadow-glow"
-                      src={student.image_url}
-                      alt={student.name}
-                    />
-                    <div className="absolute -bottom-1 -right-1 size-4 bg-status-active rounded-full border-2 border-surface animate-pulse"></div>
-                  </div>
-                  <div className="space-y-1">
-                    <p className="text-white font-black text-lg uppercase tracking-tight group-hover:text-primary transition-all italic">{student.name}</p>
-                    <p className="text-primary/60 text-[10px] font-black uppercase tracking-widest">{student.plan}</p>
-                  </div>
+                <div className="flex items-center gap-4">
+                  <img
+                    className="size-14 rounded-full object-cover bg-slate-100 border border-slate-100"
+                    src={student.image_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(student.name)}&background=random`}
+                    alt={student.name}
+                  />
+                  <p className="text-[#1a2d40] font-bold text-lg leading-tight truncate max-w-[200px]">
+                    {student.name}
+                  </p>
                 </div>
-                <button className="text-primary p-3 bg-primary/10 rounded-2xl hover:bg-primary hover:text-black transition-all duration-500 shadow-glow group-hover:scale-110">
-                  <span className="material-symbols-outlined fill-1 text-2xl">chat</span>
+                <button
+                  onClick={(e) => handleWhatsAppClick(e, student)}
+                  className="size-10 flex items-center justify-center rounded-full bg-white border border-slate-200 text-[#25d366] hover:bg-[#25d366] hover:text-white transition-all shadow-sm"
+                >
+                  <svg className="w-6 h-6 fill-current" viewBox="0 0 24 24">
+                    <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.771-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-1.557-.594-2.662-1.726-1.104-1.132-1.607-2.446-1.685-2.697-.077-.251-.041-.392.098-.534.14-.14.307-.365.462-.539.154-.174.205-.297.307-.493.102-.197.051-.37-.026-.544-.077-.174-.691-1.671-.947-2.288-.248-.599-.501-.519-.691-.529-.174-.009-.373-.01-.571-.01-.199 0-.523.074-.797.371-.274.298-1.045 1.021-1.045 2.491 0 1.47 1.07 2.89 1.219 3.088.149.199 2.107 3.216 5.101 4.51.712.308 1.268.491 1.701.629.714.227 1.365.195 1.879.119.573-.085 1.761-.719 2.011-1.414.25-.694.25-1.289.174-1.414-.076-.125-.282-.199-.589-.353z" />
+                  </svg>
                 </button>
               </div>
             ))
