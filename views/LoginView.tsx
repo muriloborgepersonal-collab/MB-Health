@@ -78,12 +78,12 @@ const LoginView: React.FC = () => {
 
                 {/* Logo / Branding */}
                 <div className="mb-14 flex flex-col items-center">
-                    <div className="flex h-24 w-24 items-center justify-center rounded-[2rem] bg-gradient-to-br from-primary/20 to-primary/5 border border-white/10 shadow-glow mb-8 group overflow-hidden relative">
-                        <div className="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity" />
-                        <span className="material-symbols-outlined text-primary text-6xl relative z-10 transition-transform group-hover:scale-110">fitness_center</span>
-                    </div>
-                    <h1 className="text-4xl font-black text-white tracking-tighter uppercase leading-none">MBHealth</h1>
-                    <div className="flex items-center gap-3 mt-4">
+                    <img
+                        src="/logo.png"
+                        alt="MB Health Logo"
+                        className="h-20 w-auto object-contain animate-kinetic-reveal shadow-glow"
+                    />
+                    <div className="flex items-center gap-3 mt-8">
                         <div className="h-px w-8 bg-primary/30" />
                         <p className="text-primary text-[10px] font-black uppercase tracking-[0.4em]">Trainer Dashboard</p>
                         <div className="h-px w-8 bg-primary/30" />

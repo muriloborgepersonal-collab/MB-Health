@@ -17,13 +17,11 @@ const HomeView: React.FC = () => {
       <header className="bg-card-header sticky top-0 z-50 px-6 pt-12 pb-6 border-b border-white/5 backdrop-blur-md">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <div className="flex h-12 w-12 items-center justify-center rounded-[1rem] bg-primary/10 border border-primary/20 shadow-glow">
-              <span className="material-symbols-outlined text-primary text-3xl">fitness_center</span>
-            </div>
-            <div>
-              <p className="text-[10px] uppercase font-black tracking-[0.3em] text-primary mb-0.5">MBHealth System</p>
-              <h2 className="text-white text-2xl font-black leading-none tracking-tighter uppercase">Olá, Treinador</h2>
-            </div>
+            <img
+              src="/logo.png"
+              alt="MB Health Logo"
+              className="h-10 w-auto object-contain"
+            />
           </div>
           <button onClick={() => navigate('/profile')} className="flex size-11 items-center justify-center rounded-full bg-card-dark text-white border border-primary/20 hover:border-primary transition-all">
             <span className="material-symbols-outlined">person</span>

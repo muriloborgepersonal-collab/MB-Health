@@ -98,9 +98,21 @@ const RoutineCreateView: React.FC = () => {
                                     required
                                 >
                                     <option value="" className="bg-card-dark">Selecione</option>
-                                    <option value="presencial" className="bg-card-dark">Presencial</option>
-                                    <option value="online" className="bg-card-dark">Online</option>
-                                    <option value="hibrido" className="bg-card-dark">Híbrido</option>
+                                    <optgroup label="Frequência Numérica" className="bg-card-dark text-slate-500 text-[10px] uppercase">
+                                        <option value="1x na semana" className="bg-card-dark text-white text-base">1x na semana</option>
+                                        <option value="2x na semana" className="bg-card-dark text-white text-base">2x na semana</option>
+                                        <option value="3x na semana" className="bg-card-dark text-white text-base">3x na semana</option>
+                                        <option value="4x na semana" className="bg-card-dark text-white text-base">4x na semana</option>
+                                        <option value="5x na semana" className="bg-card-dark text-white text-base">5x na semana</option>
+                                        <option value="6x na semana" className="bg-card-dark text-white text-base">6x na semana</option>
+                                        <option value="7x na semana" className="bg-card-dark text-white text-base">7x na semana</option>
+                                    </optgroup>
+                                    <optgroup label="Dias da Semana" className="bg-card-dark text-slate-500 text-[10px] uppercase">
+                                        <option value="Segunda a Sexta" className="bg-card-dark text-white text-base">Segunda a Sexta</option>
+                                        <option value="Final de Semana" className="bg-card-dark text-white text-base">Final de Semana</option>
+                                        <option value="Dia sim, Dia não" className="bg-card-dark text-white text-base">Dia sim, Dia não</option>
+                                        <option value="Livre / Flexível" className="bg-card-dark text-white text-base">Livre / Flexível</option>
+                                    </optgroup>
                                 </select>
                                 <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-slate-600 pointer-events-none">expand_more</span>
                             </div>

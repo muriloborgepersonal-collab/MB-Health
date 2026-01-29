@@ -89,12 +89,13 @@ const SignUpView: React.FC = () => {
             <div className="w-full max-w-sm relative z-10 flex flex-col items-center">
 
                 {/* Logo / Branding */}
-                <div className="mb-10 flex flex-col items-center text-center">
-                    <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-primary/10 border border-white/10 shadow-glow mb-6 group">
-                        <span className="material-symbols-outlined text-primary text-5xl transition-transform group-hover:scale-110">person_add</span>
-                    </div>
-                    <h1 className="text-3xl font-black text-white tracking-tighter uppercase">Criar Conta</h1>
-                    <p className="text-primary text-[10px] font-black uppercase tracking-[0.3em] mt-3">Junte-se à Elite do Treinamento</p>
+                <div className="mb-14 flex flex-col items-center">
+                    <img
+                        src="/logo.png"
+                        alt="MB Health Logo"
+                        className="h-16 w-auto object-contain animate-kinetic-reveal"
+                    />
+                    <h1 className="text-xl font-black text-white tracking-tight uppercase mt-6">Criar Nova Conta</h1>
                 </div>
 
                 {/* Error Message */}
