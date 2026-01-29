@@ -5,7 +5,7 @@ import { useStudent } from '../contexts/StudentContext';
 const RoutineCreateView: React.FC = () => {
     const { studentId } = useParams();
     const navigate = useNavigate();
-    const { students } = useStudent();
+    const { students, addWorkout } = useStudent();
     const student = students.find(s => s.id === studentId);
 
     const [formData, setFormData] = useState({
@@ -21,6 +21,7 @@ const RoutineCreateView: React.FC = () => {
         expireOnEnd: false,
         hideBeforeStart: false
     });
+    const [isSaving, setIsSaving] = useState(false);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
         const { name, value, type } = e.target;
@@ -32,11 +33,30 @@ const RoutineCreateView: React.FC = () => {
         }
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        console.log('Routine Data:', formData);
-        alert('Rotina salva com sucesso! (Simulação)');
-        navigate(-1);
+        if (!studentId) return;
+
+        setIsSaving(true);
+        try {
+            const workoutId = await addWorkout(studentId, {
+                name: formData.name,
+                type: formData.type,
+                objective: formData.objective,
+                level: (formData.difficulty.charAt(0).toUpperCase() + formData.difficulty.slice(1)) as any,
+                dateRange: `${formData.startDate} - ${formData.endDate}`
+            });
+
+            console.log('Routine created with ID:', workoutId);
+
+            // Redirect to editor for the newly created routine
+            navigate(`/editor/${workoutId}`);
+        } catch (error) {
+            console.error('Error saving routine:', error);
+            alert('Erro ao salvar a rotina. Tente novamente.');
+        } finally {
+            setIsSaving(false);
+        }
     };
 
     return (
@@ -281,9 +301,12 @@ const RoutineCreateView: React.FC = () => {
                     {/* Submit Button */}
                     <button
                         type="submit"
-                        className="w-full h-16 bg-primary text-background-dark font-black uppercase tracking-[0.2em] text-sm rounded-2xl shadow-glow active:scale-[0.98] transition-all mt-12 hover:shadow-neon"
+                        disabled={isSaving}
+                        className="w-full h-16 bg-primary text-background-dark font-black uppercase tracking-[0.2em] text-sm rounded-2xl shadow-glow active:scale-[0.98] transition-all mt-12 hover:shadow-neon flex items-center justify-center gap-3"
                     >
-                        Salvar Rotina
+                        {isSaving ? (
+                            <span className="material-symbols-outlined animate-spin">progress_activity</span>
+                        ) : 'Salvar Rotina'}
                     </button>
                 </form>
             </main>

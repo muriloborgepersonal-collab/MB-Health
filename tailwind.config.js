@@ -33,6 +33,16 @@ export default {
       boxShadow: {
         'neon': '0 0 20px -5px rgba(0, 212, 255, 0.5)',
         'neon-strong': '0 0 30px -2px rgba(0, 212, 255, 0.6)',
+        'glow': '0 0 15px -3px rgba(0, 212, 255, 0.3)',
+      },
+      keyframes: {
+        'kinetic-reveal': {
+          '0%': { transform: 'translateY(20px)', opacity: '0' },
+          '100%': { transform: 'translateY(0)', opacity: '1' },
+        }
+      },
+      animation: {
+        'kinetic-reveal': 'kinetic-reveal 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards',
       }
     },
   },

@@ -1,6 +1,6 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { Student, Feedback, WorkoutNotification } from '../types';
+import { Student, Feedback, WorkoutNotification, Workout } from '../types';
 import { supabase } from '../src/lib/supabase';
 
 const MOCK_FEEDBACKS: Feedback[] = [
@@ -20,6 +20,7 @@ interface StudentContextType {
     addStudent: (student: Omit<Student, 'id' | 'status' | 'plan' | 'created_at'> & { image_url?: string }) => Promise<void>;
     updateStudent: (id: string, updates: Partial<Student>) => Promise<void>;
     addFeedback: (feedback: Omit<Feedback, 'id' | 'date'>) => void;
+    addWorkout: (studentId: string, workout: Omit<Workout, 'id' | 'exercises'>) => Promise<string>;
     markNotificationAsRead: (id: string) => void;
     loading: boolean;
 }
@@ -99,8 +100,29 @@ export const StudentProvider: React.FC<{ children: React.ReactNode }> = ({ child
         setNotifications(prev => prev.filter(n => n.id !== id));
     };
 
+    const addWorkout = async (studentId: string, workoutData: Omit<Workout, 'id' | 'exercises'>) => {
+        const { data, error } = await supabase
+            .from('workouts')
+            .insert([{
+                student_id: studentId,
+                name: workoutData.name,
+                type: workoutData.type,
+                objective: workoutData.objective,
+                level: workoutData.level,
+                date_range: workoutData.dateRange
+            }])
+            .select();
+
+        if (error) {
+            console.error('Error adding workout:', error);
+            throw error;
+        }
+
+        return data[0].id;
+    };
+
     return (
-        <StudentContext.Provider value={{ students, feedbacks, notifications, addStudent, updateStudent, addFeedback, markNotificationAsRead, loading }}>
+        <StudentContext.Provider value={{ students, feedbacks, notifications, addStudent, updateStudent, addFeedback, addWorkout, markNotificationAsRead, loading }}>
             {children}
         </StudentContext.Provider>
     );
