@@ -20,41 +20,51 @@ const StudentWorkoutsView: React.FC = () => {
     ];
 
     return (
-        <div className="flex flex-col min-h-screen bg-[#f3f4f6]">
-            {/* Navy Header */}
-            <header className="bg-[#1e2d40] px-6 pt-10 pb-20">
+        <div className="flex flex-col min-h-screen bg-background-dark">
+            {/* Dark Header */}
+            <header className="bg-card-header px-6 pt-12 pb-24 border-b border-white/5 relative overflow-hidden">
+                <div className="absolute top-0 right-0 p-10 opacity-5">
+                    <span className="material-symbols-outlined text-[120px]">fitness_center</span>
+                </div>
                 <button
                     onClick={() => navigate(`/student/${id}`)}
-                    className="flex items-center gap-1 text-white mb-8 hover:opacity-80 transition-opacity"
+                    className="flex items-center gap-1 text-primary mb-8 hover:text-white transition-all group relative z-10"
                 >
-                    <span className="material-symbols-outlined !text-xl">chevron_left</span>
-                    <span className="text-sm font-medium">Voltar</span>
+                    <span className="material-symbols-outlined !text-xl group-hover:-translate-x-1 transition-transform">chevron_left</span>
+                    <span className="text-sm font-black uppercase tracking-widest">Voltar para o Perfil</span>
                 </button>
 
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-5 relative z-10">
                     <img
                         src={student?.image_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(student?.name || 'Aluno')}&background=random`}
                         alt={student?.name}
-                        className="size-16 rounded-full border-2 border-white/20 object-cover"
+                        className="size-20 rounded-2xl border-4 border-white/10 object-cover shadow-2xl"
                     />
-                    <h1 className="text-2xl font-medium text-white">{student?.name || 'Carregando...'}</h1>
+                    <div>
+                        <p className="text-primary text-[10px] font-black uppercase tracking-[0.2em] mb-1">Listagem de Treinos</p>
+                        <h1 className="text-2xl font-black text-white uppercase tracking-tight">{student?.name || 'Carregando...'}</h1>
+                    </div>
                 </div>
             </header>
 
             {/* Main Content */}
-            <main className="flex-1 px-4 -mt-10 pb-24">
+            <main className="flex-1 px-4 -mt-12 pb-24 space-y-4">
                 {/* Tabs Container */}
-                <div className="flex gap-2 mb-4">
+                <div className="flex gap-3 bg-card-dark/50 backdrop-blur-xl p-1.5 rounded-[1.5rem] border border-white/5 shadow-2xl">
                     <button
                         onClick={() => setActiveTab('rotinas')}
-                        className={`flex-1 h-14 rounded-t-xl font-medium text-lg transition-all ${activeTab === 'rotinas' ? 'bg-white text-slate-800' : 'bg-[#3b82f6] text-white'
+                        className={`flex-1 h-12 rounded-2xl font-black uppercase tracking-widest text-[10px] transition-all ${activeTab === 'rotinas'
+                            ? 'bg-primary text-background-dark shadow-glow'
+                            : 'text-slate-500 hover:text-white'
                             }`}
                     >
                         Rotinas de treino
                     </button>
                     <button
                         onClick={() => setActiveTab('aerobico')}
-                        className={`flex-1 h-14 rounded-t-xl font-medium text-lg transition-all ${activeTab === 'aerobico' ? 'bg-white text-slate-800' : 'bg-[#3b82f6] text-white'
+                        className={`flex-1 h-12 rounded-2xl font-black uppercase tracking-widest text-[10px] transition-all ${activeTab === 'aerobico'
+                            ? 'bg-primary text-background-dark shadow-glow'
+                            : 'text-slate-500 hover:text-white'
                             }`}
                     >
                         Aeróbico
@@ -62,55 +72,57 @@ const StudentWorkoutsView: React.FC = () => {
                 </div>
 
                 {/* Content Card */}
-                <div className="bg-white rounded-b-xl rounded-t-none p-6 shadow-sm space-y-6">
+                <div className="bg-card-dark border border-white/5 rounded-[2rem] p-6 shadow-2xl space-y-8">
                     {activeTab === 'rotinas' ? (
                         <>
                             {/* Create Routine Button */}
                             <button
                                 onClick={() => navigate(`/routine/new/${id}`)}
-                                className="w-full flex items-center justify-center gap-3 rounded-xl h-24 border-2 border-dashed border-[#0ea5e9] text-[#0ea5e9] font-bold text-xl hover:bg-sky-50 transition-colors"
+                                className="w-full flex items-center justify-center gap-3 rounded-[1.5rem] h-28 border-2 border-dashed border-primary/30 text-primary font-black uppercase tracking-widest text-xs hover:bg-primary/10 hover:border-primary/50 transition-all shadow-inner group"
                                 id="create-routine-btn"
                             >
-                                <span className="material-symbols-outlined text-3xl font-light">add</span>
-                                <span>Criar rotina</span>
+                                <div className="size-10 rounded-full bg-primary/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                                    <span className="material-symbols-outlined text-2xl">add</span>
+                                </div>
+                                <span className="mt-1">Criar Nova Rotina</span>
                             </button>
 
                             {/* Filter Buttons */}
-                            <div className="flex gap-4">
-                                <button className="flex-1 h-14 bg-[#e0f2fe] text-[#0ea5e9] rounded-xl font-bold text-lg active:scale-95 transition-all">
+                            <div className="flex gap-3">
+                                <button className="flex-1 h-12 bg-white/5 border border-white/10 text-slate-400 rounded-2xl font-black uppercase tracking-widest text-[10px] hover:border-primary/30 active:scale-95 transition-all">
                                     Arquivadas
                                 </button>
-                                <button className="flex-1 h-14 bg-[#e0f2fe] text-[#0ea5e9] rounded-xl font-bold text-lg active:scale-95 transition-all">
+                                <button className="flex-1 h-12 bg-white/5 border border-white/10 text-slate-400 rounded-2xl font-black uppercase tracking-widest text-[10px] hover:border-primary/30 active:scale-95 transition-all">
                                     Excluídas
                                 </button>
                             </div>
 
                             {/* Routine Cards */}
-                            <div className="space-y-4 pt-2">
+                            <div className="space-y-4">
                                 {routines.map((routine) => (
                                     <div
                                         key={routine.id}
                                         onClick={() => navigate(`/editor/${routine.id}`)}
-                                        className="flex items-center gap-4 p-4 bg-white border border-slate-200 rounded-2xl hover:border-[#0ea5e9] transition-colors cursor-pointer group"
+                                        className="flex items-center gap-5 p-5 bg-white/[0.02] border border-white/5 rounded-[1.5rem] hover:border-primary/30 hover:bg-white/[0.04] transition-all cursor-pointer group"
                                     >
-                                        <div className="size-16 rounded-full bg-[#f0f9ff] border border-[#e0f2fe] flex items-center justify-center">
-                                            <span className="material-symbols-outlined text-[#0ea5e9] text-3xl">fitness_center</span>
+                                        <div className="size-16 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center shadow-glow transition-transform group-hover:scale-110">
+                                            <span className="material-symbols-outlined text-primary text-3xl">fitness_center</span>
                                         </div>
                                         <div className="flex-1">
-                                            <h3 className="text-slate-800 font-bold text-lg">{routine.name}</h3>
-                                            <div className="flex items-center gap-2 text-slate-500 text-sm mt-1">
-                                                <span className="material-symbols-outlined !text-sm">calendar_month</span>
+                                            <h3 className="text-white font-black text-lg uppercase tracking-tight group-hover:text-primary transition-colors">{routine.name}</h3>
+                                            <div className="flex items-center gap-2 text-slate-500 text-[10px] font-bold uppercase tracking-widest mt-1">
+                                                <span className="material-symbols-outlined !text-xs">calendar_month</span>
                                                 <span>{routine.startDate} - {routine.endDate}</span>
                                             </div>
-                                            <div className="flex flex-wrap gap-2 mt-2">
+                                            <div className="flex flex-wrap gap-2 mt-3">
                                                 {routine.tags.map(tag => (
-                                                    <span key={tag} className="text-xs font-medium text-slate-400">
-                                                        {tag} {routine.tags.indexOf(tag) < routine.tags.length - 1 ? '| ' : ''}
+                                                    <span key={tag} className="text-[9px] font-black uppercase tracking-widest bg-white/5 px-2 py-1 rounded-md text-slate-500">
+                                                        {tag}
                                                     </span>
                                                 ))}
                                             </div>
                                         </div>
-                                        <button className="text-slate-400 group-hover:text-slate-800">
+                                        <button className="text-slate-700 hover:text-primary transition-colors">
                                             <span className="material-symbols-outlined">more_vert</span>
                                         </button>
                                     </div>
@@ -118,9 +130,9 @@ const StudentWorkoutsView: React.FC = () => {
                             </div>
                         </>
                     ) : (
-                        <div className="py-20 text-center">
-                            <span className="material-symbols-outlined text-6xl text-slate-200">directions_run</span>
-                            <p className="text-slate-400 mt-4">Nenhum treino aeróbico encontrado.</p>
+                        <div className="py-20 flex flex-col items-center justify-center border-2 border-dashed border-white/5 rounded-[1.5rem]">
+                            <span className="material-symbols-outlined text-6xl text-white/5 mb-4">directions_run</span>
+                            <p className="text-slate-500 font-black uppercase tracking-widest text-[10px]">Nenhum treino aeróbico</p>
                         </div>
                     )}
                 </div>

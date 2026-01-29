@@ -102,10 +102,10 @@ const AppContent: React.FC = () => {
       {showNav && (
         <button
           onClick={() => setIsAIModalOpen(true)}
-          className="fixed bottom-24 right-6 z-50 w-16 h-16 rounded-full flex items-center justify-center shadow-2xl shadow-primary/40 bg-gradient-to-tr from-primary to-purple-500 border-2 border-white/20 active:scale-90 transition-transform group"
+          className="fixed bottom-24 right-6 z-50 w-16 h-16 rounded-full flex items-center justify-center shadow-2xl shadow-primary/40 bg-gradient-to-tr from-primary to-blue-600 border-2 border-white/20 active:scale-90 transition-transform group"
         >
           <span className="material-symbols-outlined text-white text-3xl font-light group-hover:rotate-12 transition-transform">auto_awesome</span>
-          <div className="absolute -top-1 -right-1 bg-red-500 text-[10px] font-black px-1.5 py-0.5 rounded-full border-2 border-background-dark">IA</div>
+          <div className="absolute -top-1 -right-1 bg-primary text-[10px] font-black px-1.5 py-0.5 rounded-full border-2 border-background-dark text-background-dark">IA</div>
         </button>
       )}
 

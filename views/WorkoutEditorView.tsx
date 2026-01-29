@@ -7,22 +7,22 @@ const WorkoutEditorView: React.FC = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="flex flex-col">
-      <header className="sticky top-0 z-50 bg-background-dark p-6 border-b border-white/5">
+    <div className="flex flex-col min-h-screen bg-background-dark">
+      <header className="sticky top-0 z-50 bg-card-header/80 backdrop-blur-md p-6 border-b border-white/5">
         <div className="flex items-center justify-between max-w-lg mx-auto">
-          <button onClick={() => navigate(-1)} className="text-white hover:text-primary">
-            <span className="material-symbols-outlined">arrow_back_ios</span>
+          <button onClick={() => navigate(-1)} className="text-primary hover:text-white transition-colors group">
+            <span className="material-symbols-outlined group-hover:-translate-x-1 transition-transform">arrow_back_ios</span>
           </button>
-          <h2 className="text-lg font-black tracking-tight uppercase">Editor de Exercícios</h2>
-          <button className="text-white">
+          <h2 className="text-white text-lg font-black tracking-widest uppercase">Editor de Exercícios</h2>
+          <button className="text-slate-500 hover:text-white transition-colors">
             <span className="material-symbols-outlined">more_vert</span>
           </button>
         </div>
       </header>
 
-      <main className="px-6 py-6 space-y-6">
+      <main className="px-4 py-8 space-y-8 max-w-lg mx-auto w-full">
         {/* Actions Bar */}
-        <div className="overflow-x-auto hide-scrollbar">
+        <div className="overflow-x-auto hide-scrollbar -mx-4 px-4">
           <div className="flex gap-6 min-w-max pb-2">
             {[
               { label: 'Baixar treino', icon: 'download' },
@@ -32,12 +32,12 @@ const WorkoutEditorView: React.FC = () => {
             ].map((action, i) => (
               <div
                 key={i}
-                className="flex flex-col items-center gap-2 py-2 w-24 cursor-pointer group"
+                className="flex flex-col items-center gap-3 py-2 w-24 cursor-pointer group"
               >
-                <div className={`rounded-full p-4 transition-all ${action.highlight ? 'bg-gradient-to-tr from-primary to-purple-500 shadow-glow' : 'bg-white/5 hover:bg-white/10'}`}>
-                  <span className="material-symbols-outlined text-white">{action.icon}</span>
+                <div className={`rounded-2xl p-4 transition-all ${action.highlight ? 'bg-gradient-to-tr from-primary to-blue-600 shadow-glow scale-110' : 'bg-white/5 border border-white/5 hover:border-primary/30 group-hover:bg-white/10'}`}>
+                  <span className={`material-symbols-outlined ${action.highlight ? 'text-background-dark font-black' : 'text-slate-400 group-hover:text-primary'}`}>{action.icon}</span>
                 </div>
-                <p className={`text-[10px] font-black uppercase tracking-widest ${action.highlight ? 'text-primary' : 'text-slate-400 group-hover:text-white'}`}>
+                <p className={`text-[9px] font-black uppercase tracking-[0.2em] text-center ${action.highlight ? 'text-primary' : 'text-slate-500 group-hover:text-white'}`}>
                   {action.label}
                 </p>
               </div>
@@ -46,8 +46,8 @@ const WorkoutEditorView: React.FC = () => {
         </div>
 
         {/* Add Button */}
-        <button className="w-full flex items-center justify-center gap-3 rounded-2xl h-16 bg-primary text-background-dark font-black text-lg shadow-glow active:scale-[0.98] transition-all">
-          <span className="material-symbols-outlined text-3xl">add_circle</span>
+        <button className="w-full flex items-center justify-center gap-3 rounded-[1.5rem] h-16 bg-primary text-background-dark font-black uppercase tracking-widest text-sm shadow-glow active:scale-[0.98] transition-all hover:shadow-neon">
+          <span className="material-symbols-outlined text-2xl font-black">add_circle</span>
           <span>Adicionar Exercício</span>
         </button>
 

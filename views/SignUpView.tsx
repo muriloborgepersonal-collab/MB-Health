@@ -54,20 +54,22 @@ const SignUpView: React.FC = () => {
     if (success) {
         return (
             <div className="min-h-screen bg-background-dark flex flex-col items-center justify-center p-6 relative overflow-hidden">
-                <div className="absolute top-[-20%] left-[-20%] w-[80%] h-[80%] bg-green-500/20 rounded-full blur-[120px] pointer-events-none"></div>
+                {/* Background Ambience */}
+                <div className="absolute top-[-20%] left-[-20%] w-[100%] h-[100%] bg-primary/10 rounded-full blur-[150px] pointer-events-none opacity-50"></div>
+                <div className="absolute bottom-[-20%] right-[-20%] w-[80%] h-[80%] bg-blue-900/10 rounded-full blur-[120px] pointer-events-none opacity-30"></div>
+                <div className="absolute top-0 left-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-[0.03] pointer-events-none"></div>
 
                 <div className="w-full max-w-sm relative z-10 flex flex-col items-center text-center">
-                    <div className="flex h-20 w-20 items-center justify-center rounded-3xl bg-gradient-to-br from-green-500/20 to-green-500/5 border border-green-500/30 mb-6">
-                        <span className="material-symbols-outlined text-green-400 text-5xl">check_circle</span>
+                    <div className="size-24 rounded-[2rem] bg-primary/10 border border-primary/30 shadow-glow mb-8 flex items-center justify-center">
+                        <span className="material-symbols-outlined text-primary text-6xl">verified</span>
                     </div>
-                    <h1 className="text-2xl font-black text-white mb-4">Conta Criada!</h1>
-                    <p className="text-slate-400 mb-8">
-                        Enviamos um email de confirmação para <span className="text-white font-medium">{email}</span>.
-                        Por favor, verifique sua caixa de entrada.
+                    <h1 className="text-3xl font-black text-white uppercase tracking-tighter mb-4">Verifique seu Email</h1>
+                    <p className="text-slate-500 font-bold uppercase tracking-[0.1em] text-[11px] mb-8 leading-relaxed">
+                        Enviamos um link de confirmação para <span className="text-primary">{email}</span>. Acesse o link para ativar sua conta.
                     </p>
                     <button
                         onClick={() => navigate('/')}
-                        className="w-full h-14 bg-gradient-to-r from-primary to-[#00a0c0] text-background-dark font-black text-lg rounded-2xl shadow-lg shadow-primary/25 uppercase tracking-widest"
+                        className="w-full h-16 bg-primary text-background-dark font-black uppercase tracking-[0.2em] text-sm rounded-2xl shadow-glow hover:shadow-neon active:scale-[0.98] transition-all"
                     >
                         Ir para Login
                     </button>
@@ -80,18 +82,19 @@ const SignUpView: React.FC = () => {
         <div className="min-h-screen bg-background-dark flex flex-col items-center justify-center p-6 relative overflow-hidden">
 
             {/* Background Ambience */}
-            <div className="absolute top-[-20%] left-[-20%] w-[80%] h-[80%] bg-primary/20 rounded-full blur-[120px] pointer-events-none"></div>
-            <div className="absolute bottom-[-20%] right-[-20%] w-[60%] h-[60%] bg-purple-500/10 rounded-full blur-[100px] pointer-events-none"></div>
+            <div className="absolute top-[-20%] left-[-20%] w-[100%] h-[100%] bg-primary/10 rounded-full blur-[150px] pointer-events-none opacity-50"></div>
+            <div className="absolute bottom-[-20%] right-[-20%] w-[80%] h-[80%] bg-blue-900/10 rounded-full blur-[120px] pointer-events-none opacity-30"></div>
+            <div className="absolute top-0 left-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-[0.03] pointer-events-none"></div>
 
             <div className="w-full max-w-sm relative z-10 flex flex-col items-center">
 
                 {/* Logo / Branding */}
-                <div className="mb-8 flex flex-col items-center">
-                    <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/30 shadow-glow mb-4">
-                        <span className="material-symbols-outlined text-primary text-4xl">fitness_center</span>
+                <div className="mb-10 flex flex-col items-center text-center">
+                    <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-primary/10 border border-white/10 shadow-glow mb-6 group">
+                        <span className="material-symbols-outlined text-primary text-5xl transition-transform group-hover:scale-110">person_add</span>
                     </div>
-                    <h1 className="text-2xl font-black text-white tracking-tight">Criar Conta</h1>
-                    <p className="text-slate-400 text-sm mt-1">Preencha os dados abaixo</p>
+                    <h1 className="text-3xl font-black text-white tracking-tighter uppercase">Criar Conta</h1>
+                    <p className="text-primary text-[10px] font-black uppercase tracking-[0.3em] mt-3">Junte-se à Elite do Treinamento</p>
                 </div>
 
                 {/* Error Message */}
@@ -103,16 +106,16 @@ const SignUpView: React.FC = () => {
                 )}
 
                 {/* SignUp Form */}
-                <form onSubmit={handleSignUp} className="w-full space-y-4">
-                    <div className="space-y-2">
-                        <label className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Nome Completo</label>
+                <form onSubmit={handleSignUp} className="w-full space-y-6">
+                    <div className="space-y-3">
+                        <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 ml-1">Nome Completo</label>
                         <div className="relative group">
-                            <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-primary transition-colors">person</span>
+                            <span className="material-symbols-outlined absolute left-5 top-1/2 -translate-y-1/2 text-slate-600 group-focus-within:text-primary transition-colors">person</span>
                             <input
                                 type="text"
                                 value={name}
                                 onChange={(e) => setName(e.target.value)}
-                                className="w-full h-14 bg-white/5 border border-white/10 rounded-2xl pl-12 pr-4 text-white focus:border-primary focus:ring-0 focus:bg-white/10 transition-all font-medium placeholder:text-slate-600"
+                                className="w-full h-16 bg-white/[0.02] border border-white/5 rounded-2xl pl-14 pr-4 text-white focus:border-primary/50 focus:ring-4 focus:ring-primary/5 transition-all font-bold placeholder:text-slate-700 shadow-inner outline-none"
                                 placeholder="Seu nome"
                                 required
                                 disabled={loading}
@@ -120,15 +123,15 @@ const SignUpView: React.FC = () => {
                         </div>
                     </div>
 
-                    <div className="space-y-2">
-                        <label className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Email</label>
+                    <div className="space-y-3">
+                        <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 ml-1">Email</label>
                         <div className="relative group">
-                            <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-primary transition-colors">mail</span>
+                            <span className="material-symbols-outlined absolute left-5 top-1/2 -translate-y-1/2 text-slate-600 group-focus-within:text-primary transition-colors">mail</span>
                             <input
                                 type="email"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
-                                className="w-full h-14 bg-white/5 border border-white/10 rounded-2xl pl-12 pr-4 text-white focus:border-primary focus:ring-0 focus:bg-white/10 transition-all font-medium placeholder:text-slate-600"
+                                className="w-full h-16 bg-white/[0.02] border border-white/5 rounded-2xl pl-14 pr-4 text-white focus:border-primary/50 focus:ring-4 focus:ring-primary/5 transition-all font-bold placeholder:text-slate-700 shadow-inner outline-none"
                                 placeholder="seu@email.com"
                                 required
                                 disabled={loading}
@@ -136,15 +139,15 @@ const SignUpView: React.FC = () => {
                         </div>
                     </div>
 
-                    <div className="space-y-2">
-                        <label className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Senha</label>
+                    <div className="space-y-3">
+                        <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 ml-1">Senha</label>
                         <div className="relative group">
-                            <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-primary transition-colors">lock</span>
+                            <span className="material-symbols-outlined absolute left-5 top-1/2 -translate-y-1/2 text-slate-600 group-focus-within:text-primary transition-colors">lock</span>
                             <input
                                 type="password"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
-                                className="w-full h-14 bg-white/5 border border-white/10 rounded-2xl pl-12 pr-4 text-white focus:border-primary focus:ring-0 focus:bg-white/10 transition-all font-medium placeholder:text-slate-600"
+                                className="w-full h-16 bg-white/[0.02] border border-white/5 rounded-2xl pl-14 pr-4 text-white focus:border-primary/50 focus:ring-4 focus:ring-primary/5 transition-all font-bold placeholder:text-slate-700 shadow-inner outline-none"
                                 placeholder="Mínimo 6 caracteres"
                                 required
                                 disabled={loading}
@@ -152,15 +155,15 @@ const SignUpView: React.FC = () => {
                         </div>
                     </div>
 
-                    <div className="space-y-2">
-                        <label className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Confirmar Senha</label>
+                    <div className="space-y-3">
+                        <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 ml-1">Confirmar Senha</label>
                         <div className="relative group">
-                            <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-primary transition-colors">lock</span>
+                            <span className="material-symbols-outlined absolute left-5 top-1/2 -translate-y-1/2 text-slate-600 group-focus-within:text-primary transition-colors">lock</span>
                             <input
                                 type="password"
                                 value={confirmPassword}
                                 onChange={(e) => setConfirmPassword(e.target.value)}
-                                className="w-full h-14 bg-white/5 border border-white/10 rounded-2xl pl-12 pr-4 text-white focus:border-primary focus:ring-0 focus:bg-white/10 transition-all font-medium placeholder:text-slate-600"
+                                className="w-full h-16 bg-white/[0.02] border border-white/5 rounded-2xl pl-14 pr-4 text-white focus:border-primary/50 focus:ring-4 focus:ring-primary/5 transition-all font-bold placeholder:text-slate-700 shadow-inner outline-none"
                                 placeholder="Repita a senha"
                                 required
                                 disabled={loading}
@@ -171,12 +174,12 @@ const SignUpView: React.FC = () => {
                     <button
                         type="submit"
                         disabled={loading}
-                        className="w-full h-14 mt-4 bg-gradient-to-r from-primary to-[#00a0c0] text-background-dark font-black text-lg rounded-2xl shadow-lg shadow-primary/25 hover:shadow-primary/40 active:scale-[0.98] transition-all uppercase tracking-widest flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+                        className="w-full h-16 mt-8 bg-primary text-background-dark font-black text-sm rounded-2xl shadow-glow active:scale-[0.98] transition-all uppercase tracking-[0.2em] flex items-center justify-center gap-3 group disabled:opacity-70 disabled:cursor-not-allowed hover:shadow-neon"
                     >
                         {loading ? (
-                            <span className="animate-spin material-symbols-outlined">progress_activity</span>
+                            <span className="animate-spin material-symbols-outlined font-black">progress_activity</span>
                         ) : (
-                            'CRIAR CONTA'
+                            'CRIAR MINHA CONTA'
                         )}
                     </button>
                 </form>

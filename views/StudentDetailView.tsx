@@ -42,18 +42,19 @@ const StudentDetailView: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#1e2d40] flex items-center justify-center">
-        <span className="material-symbols-outlined animate-spin text-white text-5xl">progress_activity</span>
+      <div className="min-h-screen bg-background-dark flex flex-col items-center justify-center gap-4">
+        <span className="material-symbols-outlined animate-spin text-primary text-5xl">progress_activity</span>
+        <p className="text-slate-500 font-bold uppercase tracking-widest text-xs">Carregando Perfil...</p>
       </div>
     );
   }
 
   if (!student) {
     return (
-      <div className="min-h-screen bg-[#1e2d40] flex flex-col items-center justify-center p-6 text-center">
-        <span className="material-symbols-outlined text-6xl text-white/50 mb-4">person_off</span>
-        <h2 className="text-2xl font-bold text-white mb-2">Aluno não encontrado</h2>
-        <button onClick={() => navigate('/students')} className="text-[#0ea5e9] font-bold hover:underline">Voltar para a lista</button>
+      <div className="min-h-screen bg-background-dark flex flex-col items-center justify-center p-6 text-center">
+        <span className="material-symbols-outlined text-7xl text-white/5 mb-6">person_off</span>
+        <h2 className="text-2xl font-black text-white uppercase tracking-tight mb-2">Aluno não encontrado</h2>
+        <button onClick={() => navigate('/students')} className="text-primary font-black uppercase tracking-widest text-xs hover:underline">Voltar para a lista</button>
       </div>
     );
   }
@@ -69,38 +70,41 @@ const StudentDetailView: React.FC = () => {
   ];
 
   const menuItems = [
-    { label: 'Treinos', icon: 'fitness_center', color: 'bg-[#e0f2fe]', iconColor: 'text-[#0ea5e9]', path: `/student/${student.id}/workouts` },
-    { label: 'Avaliações', icon: 'assignment', color: 'bg-[#e0f2fe]', iconColor: 'text-[#0ea5e9]' },
-    { label: 'Posição financeira', icon: 'attach_money', color: 'bg-[#e0f2fe]', iconColor: 'text-[#0ea5e9]' },
-    { label: 'Progresso do aluno', icon: 'assignment_turned_in', color: 'bg-[#e0f2fe]', iconColor: 'text-[#0ea5e9]' },
+    { label: 'Treinos', icon: 'fitness_center', color: 'bg-primary/10', iconColor: 'text-primary', path: `/student/${student.id}/workouts` },
+    { label: 'Avaliações', icon: 'assignment', color: 'bg-white/5', iconColor: 'text-slate-400' },
+    { label: 'Posição financeira', icon: 'attach_money', color: 'bg-white/5', iconColor: 'text-slate-400' },
+    { label: 'Progresso do aluno', icon: 'assignment_turned_in', color: 'bg-white/5', iconColor: 'text-slate-400' },
   ];
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#f3f4f6]">
-      {/* Navy Header */}
-      <header className="bg-[#1e2d40] px-6 pt-10 pb-20">
+    <div className="flex flex-col min-h-screen bg-background-dark">
+      {/* Dark Header */}
+      <header className="bg-card-header px-6 pt-12 pb-24 border-b border-white/5 relative overflow-hidden">
+        <div className="absolute top-0 right-0 p-10 opacity-5">
+          <span className="material-symbols-outlined text-[120px]">person</span>
+        </div>
         <button
           onClick={() => navigate(-1)}
-          className="flex items-center gap-1 text-white mb-8 hover:opacity-80 transition-opacity"
+          className="flex items-center gap-1 text-primary mb-8 hover:text-white transition-all group relative z-10"
         >
-          <span className="material-symbols-outlined !text-xl">chevron_left</span>
-          <span className="text-sm font-medium">Voltar</span>
+          <span className="material-symbols-outlined !text-xl group-hover:-translate-x-1 transition-transform">chevron_left</span>
+          <span className="text-sm font-black uppercase tracking-widest">Voltar</span>
         </button>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-5 relative z-10">
           {/* Editable Photo */}
           <div className="relative cursor-pointer group" onClick={handlePhotoClick}>
             <img
               src={student.image_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(student.name)}&background=random`}
               alt={student.name}
-              className={`size-16 rounded-full border-2 border-white/20 object-cover transition-opacity ${updatingPhoto ? 'opacity-50' : 'group-hover:opacity-80'}`}
+              className={`size-24 rounded-[2rem] border-4 border-white/10 group-hover:border-primary/50 object-cover shadow-2xl transition-all ${updatingPhoto ? 'opacity-50' : ''}`}
             />
-            <div className="absolute inset-0 flex items-center justify-center rounded-full bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity">
-              <span className="material-symbols-outlined text-white text-xl">photo_camera</span>
+            <div className="absolute inset-0 flex items-center justify-center rounded-[2rem] bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity">
+              <span className="material-symbols-outlined text-white text-2xl">photo_camera</span>
             </div>
             {updatingPhoto && (
               <div className="absolute inset-0 flex items-center justify-center">
-                <span className="material-symbols-outlined animate-spin text-white text-xl">progress_activity</span>
+                <span className="material-symbols-outlined animate-spin text-primary text-2xl">progress_activity</span>
               </div>
             )}
           </div>
@@ -111,24 +115,31 @@ const StudentDetailView: React.FC = () => {
             onChange={handlePhotoChange}
             className="hidden"
           />
-          <h1 className="text-2xl font-medium text-white">{student.name}</h1>
+          <div>
+            <h1 className="text-3xl font-black text-white tracking-tight">{student.name}</h1>
+            <p className="text-primary text-[10px] font-black uppercase tracking-[0.2em] mt-1">Perfil do Atleta</p>
+          </div>
         </div>
       </header>
 
-      {/* Main Content (Shifted up with negative margin to overlay header slightly) */}
-      <main className="flex-1 px-4 -mt-10 pb-24">
+      {/* Main Content */}
+      <main className="flex-1 px-4 -mt-12 pb-24 space-y-4">
         {/* Tabs Container */}
-        <div className="flex gap-2 mb-4">
+        <div className="flex gap-3 bg-card-dark/50 backdrop-blur-xl p-1.5 rounded-[1.5rem] border border-white/5 shadow-2xl">
           <button
             onClick={() => setActiveTab('inicio')}
-            className={`flex-1 h-14 rounded-t-xl font-medium text-lg transition-all ${activeTab === 'inicio' ? 'bg-white text-slate-800' : 'bg-[#3b82f6] text-white'
+            className={`flex-1 h-12 rounded-2xl font-black uppercase tracking-widest text-[10px] transition-all ${activeTab === 'inicio'
+              ? 'bg-primary text-background-dark shadow-glow'
+              : 'text-slate-500 hover:text-white'
               }`}
           >
             Início
           </button>
           <button
             onClick={() => setActiveTab('opcoes')}
-            className={`flex-1 h-14 rounded-t-xl font-medium text-lg transition-all ${activeTab === 'opcoes' ? 'bg-white text-slate-800' : 'bg-[#3b82f6] text-white'
+            className={`flex-1 h-12 rounded-2xl font-black uppercase tracking-widest text-[10px] transition-all ${activeTab === 'opcoes'
+              ? 'bg-primary text-background-dark shadow-glow'
+              : 'text-slate-500 hover:text-white'
               }`}
           >
             Opções
@@ -136,42 +147,52 @@ const StudentDetailView: React.FC = () => {
         </div>
 
         {/* Content Card */}
-        <div className="bg-white rounded-b-xl rounded-t-none p-6 shadow-sm space-y-8">
+        <div className="bg-card-dark border border-white/5 rounded-[2rem] p-6 shadow-2xl space-y-10">
           {/* Frequência de Treinos Section */}
-          <div>
-            <h3 className="text-slate-800 font-bold mb-6">Frequência de Treinos</h3>
-            <div className="flex justify-between items-center px-2">
+          <section>
+            <div className="flex items-center justify-between mb-8">
+              <h3 className="text-white font-black uppercase tracking-widest text-xs">Frequência de Treinos</h3>
+              <span className="text-slate-500 text-[10px] font-black uppercase tracking-widest">Últimos 7 dias</span>
+            </div>
+            <div className="flex justify-between items-center px-1">
               {days.map((day, i) => (
-                <div key={i} className="flex flex-col items-center gap-3">
-                  <div className={`size-11 rounded-full border-2 flex items-center justify-center transition-all ${day.active
-                    ? 'bg-[#0ea5e9] border-[#0ea5e9] text-white'
-                    : 'bg-white border-[#0ea5e9] text-transparent'
+                <div key={i} className="flex flex-col items-center gap-4">
+                  <div className={`size-10 rounded-xl border flex items-center justify-center transition-all ${day.active
+                    ? 'bg-primary border-primary text-background-dark shadow-glow scale-110'
+                    : 'bg-white/5 border-white/10 text-transparent'
                     }`}>
-                    <span className="material-symbols-outlined text-xl font-bold">check</span>
+                    <span className="material-symbols-outlined text-lg font-black">check</span>
                   </div>
-                  <span className="text-sm font-bold text-slate-700">{day.label}</span>
+                  <span className={`text-[10px] font-black uppercase tracking-tighter ${day.active ? 'text-primary' : 'text-slate-600'}`}>
+                    {day.label}
+                  </span>
                 </div>
               ))}
             </div>
-          </div>
+          </section>
 
-          <hr className="border-slate-100" />
+          <div className="h-px bg-gradient-to-r from-transparent via-white/5 to-transparent" />
 
           {/* Menu Items List */}
-          <div className="space-y-0 divide-y divide-slate-100">
+          <section className="space-y-4">
             {menuItems.map((item, i) => (
               <button
                 key={i}
                 onClick={() => item.path && navigate(item.path)}
-                className="w-full flex items-center gap-4 py-4 hover:bg-slate-50 transition-colors group"
+                className="w-full flex items-center justify-between p-4 bg-white/[0.02] border border-white/5 rounded-[1.5rem] hover:border-primary/30 hover:bg-white/[0.04] active:scale-[0.98] transition-all group"
               >
-                <div className={`size-12 rounded-full flex items-center justify-center ${item.color} ${item.iconColor} group-active:scale-95 transition-transform`}>
-                  <span className="material-symbols-outlined text-2xl">{item.icon}</span>
+                <div className="flex items-center gap-5">
+                  <div className={`size-12 rounded-2xl flex items-center justify-center ${item.color} ${item.iconColor} shadow-glow transition-all group-hover:scale-110`}>
+                    <span className="material-symbols-outlined text-2xl font-light">{item.icon}</span>
+                  </div>
+                  <span className="text-sm text-slate-300 font-black uppercase tracking-widest group-hover:text-white transition-colors">
+                    {item.label}
+                  </span>
                 </div>
-                <span className="text-lg text-slate-700 font-medium">{item.label}</span>
+                <span className="material-symbols-outlined text-slate-700 group-hover:text-primary transition-colors">chevron_right</span>
               </button>
             ))}
-          </div>
+          </section>
         </div>
       </main>
     </div>

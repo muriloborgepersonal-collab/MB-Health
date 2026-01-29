@@ -69,24 +69,29 @@ const StudentCreateView: React.FC = () => {
 
     return (
         <div className="flex flex-col min-h-screen bg-background-dark text-white p-6 pb-24">
-            <header className="flex items-center justify-between mb-8">
-                <button onClick={() => navigate(-1)} className="text-white hover:text-primary transition-colors">
-                    <span className="material-symbols-outlined text-3xl">arrow_back_ios</span>
-                </button>
-                <h1 className="text-2xl font-black uppercase tracking-wider">Novo Aluno</h1>
-                <div className="w-8"></div>
+            <header className="px-6 pt-12 pb-6 border-b border-white/5 bg-card-header/80 backdrop-blur-md sticky top-0 z-50">
+                <div className="flex items-center justify-between">
+                    <button onClick={() => navigate(-1)} className="p-3 bg-card-dark border border-white/5 rounded-2xl hover:border-primary/50 transition-all active:scale-95 group">
+                        <span className="material-symbols-outlined text-2xl text-slate-400 group-hover:text-primary">arrow_back_ios_new</span>
+                    </button>
+                    <div className="flex flex-col items-center">
+                        <h1 className="text-xl font-black uppercase tracking-[0.2em] text-white">Novo Aluno</h1>
+                        <div className="h-0.5 w-8 bg-primary mt-1"></div>
+                    </div>
+                    <div className="w-14"></div>
+                </div>
             </header>
 
             <main className="flex-1 max-w-lg mx-auto w-full">
                 <form onSubmit={handleSubmit} className="space-y-6">
 
                     {/* Photo Upload */}
-                    <div className="flex flex-col items-center mb-6">
+                    <div className="flex flex-col items-center mb-10">
                         <div
                             onClick={handlePhotoClick}
                             className="relative cursor-pointer group"
                         >
-                            <div className="w-28 h-28 rounded-full bg-white/5 border-2 border-dashed border-white/20 flex items-center justify-center overflow-hidden transition-all group-hover:border-primary group-hover:bg-primary/5">
+                            <div className="w-32 h-32 rounded-[2.5rem] bg-white/[0.02] border-2 border-dashed border-white/10 flex items-center justify-center overflow-hidden transition-all group-hover:border-primary/50 group-hover:bg-primary/5 shadow-inner">
                                 {photoPreview ? (
                                     <img
                                         src={photoPreview}
@@ -94,16 +99,16 @@ const StudentCreateView: React.FC = () => {
                                         className="w-full h-full object-cover"
                                     />
                                 ) : (
-                                    <span className="material-symbols-outlined text-4xl text-slate-500 group-hover:text-primary transition-colors">
-                                        add_a_photo
-                                    </span>
+                                    <div className="flex flex-col items-center gap-2">
+                                        <span className="material-symbols-outlined text-5xl text-slate-600 group-hover:text-primary transition-colors">
+                                            add_a_photo
+                                        </span>
+                                    </div>
                                 )}
                             </div>
-                            {photoPreview && (
-                                <div className="absolute bottom-0 right-0 w-8 h-8 bg-primary rounded-full flex items-center justify-center shadow-lg shadow-primary/30">
-                                    <span className="material-symbols-outlined text-background-dark text-lg">edit</span>
-                                </div>
-                            )}
+                            <div className="absolute -bottom-2 -right-2 w-10 h-10 bg-primary rounded-2xl flex items-center justify-center shadow-glow border-4 border-background-dark group-hover:scale-110 transition-transform">
+                                <span className="material-symbols-outlined text-background-dark text-xl font-black">add</span>
+                            </div>
                         </div>
                         <input
                             ref={fileInputRef}
@@ -112,52 +117,52 @@ const StudentCreateView: React.FC = () => {
                             onChange={handlePhotoChange}
                             className="hidden"
                         />
-                        <p className="text-xs text-slate-500 mt-3 text-center">
-                            {photoPreview ? 'Clique para alterar a foto' : 'Adicionar foto do aluno'}
+                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-5">
+                            {photoPreview ? 'Toque para alterar' : 'Foto do Perfil'}
                         </p>
                     </div>
 
-                    <div className="space-y-2">
-                        <label className="text-sm font-bold text-slate-400 uppercase tracking-wider">Nome Completo</label>
-                        <div className="flex items-center px-4 py-3 bg-white/5 border border-white/10 rounded-2xl focus-within:border-primary transition-colors">
-                            <span className="material-symbols-outlined text-slate-500 mr-3">person</span>
+                    <div className="space-y-3">
+                        <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 ml-1">Nome Completo</label>
+                        <div className="flex items-center px-6 h-16 bg-white/[0.02] border border-white/5 rounded-2xl focus-within:border-primary/50 focus-within:ring-4 focus-within:ring-primary/5 transition-all shadow-inner group">
+                            <span className="material-symbols-outlined text-slate-600 mr-4 group-focus-within:text-primary transition-colors">person</span>
                             <input
                                 type="text"
                                 name="name"
                                 value={formData.name}
                                 onChange={handleChange}
                                 placeholder="Ex: João da Silva"
-                                className="bg-transparent border-none text-white w-full focus:ring-0 placeholder:text-slate-600 font-medium"
+                                className="bg-transparent border-none text-white w-full focus:ring-0 placeholder:text-slate-700 font-bold outline-none"
                                 required
                             />
                         </div>
                     </div>
 
-                    <div className="space-y-2">
-                        <label className="text-sm font-bold text-slate-400 uppercase tracking-wider">Email</label>
-                        <div className="flex items-center px-4 py-3 bg-white/5 border border-white/10 rounded-2xl focus-within:border-primary transition-colors">
-                            <span className="material-symbols-outlined text-slate-500 mr-3">mail</span>
+                    <div className="space-y-3">
+                        <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 ml-1">Email</label>
+                        <div className="flex items-center px-6 h-16 bg-white/[0.02] border border-white/5 rounded-2xl focus-within:border-primary/50 focus-within:ring-4 focus-within:ring-primary/5 transition-all shadow-inner group">
+                            <span className="material-symbols-outlined text-slate-600 mr-4 group-focus-within:text-primary transition-colors">mail</span>
                             <input
                                 type="email"
                                 name="email"
                                 value={formData.email}
                                 onChange={handleChange}
                                 placeholder="Ex: joao@email.com"
-                                className="bg-transparent border-none text-white w-full focus:ring-0 placeholder:text-slate-600 font-medium"
+                                className="bg-transparent border-none text-white w-full focus:ring-0 placeholder:text-slate-700 font-bold outline-none"
                             />
                         </div>
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                            <label className="text-sm font-bold text-slate-400 uppercase tracking-wider">Grupo</label>
-                            <div className="flex items-center px-4 py-3 bg-white/5 border border-white/10 rounded-2xl focus-within:border-primary transition-colors">
-                                <span className="material-symbols-outlined text-slate-500 mr-3">group</span>
+                        <div className="space-y-3">
+                            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 ml-1">Grupo</label>
+                            <div className="flex items-center px-6 h-16 bg-white/[0.02] border border-white/5 rounded-2xl focus-within:border-primary/50 focus-within:ring-4 focus-within:ring-primary/5 transition-all shadow-inner group">
+                                <span className="material-symbols-outlined text-slate-600 mr-3 group-focus-within:text-primary transition-colors">group</span>
                                 <select
                                     name="group_type"
                                     value={formData.group_type}
                                     onChange={handleChange}
-                                    className="bg-transparent border-none text-white w-full focus:ring-0 font-medium [&>option]:bg-background-dark"
+                                    className="bg-transparent border-none text-white w-full focus:ring-0 font-bold [&>option]:bg-background-dark outline-none cursor-pointer"
                                 >
                                     <option value="Online">Online</option>
                                     <option value="Presencial">Presencial</option>
@@ -165,44 +170,44 @@ const StudentCreateView: React.FC = () => {
                             </div>
                         </div>
 
-                        <div className="space-y-2">
-                            <label className="text-sm font-bold text-slate-400 uppercase tracking-wider">Nascimento</label>
-                            <div className="flex items-center px-4 py-3 bg-white/5 border border-white/10 rounded-2xl focus-within:border-primary transition-colors">
+                        <div className="space-y-3">
+                            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 ml-1">Nascimento</label>
+                            <div className="flex items-center px-6 h-16 bg-white/[0.02] border border-white/5 rounded-2xl focus-within:border-primary/50 focus-within:ring-4 focus-within:ring-primary/5 transition-all shadow-inner group">
                                 <input
                                     type="date"
                                     name="birth_date"
                                     value={formData.birth_date}
                                     onChange={handleChange}
-                                    className="bg-transparent border-none text-white w-full focus:ring-0 font-medium invert-calendar-icon"
+                                    className="bg-transparent border-none text-white w-full focus:ring-0 font-bold invert-calendar-icon outline-none"
                                 />
                             </div>
                         </div>
                     </div>
 
-                    <div className="space-y-2">
-                        <label className="text-sm font-bold text-slate-400 uppercase tracking-wider">WhatsApp</label>
-                        <div className="flex items-center px-4 py-3 bg-white/5 border border-white/10 rounded-2xl focus-within:border-primary transition-colors">
-                            <span className="material-symbols-outlined text-slate-500 mr-3">chat</span>
+                    <div className="space-y-3">
+                        <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 ml-1">WhatsApp</label>
+                        <div className="flex items-center px-6 h-16 bg-white/[0.02] border border-white/5 rounded-2xl focus-within:border-primary/50 focus-within:ring-4 focus-within:ring-primary/5 transition-all shadow-inner group">
+                            <span className="material-symbols-outlined text-slate-600 mr-4 group-focus-within:text-primary transition-colors">chat</span>
                             <input
                                 type="tel"
                                 name="whatsapp"
                                 value={formData.whatsapp}
                                 onChange={handleChange}
                                 placeholder="(00) 00000-0000"
-                                className="bg-transparent border-none text-white w-full focus:ring-0 placeholder:text-slate-600 font-medium"
+                                className="bg-transparent border-none text-white w-full focus:ring-0 placeholder:text-slate-700 font-bold outline-none"
                             />
                         </div>
                     </div>
 
-                    <div className="space-y-2">
-                        <label className="text-sm font-bold text-slate-400 uppercase tracking-wider">Gênero</label>
-                        <div className="flex  items-center px-4 py-3 bg-white/5 border border-white/10 rounded-2xl focus-within:border-primary transition-colors">
-                            <span className="material-symbols-outlined text-slate-500 mr-3">wc</span>
+                    <div className="space-y-3">
+                        <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 ml-1">Gênero</label>
+                        <div className="flex items-center px-6 h-16 bg-white/[0.02] border border-white/5 rounded-2xl focus-within:border-primary/50 focus-within:ring-4 focus-within:ring-primary/5 transition-all shadow-inner group">
+                            <span className="material-symbols-outlined text-slate-600 mr-4 group-focus-within:text-primary transition-colors">wc</span>
                             <select
                                 name="gender"
                                 value={formData.gender}
                                 onChange={handleChange}
-                                className="bg-transparent border-none text-white w-full focus:ring-0 font-medium [&>option]:bg-background-dark"
+                                className="bg-transparent border-none text-white w-full focus:ring-0 font-bold [&>option]:bg-background-dark outline-none cursor-pointer"
                             >
                                 <option value="" disabled>Selecione</option>
                                 <option value="Masculino">Masculino</option>
@@ -212,19 +217,22 @@ const StudentCreateView: React.FC = () => {
                         </div>
                     </div>
 
-                    <div className="pt-6">
+                    <div className="pt-10">
                         <button
                             type="submit"
                             disabled={loading}
-                            className={`w-full h-14 bg-gradient-to-r from-primary to-[#00a0c0] rounded-2xl text-background-dark font-black text-lg shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-all uppercase tracking-widest flex items-center justify-center gap-2 ${loading ? 'opacity-70 cursor-not-allowed' : 'hover:scale-[1.02] active:scale-[0.98]'}`}
+                            className={`w-full h-18 py-6 bg-primary rounded-2xl text-background-dark font-black text-sm shadow-glow active:scale-[0.98] transition-all uppercase tracking-[0.2em] flex items-center justify-center gap-3 hover:shadow-neon ${loading ? 'opacity-70 cursor-not-allowed' : ''}`}
                         >
                             {loading ? (
                                 <>
-                                    <span className="animate-spin material-symbols-outlined">progress_activity</span>
-                                    Salvando...
+                                    <span className="animate-spin material-symbols-outlined font-black">progress_activity</span>
+                                    SALVANDO...
                                 </>
                             ) : (
-                                'Salvar Aluno'
+                                <>
+                                    SALVAR NOVO ALUNO
+                                    <span className="material-symbols-outlined font-black">check_circle</span>
+                                </>
                             )}
                         </button>
                     </div>

@@ -70,18 +70,24 @@ const LoginView: React.FC = () => {
         <div className="min-h-screen bg-background-dark flex flex-col items-center justify-center p-6 relative overflow-hidden">
 
             {/* Background Ambience */}
-            <div className="absolute top-[-20%] left-[-20%] w-[80%] h-[80%] bg-primary/20 rounded-full blur-[120px] pointer-events-none"></div>
-            <div className="absolute bottom-[-20%] right-[-20%] w-[60%] h-[60%] bg-purple-500/10 rounded-full blur-[100px] pointer-events-none"></div>
+            <div className="absolute top-[-20%] left-[-20%] w-[100%] h-[100%] bg-primary/10 rounded-full blur-[150px] pointer-events-none opacity-50"></div>
+            <div className="absolute bottom-[-20%] right-[-20%] w-[80%] h-[80%] bg-blue-900/10 rounded-full blur-[120px] pointer-events-none opacity-30"></div>
+            <div className="absolute top-0 left-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-[0.03] pointer-events-none"></div>
 
             <div className="w-full max-w-sm relative z-10 flex flex-col items-center">
 
                 {/* Logo / Branding */}
-                <div className="mb-12 flex flex-col items-center">
-                    <div className="flex h-20 w-20 items-center justify-center rounded-3xl bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/30 shadow-glow mb-6">
-                        <span className="material-symbols-outlined text-primary text-5xl">fitness_center</span>
+                <div className="mb-14 flex flex-col items-center">
+                    <div className="flex h-24 w-24 items-center justify-center rounded-[2rem] bg-gradient-to-br from-primary/20 to-primary/5 border border-white/10 shadow-glow mb-8 group overflow-hidden relative">
+                        <div className="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+                        <span className="material-symbols-outlined text-primary text-6xl relative z-10 transition-transform group-hover:scale-110">fitness_center</span>
                     </div>
-                    <h1 className="text-3xl font-black text-white tracking-tight">MBHealth</h1>
-                    <p className="text-slate-400 text-sm font-medium tracking-widest uppercase mt-2">Trainer Dashboard</p>
+                    <h1 className="text-4xl font-black text-white tracking-tighter uppercase leading-none">MBHealth</h1>
+                    <div className="flex items-center gap-3 mt-4">
+                        <div className="h-px w-8 bg-primary/30" />
+                        <p className="text-primary text-[10px] font-black uppercase tracking-[0.4em]">Trainer Dashboard</p>
+                        <div className="h-px w-8 bg-primary/30" />
+                    </div>
                 </div>
 
                 {/* Error Message */}
@@ -94,59 +100,60 @@ const LoginView: React.FC = () => {
 
                 {/* Login Form */}
                 <form onSubmit={handleLogin} className="w-full space-y-5">
-                    <div className="space-y-2">
-                        <label className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Email</label>
-                        <div className="relative group">
-                            <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-primary transition-colors">mail</span>
-                            <input
-                                type="email"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                className="w-full h-14 bg-white/5 border border-white/10 rounded-2xl pl-12 pr-4 text-white focus:border-primary focus:ring-0 focus:bg-white/10 transition-all font-medium placeholder:text-slate-600"
-                                placeholder="seu@email.com"
-                                required
-                                disabled={loading}
-                            />
+                    <div className="space-y-6">
+                        <div className="space-y-3">
+                            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 ml-1">Email</label>
+                            <div className="relative group">
+                                <span className="material-symbols-outlined absolute left-5 top-1/2 -translate-y-1/2 text-slate-600 group-focus-within:text-primary transition-colors">mail</span>
+                                <input
+                                    type="email"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    className="w-full h-16 bg-white/[0.02] border border-white/5 rounded-2xl pl-14 pr-4 text-white focus:border-primary/50 focus:ring-4 focus:ring-primary/5 transition-all font-bold placeholder:text-slate-700 shadow-inner outline-none"
+                                    placeholder="seu@email.com"
+                                    required
+                                    disabled={loading}
+                                />
+                            </div>
                         </div>
-                    </div>
 
-                    <div className="space-y-2">
-                        <label className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Senha</label>
-                        <div className="relative group">
-                            <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-primary transition-colors">lock</span>
-                            <input
-                                type="password"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                className="w-full h-14 bg-white/5 border border-white/10 rounded-2xl pl-12 pr-4 text-white focus:border-primary focus:ring-0 focus:bg-white/10 transition-all font-medium placeholder:text-slate-600"
-                                placeholder="••••••••"
-                                required
-                                disabled={loading}
-                            />
+                        <div className="space-y-3">
+                            <div className="flex justify-between items-center px-1">
+                                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Senha</label>
+                                <button
+                                    type="button"
+                                    onClick={handleForgotPassword}
+                                    className="text-[10px] font-black uppercase tracking-widest text-slate-600 hover:text-primary transition-colors"
+                                >
+                                    Esqueceu a senha?
+                                </button>
+                            </div>
+                            <div className="relative group">
+                                <span className="material-symbols-outlined absolute left-5 top-1/2 -translate-y-1/2 text-slate-600 group-focus-within:text-primary transition-colors">lock</span>
+                                <input
+                                    type="password"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    className="w-full h-16 bg-white/[0.02] border border-white/5 rounded-2xl pl-14 pr-4 text-white focus:border-primary/50 focus:ring-4 focus:ring-primary/5 transition-all font-bold placeholder:text-slate-700 shadow-inner outline-none"
+                                    placeholder="••••••••"
+                                    required
+                                    disabled={loading}
+                                />
+                            </div>
                         </div>
-                    </div>
-
-                    <div className="flex justify-end">
-                        <button
-                            type="button"
-                            onClick={handleForgotPassword}
-                            className="text-xs text-slate-400 hover:text-white transition-colors"
-                        >
-                            Esqueceu a senha?
-                        </button>
                     </div>
 
                     <button
                         type="submit"
                         disabled={loading}
-                        className="w-full h-14 mt-4 bg-gradient-to-r from-primary to-[#00a0c0] text-background-dark font-black text-lg rounded-2xl shadow-lg shadow-primary/25 hover:shadow-primary/40 active:scale-[0.98] transition-all uppercase tracking-widest flex items-center justify-center gap-2 group disabled:opacity-70 disabled:cursor-not-allowed"
+                        className="w-full h-16 mt-8 bg-primary text-background-dark font-black text-sm rounded-2xl shadow-glow active:scale-[0.98] transition-all uppercase tracking-[0.2em] flex items-center justify-center gap-3 group disabled:opacity-70 disabled:cursor-not-allowed hover:shadow-neon"
                     >
                         {loading ? (
-                            <span className="animate-spin material-symbols-outlined">progress_activity</span>
+                            <span className="animate-spin material-symbols-outlined font-black">progress_activity</span>
                         ) : (
                             <>
-                                ENTRAR
-                                <span className="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                                ENTRAR NO DASHBOARD
+                                <span className="material-symbols-outlined transition-transform group-hover:translate-x-1 font-black">arrow_forward</span>
                             </>
                         )}
                     </button>

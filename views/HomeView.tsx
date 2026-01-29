@@ -12,17 +12,17 @@ const HomeView: React.FC = () => {
   const inactiveStudents = students.filter(s => s.status === 'inactive').length;
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col min-h-screen bg-background-dark">
       {/* Top Header */}
-      <header className="bg-card-header sticky top-0 z-50 px-4 pt-8 pb-4 border-b border-white/5">
+      <header className="bg-card-header sticky top-0 z-50 px-6 pt-12 pb-6 border-b border-white/5 backdrop-blur-md">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 border border-primary/20 shadow-glow">
+          <div className="flex items-center gap-4">
+            <div className="flex h-12 w-12 items-center justify-center rounded-[1rem] bg-primary/10 border border-primary/20 shadow-glow">
               <span className="material-symbols-outlined text-primary text-3xl">fitness_center</span>
             </div>
             <div>
-              <p className="text-[10px] uppercase tracking-widest text-primary font-black">MBHealth</p>
-              <h2 className="text-white text-xl font-extrabold leading-tight tracking-tight">Olá, Treinador</h2>
+              <p className="text-[10px] uppercase font-black tracking-[0.3em] text-primary mb-0.5">MBHealth System</p>
+              <h2 className="text-white text-2xl font-black leading-none tracking-tighter uppercase">Olá, Treinador</h2>
             </div>
           </div>
           <button onClick={() => navigate('/profile')} className="flex size-11 items-center justify-center rounded-full bg-card-dark text-white border border-primary/20 hover:border-primary transition-all">
