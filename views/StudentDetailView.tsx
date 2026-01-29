@@ -69,7 +69,7 @@ const StudentDetailView: React.FC = () => {
   ];
 
   const menuItems = [
-    { label: 'Treinos', icon: 'fitness_center', color: 'bg-[#e0f2fe]', iconColor: 'text-[#0ea5e9]' },
+    { label: 'Treinos', icon: 'fitness_center', color: 'bg-[#e0f2fe]', iconColor: 'text-[#0ea5e9]', path: `/editor/${student.id}` },
     { label: 'Avaliações', icon: 'assignment', color: 'bg-[#e0f2fe]', iconColor: 'text-[#0ea5e9]' },
     { label: 'Posição financeira', icon: 'attach_money', color: 'bg-[#e0f2fe]', iconColor: 'text-[#0ea5e9]' },
     { label: 'Progresso do aluno', icon: 'assignment_turned_in', color: 'bg-[#e0f2fe]', iconColor: 'text-[#0ea5e9]' },
@@ -162,6 +162,7 @@ const StudentDetailView: React.FC = () => {
             {menuItems.map((item, i) => (
               <button
                 key={i}
+                onClick={() => item.path && navigate(item.path)}
                 className="w-full flex items-center gap-4 py-4 hover:bg-slate-50 transition-colors group"
               >
                 <div className={`size-12 rounded-full flex items-center justify-center ${item.color} ${item.iconColor} group-active:scale-95 transition-transform`}>
