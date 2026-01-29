@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { useAuth } from '../contexts/AuthContext';
 
 const ForgotPasswordView: React.FC = () => {
@@ -79,14 +80,27 @@ const ForgotPasswordView: React.FC = () => {
                 </button>
 
                 {/* Header Section */}
-                <div className="mb-14 flex flex-col items-center">
-                    <img
-                        src="/logo.png"
-                        alt="MB Health Logo"
-                        className="h-16 w-auto object-contain animate-kinetic-reveal"
-                    />
-                    <h1 className="text-xl font-black text-white tracking-tight uppercase mt-6">Recuperar Senha</h1>
-                </div>
+                <motion.div
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.8 }}
+                    className="mb-12 relative flex flex-col items-center group"
+                >
+                    <div className="absolute inset-0 -m-16 pointer-events-none">
+                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-24 h-24 bg-primary/20 rounded-full blur-[35px] opacity-60"></div>
+                    </div>
+
+                    <div className="relative z-10 mb-8">
+                        <img
+                            src="/logo.png"
+                            alt="MB Health Logo"
+                            className="h-16 w-auto object-contain drop-shadow-[0_0_12px_rgba(0,212,255,0.3)]"
+                        />
+                    </div>
+
+                    <h1 className="text-xl font-black text-white tracking-tight uppercase">Recuperar Senha</h1>
+                    <div className="h-[1px] w-12 bg-primary/20 mt-4" />
+                </motion.div>
 
                 {/* Error Message */}
                 {error && (
