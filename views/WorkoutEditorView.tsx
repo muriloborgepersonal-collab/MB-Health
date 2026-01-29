@@ -28,12 +28,10 @@ const WorkoutEditorView: React.FC = () => {
               { label: 'Baixar treino', icon: 'download' },
               { label: 'Visão aluno', icon: 'visibility' },
               { label: 'Evolução', icon: 'trending_up' },
-              { label: 'Criar Rotina', icon: 'add_task', action: () => navigate(`/routine/new/${id}`) },
               { label: 'MFITIA', icon: 'auto_awesome', highlight: true }
             ].map((action, i) => (
               <div
                 key={i}
-                onClick={action.action}
                 className="flex flex-col items-center gap-2 py-2 w-24 cursor-pointer group"
               >
                 <div className={`rounded-full p-4 transition-all ${action.highlight ? 'bg-gradient-to-tr from-primary to-purple-500 shadow-glow' : 'bg-white/5 hover:bg-white/10'}`}>

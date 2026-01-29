@@ -24,6 +24,7 @@ import NotificationsView from './views/NotificationsView';
 import CreateNotificationSelectionView from './views/CreateNotificationSelectionView';
 import WorkoutEditorView from './views/WorkoutEditorView';
 import RoutineCreateView from './views/RoutineCreateView';
+import StudentWorkoutsView from './views/StudentWorkoutsView';
 
 // Components
 import Navigation from './components/Navigation';
@@ -59,6 +60,9 @@ const AppContent: React.FC = () => {
         } />
         <Route path="/student/:id" element={
           <ProtectedRoute><StudentDetailView /></ProtectedRoute>
+        } />
+        <Route path="/student/:id/workouts" element={
+          <ProtectedRoute><StudentWorkoutsView /></ProtectedRoute>
         } />
         <Route path="/share-link" element={
           <ProtectedRoute><ShareLinkView /></ProtectedRoute>

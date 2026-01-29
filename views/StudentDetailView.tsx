@@ -69,7 +69,7 @@ const StudentDetailView: React.FC = () => {
   ];
 
   const menuItems = [
-    { label: 'Treinos', icon: 'fitness_center', color: 'bg-[#e0f2fe]', iconColor: 'text-[#0ea5e9]', path: `/editor/${student.id}` },
+    { label: 'Treinos', icon: 'fitness_center', color: 'bg-[#e0f2fe]', iconColor: 'text-[#0ea5e9]', path: `/student/${student.id}/workouts` },
     { label: 'Avaliações', icon: 'assignment', color: 'bg-[#e0f2fe]', iconColor: 'text-[#0ea5e9]' },
     { label: 'Posição financeira', icon: 'attach_money', color: 'bg-[#e0f2fe]', iconColor: 'text-[#0ea5e9]' },
     { label: 'Progresso do aluno', icon: 'assignment_turned_in', color: 'bg-[#e0f2fe]', iconColor: 'text-[#0ea5e9]' },
