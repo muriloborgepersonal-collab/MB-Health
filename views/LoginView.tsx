@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../contexts/AuthContext';
 
 const LoginView: React.FC = () => {
@@ -76,19 +77,49 @@ const LoginView: React.FC = () => {
 
             <div className="w-full max-w-sm relative z-10 flex flex-col items-center">
 
-                {/* Logo / Branding */}
-                <div className="mb-14 flex flex-col items-center">
-                    <img
-                        src="/logo.png"
-                        alt="MB Health Logo"
-                        className="h-20 w-auto object-contain animate-kinetic-reveal shadow-glow"
-                    />
-                    <div className="flex items-center gap-3 mt-8">
-                        <div className="h-px w-8 bg-primary/30" />
-                        <p className="text-primary text-[10px] font-black uppercase tracking-[0.4em]">Trainer Dashboard</p>
-                        <div className="h-px w-8 bg-primary/30" />
+                {/* Logo / Branding - Redesigned for Integration */}
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8, ease: "easeOut" }}
+                    className="mb-16 relative flex flex-col items-center group"
+                >
+                    {/* Integrated Scene Lighting (The "Scenário" Integration) */}
+                    <div className="absolute inset-0 -m-20 pointer-events-none overflow-visible">
+                        {/* Core glow directly behind the logo */}
+                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-primary/20 rounded-full blur-[40px] mix-blend-screen opacity-70 group-hover:opacity-100 transition-opacity duration-1000"></div>
+
+                        {/* Wider ambient wash */}
+                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-primary/5 rounded-full blur-[80px] mix-blend-lighten pointer-events-none"></div>
+
+                        {/* Secondary kinetic accent */}
+                        <motion.div
+                            animate={{
+                                scale: [1, 1.2, 1],
+                                opacity: [0.1, 0.2, 0.1]
+                            }}
+                            transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+                            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[200%] h-[200%] bg-blue-500/5 rounded-full blur-[100px]"
+                        ></motion.div>
                     </div>
-                </div>
+
+                    {/* Logo Body */}
+                    <div className="relative z-10 p-4">
+                        <img
+                            src="/logo.png"
+                            alt="MB Health Logo"
+                            className="h-24 w-auto object-contain drop-shadow-[0_0_15px_rgba(0,212,255,0.4)] hover:drop-shadow-[0_0_25px_rgba(0,212,255,0.6)] transition-all duration-700"
+                        />
+                    </div>
+
+                    {/* Subtle Horizon Line (Integrated instead of text) */}
+                    <motion.div
+                        initial={{ scaleX: 0, opacity: 0 }}
+                        animate={{ scaleX: 1, opacity: 1 }}
+                        transition={{ delay: 0.5, duration: 1 }}
+                        className="h-[1px] w-24 bg-gradient-to-r from-transparent via-primary/40 to-transparent mt-6"
+                    />
+                </motion.div>
 
                 {/* Error Message */}
                 {error && (
