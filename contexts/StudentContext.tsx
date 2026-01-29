@@ -35,7 +35,7 @@ export const StudentProvider: React.FC<{ children: React.ReactNode }> = ({ child
     const fetchStudents = async () => {
         setLoading(true);
         const { data, error } = await supabase
-            .from('students')
+            .from('Alunos')
             .select('*')
             .order('name', { ascending: true });
 
@@ -55,7 +55,7 @@ export const StudentProvider: React.FC<{ children: React.ReactNode }> = ({ child
         const image_url = newStudentData.image_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(newStudentData.name)}&background=random`;
 
         const { data, error } = await supabase
-            .from('students')
+            .from('Alunos')
             .insert([{
                 ...newStudentData,
                 image_url,
@@ -74,7 +74,7 @@ export const StudentProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
     const updateStudent = async (id: string, updates: Partial<Student>) => {
         const { error } = await supabase
-            .from('students')
+            .from('Alunos')
             .update(updates)
             .eq('id', id);
 
