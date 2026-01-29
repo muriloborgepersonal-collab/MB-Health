@@ -28,9 +28,14 @@ const WorkoutEditorView: React.FC = () => {
               { label: 'Baixar treino', icon: 'download' },
               { label: 'Visão aluno', icon: 'visibility' },
               { label: 'Evolução', icon: 'trending_up' },
+              { label: 'Criar Rotina', icon: 'add_task', action: () => navigate(`/routine/new/${id}`) },
               { label: 'MFITIA', icon: 'auto_awesome', highlight: true }
             ].map((action, i) => (
-              <div key={i} className="flex flex-col items-center gap-2 py-2 w-24 cursor-pointer group">
+              <div
+                key={i}
+                onClick={action.action}
+                className="flex flex-col items-center gap-2 py-2 w-24 cursor-pointer group"
+              >
                 <div className={`rounded-full p-4 transition-all ${action.highlight ? 'bg-gradient-to-tr from-primary to-purple-500 shadow-glow' : 'bg-white/5 hover:bg-white/10'}`}>
                   <span className="material-symbols-outlined text-white">{action.icon}</span>
                 </div>
@@ -59,15 +64,15 @@ const WorkoutEditorView: React.FC = () => {
           </div>
 
           <div className="p-6 pt-2">
-            <div 
-              className="relative flex items-center justify-center bg-zinc-800 bg-cover bg-center aspect-video rounded-3xl overflow-hidden group shadow-inner border border-white/5" 
+            <div
+              className="relative flex items-center justify-center bg-zinc-800 bg-cover bg-center aspect-video rounded-3xl overflow-hidden group shadow-inner border border-white/5"
               style={{ backgroundImage: `url("https://picsum.photos/600/400?fitness")` }}
             >
               <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-all"></div>
               <button className="relative z-10 flex items-center justify-center rounded-full size-20 bg-white/10 backdrop-blur-xl text-white border border-white/20 hover:scale-110 transition-transform shadow-2xl">
                 <span className="material-symbols-outlined text-4xl fill-1">play_arrow</span>
               </button>
-              
+
               {/* Fake Player Progress */}
               <div className="absolute inset-x-0 bottom-0 p-6 bg-gradient-to-t from-black/80 to-transparent">
                 <div className="flex h-1.5 items-center mb-3">
@@ -91,7 +96,7 @@ const WorkoutEditorView: React.FC = () => {
               ].map((field, i) => (
                 <div key={i} className="space-y-2">
                   <label className="text-[10px] uppercase font-black tracking-widest text-slate-500 ml-1">{field.label}</label>
-                  <input 
+                  <input
                     className="w-full bg-white/5 border border-white/10 rounded-2xl h-14 px-4 text-white text-sm font-bold focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all text-center"
                     defaultValue={field.val}
                   />
@@ -115,11 +120,11 @@ const WorkoutEditorView: React.FC = () => {
 
         {/* Placeholder for Next Exercise */}
         <div className="opacity-40">
-           <div className="bg-white/5 border border-white/10 rounded-[2rem] p-6 flex items-center group cursor-not-allowed">
-              <span className="material-symbols-outlined text-slate-600">drag_indicator</span>
-              <p className="font-black tracking-tight text-xl ml-4">Crucifixo Reto</p>
-              <span className="material-symbols-outlined ml-auto">expand_more</span>
-           </div>
+          <div className="bg-white/5 border border-white/10 rounded-[2rem] p-6 flex items-center group cursor-not-allowed">
+            <span className="material-symbols-outlined text-slate-600">drag_indicator</span>
+            <p className="font-black tracking-tight text-xl ml-4">Crucifixo Reto</p>
+            <span className="material-symbols-outlined ml-auto">expand_more</span>
+          </div>
         </div>
       </main>
     </div>
