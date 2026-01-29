@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useStudent } from '../contexts/StudentContext';
 
@@ -7,6 +7,8 @@ const StudentCreateView: React.FC = () => {
     const navigate = useNavigate();
     const { addStudent } = useStudent();
     const [loading, setLoading] = useState(false);
+    const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
     const [formData, setFormData] = useState({
         name: '',
@@ -22,6 +24,25 @@ const StudentCreateView: React.FC = () => {
         setFormData(prev => ({ ...prev, [name]: value }));
     };
 
+    const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            if (file.size > 5 * 1024 * 1024) {
+                alert('A imagem deve ter no máximo 5MB');
+                return;
+            }
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setPhotoPreview(reader.result as string);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const handlePhotoClick = () => {
+        fileInputRef.current?.click();
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!formData.name || loading) return;
@@ -34,7 +55,8 @@ const StudentCreateView: React.FC = () => {
                 group_type: formData.group_type,
                 birth_date: formData.birth_date,
                 whatsapp: formData.whatsapp,
-                gender: formData.gender
+                gender: formData.gender,
+                image_url: photoPreview || undefined
             });
             navigate('/students');
         } catch (error) {
@@ -57,6 +79,43 @@ const StudentCreateView: React.FC = () => {
 
             <main className="flex-1 max-w-lg mx-auto w-full">
                 <form onSubmit={handleSubmit} className="space-y-6">
+
+                    {/* Photo Upload */}
+                    <div className="flex flex-col items-center mb-6">
+                        <div
+                            onClick={handlePhotoClick}
+                            className="relative cursor-pointer group"
+                        >
+                            <div className="w-28 h-28 rounded-full bg-white/5 border-2 border-dashed border-white/20 flex items-center justify-center overflow-hidden transition-all group-hover:border-primary group-hover:bg-primary/5">
+                                {photoPreview ? (
+                                    <img
+                                        src={photoPreview}
+                                        alt="Preview"
+                                        className="w-full h-full object-cover"
+                                    />
+                                ) : (
+                                    <span className="material-symbols-outlined text-4xl text-slate-500 group-hover:text-primary transition-colors">
+                                        add_a_photo
+                                    </span>
+                                )}
+                            </div>
+                            {photoPreview && (
+                                <div className="absolute bottom-0 right-0 w-8 h-8 bg-primary rounded-full flex items-center justify-center shadow-lg shadow-primary/30">
+                                    <span className="material-symbols-outlined text-background-dark text-lg">edit</span>
+                                </div>
+                            )}
+                        </div>
+                        <input
+                            ref={fileInputRef}
+                            type="file"
+                            accept="image/*"
+                            onChange={handlePhotoChange}
+                            className="hidden"
+                        />
+                        <p className="text-xs text-slate-500 mt-3 text-center">
+                            {photoPreview ? 'Clique para alterar a foto' : 'Adicionar foto do aluno'}
+                        </p>
+                    </div>
 
                     <div className="space-y-2">
                         <label className="text-sm font-bold text-slate-400 uppercase tracking-wider">Nome Completo</label>

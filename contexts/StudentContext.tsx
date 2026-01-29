@@ -17,7 +17,7 @@ interface StudentContextType {
     students: Student[];
     feedbacks: Feedback[];
     notifications: WorkoutNotification[];
-    addStudent: (student: Omit<Student, 'id' | 'image_url' | 'status' | 'plan' | 'created_at'>) => Promise<void>;
+    addStudent: (student: Omit<Student, 'id' | 'status' | 'plan' | 'created_at'> & { image_url?: string }) => Promise<void>;
     updateStudent: (id: string, updates: Partial<Student>) => Promise<void>;
     addFeedback: (feedback: Omit<Feedback, 'id' | 'date'>) => void;
     markNotificationAsRead: (id: string) => void;
@@ -51,8 +51,8 @@ export const StudentProvider: React.FC<{ children: React.ReactNode }> = ({ child
         fetchStudents();
     }, []);
 
-    const addStudent = async (newStudentData: Omit<Student, 'id' | 'image_url' | 'status' | 'plan' | 'created_at'>) => {
-        const image_url = `https://ui-avatars.com/api/?name=${encodeURIComponent(newStudentData.name)}&background=random`;
+    const addStudent = async (newStudentData: Omit<Student, 'id' | 'status' | 'plan' | 'created_at'> & { image_url?: string }) => {
+        const image_url = newStudentData.image_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(newStudentData.name)}&background=random`;
 
         const { data, error } = await supabase
             .from('students')

@@ -1,15 +1,44 @@
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useStudent } from '../contexts/StudentContext';
 
 const StudentDetailView: React.FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { students, loading } = useStudent();
+  const { students, loading, updateStudent } = useStudent();
   const [activeTab, setActiveTab] = useState<'inicio' | 'opcoes'>('inicio');
+  const [updatingPhoto, setUpdatingPhoto] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const student = students.find(s => s.id === id);
+
+  const handlePhotoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file && student) {
+      if (file.size > 5 * 1024 * 1024) {
+        alert('A imagem deve ter no máximo 5MB');
+        return;
+      }
+      setUpdatingPhoto(true);
+      const reader = new FileReader();
+      reader.onloadend = async () => {
+        try {
+          await updateStudent(student.id, { image_url: reader.result as string });
+        } catch (error) {
+          console.error('Error updating photo:', error);
+          alert('Erro ao atualizar foto.');
+        } finally {
+          setUpdatingPhoto(false);
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handlePhotoClick = () => {
+    fileInputRef.current?.click();
+  };
 
   if (loading) {
     return (
@@ -59,10 +88,28 @@ const StudentDetailView: React.FC = () => {
         </button>
 
         <div className="flex items-center gap-4">
-          <img
-            src={student.image_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(student.name)}&background=random`}
-            alt={student.name}
-            className="size-16 rounded-full border-2 border-white/20 object-cover"
+          {/* Editable Photo */}
+          <div className="relative cursor-pointer group" onClick={handlePhotoClick}>
+            <img
+              src={student.image_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(student.name)}&background=random`}
+              alt={student.name}
+              className={`size-16 rounded-full border-2 border-white/20 object-cover transition-opacity ${updatingPhoto ? 'opacity-50' : 'group-hover:opacity-80'}`}
+            />
+            <div className="absolute inset-0 flex items-center justify-center rounded-full bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity">
+              <span className="material-symbols-outlined text-white text-xl">photo_camera</span>
+            </div>
+            {updatingPhoto && (
+              <div className="absolute inset-0 flex items-center justify-center">
+                <span className="material-symbols-outlined animate-spin text-white text-xl">progress_activity</span>
+              </div>
+            )}
+          </div>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            onChange={handlePhotoChange}
+            className="hidden"
           />
           <h1 className="text-2xl font-medium text-white">{student.name}</h1>
         </div>
@@ -97,8 +144,8 @@ const StudentDetailView: React.FC = () => {
               {days.map((day, i) => (
                 <div key={i} className="flex flex-col items-center gap-3">
                   <div className={`size-11 rounded-full border-2 flex items-center justify-center transition-all ${day.active
-                      ? 'bg-[#0ea5e9] border-[#0ea5e9] text-white'
-                      : 'bg-white border-[#0ea5e9] text-transparent'
+                    ? 'bg-[#0ea5e9] border-[#0ea5e9] text-white'
+                    : 'bg-white border-[#0ea5e9] text-transparent'
                     }`}>
                     <span className="material-symbols-outlined text-xl font-bold">check</span>
                   </div>
