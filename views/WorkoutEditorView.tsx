@@ -95,38 +95,8 @@ export default function WorkoutEditorView() {
     fetchData();
   }, [id, dayId]);
 
-  const handleAddExercise = async () => {
-    if (!id) return;
-    try {
-      const { data, error } = await supabase
-        .from('exercises')
-        .insert([{
-          workout_id: id,
-          workout_day_id: dayId || null,
-          name: 'Novo Exercício',
-          sets: 3,
-          reps: '12',
-          load: '0',
-          rest: '60s'
-        }])
-        .select()
-        .single();
-
-      if (error) throw error;
-
-      setExercises(prev => [...prev, {
-        id: data.id,
-        name: data.name,
-        sets: data.sets,
-        reps: data.reps,
-        load: data.load,
-        rest: data.rest,
-        videoUrl: data.video_url,
-        thumbnailUrl: data.thumbnail_url
-      }]);
-    } catch (error) {
-      console.error('Error adding exercise:', error);
-    }
+  const handleAddExercise = () => {
+    navigate(`/exercises-library?mode=select&workoutId=${id}&dayId=${dayId || ''}`);
   };
 
   const handleUpdateExercise = async (exId: string, updates: Partial<Exercise>) => {

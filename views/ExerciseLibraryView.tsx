@@ -371,19 +371,19 @@ const ExerciseLibraryView: React.FC = () => {
                 {/* Filter Tabs */}
                 <div className="flex bg-white/[0.02] p-1 rounded-2xl border border-white/5">
                     {[
-                        { id: 'favs', label: 'Favoritos', icon: Star },
-                        { id: 'app', label: 'Do App', icon: Info },
-                        { id: 'yours', label: 'Seus', icon: Plus }
+                        { id: 'favs', label: 'Favoritas', icon: Star },
+                        { id: 'app', label: 'Exercícios do app', icon: Info },
+                        { id: 'yours', label: 'Seus exercícios', icon: Plus }
                     ].map(tab => (
                         <button
                             key={tab.id}
                             onClick={() => setActiveTab(tab.id as any)}
                             className={cn(
-                                "flex-1 h-12 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2 transition-all",
-                                activeTab === tab.id ? "bg-primary text-background-dark shadow-glow" : "text-slate-500 hover:text-white"
+                                "flex-1 h-12 rounded-xl text-[8px] font-black uppercase tracking-widest flex items-center justify-center gap-2 transition-all",
+                                activeTab === tab.id ? "bg-white text-primary shadow-glow" : "text-slate-500 hover:text-white"
                             )}
                         >
-                            <tab.icon size={16} />
+                            <tab.icon size={14} />
                             {tab.label}
                         </button>
                     ))}
@@ -395,27 +395,27 @@ const ExerciseLibraryView: React.FC = () => {
                         <select
                             value={selectedMuscle}
                             onChange={(e) => setSelectedMuscle(e.target.value)}
-                            className="w-full h-12 bg-white/[0.02] border border-white/10 rounded-xl px-4 text-[10px] font-black uppercase tracking-widest text-slate-400 appearance-none outline-none focus:border-primary/50"
+                            className="w-full h-12 bg-primary/10 border border-primary/20 rounded-xl px-4 text-[10px] font-black uppercase tracking-widest text-primary appearance-none outline-none focus:ring-2 focus:ring-primary/20"
                         >
                             <option value="Todos">Grupos musculares</option>
-                            {dynamicMuscleGroups.map(m => <option key={m.id} value={m.name}>{m.name}</option>)}
+                            {dynamicMuscleGroups.map(m => <option key={m.id} value={m.name} className="bg-background-dark">{m.name}</option>)}
                         </select>
-                        <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-600 pointer-events-none" size={16} />
+                        <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-primary pointer-events-none" size={16} />
                     </div>
                     <div className="flex-1 min-w-[140px] relative">
                         <select
                             value={selectedCategory}
                             onChange={(e) => setSelectedCategory(e.target.value)}
-                            className="w-full h-12 bg-white/[0.02] border border-white/10 rounded-xl px-4 text-[10px] font-black uppercase tracking-widest text-slate-400 appearance-none outline-none focus:border-primary/50"
+                            className="w-full h-12 bg-primary/10 border border-primary/20 rounded-xl px-4 text-[10px] font-black uppercase tracking-widest text-primary appearance-none outline-none focus:ring-2 focus:ring-primary/20"
                         >
                             <option value="Todas">Categorias</option>
-                            {dynamicCategories.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
+                            {dynamicCategories.map(c => <option key={c.id} value={c.name} className="bg-background-dark">{c.name}</option>)}
                         </select>
-                        <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-600 pointer-events-none" size={16} />
+                        <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-primary pointer-events-none" size={16} />
                     </div>
                     <button
                         onClick={() => { setSelectedMuscle('Todos'); setSelectedCategory('Todas'); setSearchQuery(''); }}
-                        className="text-[10px] font-black uppercase tracking-widest text-primary hover:text-white transition-colors"
+                        className="text-[10px] font-black uppercase tracking-widest text-primary hover:text-white transition-colors ml-auto"
                     >
                         Limpar
                     </button>
