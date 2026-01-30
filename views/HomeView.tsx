@@ -45,14 +45,16 @@ const HomeView: React.FC = () => {
                   if (stat.label === 'Atualizações') navigate('/updates-menu');
                   if (stat.label === 'Enviar msg') navigate('/notifications/dashboard');
                 }}
-                className="relative flex h-36 min-w-36 flex-col justify-between rounded-2xl bg-card-dark border border-white/5 p-5 shadow-xl hover:border-primary/30 transition-all cursor-pointer group"
+                className="relative flex h-36 min-w-36 flex-col justify-between rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/30 p-5 shadow-xl hover:shadow-neon transition-all cursor-pointer group"
               >
-                <span className="material-symbols-outlined text-primary group-hover:scale-110 transition-transform">{stat.icon}</span>
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-background-dark shadow-glow mb-2">
+                  <span className="material-symbols-outlined font-bold text-xl">{stat.icon}</span>
+                </div>
                 <div className="flex flex-col">
-                  <span className="text-xs text-slate-400 font-bold uppercase tracking-wider">{stat.label}</span>
+                  <span className="text-[10px] text-primary/70 font-black uppercase tracking-widest">{stat.label}</span>
                   <span className="text-2xl font-black text-white">{stat.value}</span>
                 </div>
-                {stat.hasAlert && <div className="absolute top-4 right-4 h-2.5 w-2.5 rounded-full bg-primary shadow-glow"></div>}
+                {stat.hasAlert && <div className="absolute top-4 right-4 h-2.5 w-2.5 rounded-full bg-status-deleted animate-pulse shadow-glow"></div>}
               </div>
             ))}
           </div>
@@ -66,8 +68,8 @@ const HomeView: React.FC = () => {
             </div>
             <h3 className="text-white text-lg font-black leading-tight">Adicionar<br />Alunos</h3>
           </button>
-          <button onClick={() => navigate('/share-link')} className="flex flex-col gap-4 rounded-2xl bg-white/5 border border-white/10 p-5 active:scale-95 transition-transform text-left">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/10 text-primary border border-primary/30">
+          <button onClick={() => navigate('/share-link')} className="flex flex-col gap-4 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/30 p-5 active:scale-95 transition-transform text-left">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary text-background-dark shadow-glow">
               <span className="material-symbols-outlined font-bold">link</span>
             </div>
             <h3 className="text-white text-lg font-black leading-tight">Link de<br />Cadastro</h3>
@@ -117,19 +119,19 @@ const HomeView: React.FC = () => {
         <section className="space-y-6">
           <div
             onClick={() => navigate('/workouts')}
-            className="relative group cursor-pointer overflow-hidden rounded-[2.5rem] border-4 border-primary bg-white shadow-2xl transition-all active:scale-[0.98] p-8"
+            className="relative group cursor-pointer overflow-hidden rounded-[2.5rem] border border-primary/30 bg-gradient-to-br from-primary/20 to-primary/5 shadow-2xl transition-all active:scale-[0.98] p-8 hover:shadow-neon"
           >
             <div className="flex justify-between items-start mb-8">
-              <div className="p-4 bg-primary/10 rounded-2xl">
-                <span className="material-symbols-outlined text-primary text-5xl">fitness_center</span>
+              <div className="p-4 bg-primary rounded-2xl shadow-glow text-background-dark">
+                <span className="material-symbols-outlined text-5xl font-bold">fitness_center</span>
               </div>
-              <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center">
-                <span className="material-symbols-outlined text-slate-400 text-lg">arrow_forward_ios</span>
+              <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center border border-primary/20">
+                <span className="material-symbols-outlined text-primary text-lg">arrow_forward_ios</span>
               </div>
             </div>
             <div>
-              <h2 className="text-primary text-3xl font-black mb-3 uppercase tracking-tighter leading-tight">Biblioteca de Treinos</h2>
-              <p className="text-slate-500 text-sm font-bold leading-relaxed">
+              <h2 className="text-white text-3xl font-black mb-3 uppercase tracking-tighter leading-tight group-hover:text-primary transition-colors">Biblioteca de Treinos</h2>
+              <p className="text-text-secondary text-sm font-bold leading-relaxed">
                 Crie, edite e organize rotinas personalizadas para cada perfil de aluno.
               </p>
             </div>
@@ -149,15 +151,15 @@ const HomeView: React.FC = () => {
                     navigate('/workouts');
                   }
                 }}
-                className="flex flex-col rounded-3xl bg-white p-6 shadow-xl border border-slate-100 transition-all active:scale-[0.96] cursor-pointer group"
+                className="flex flex-col rounded-3xl bg-gradient-to-br from-primary/20 to-primary/5 p-6 shadow-xl border border-primary/30 transition-all active:scale-[0.96] cursor-pointer group hover:shadow-neon"
               >
                 <div className="mb-6">
-                  <div className="w-12 h-12 flex items-center justify-center bg-primary/10 rounded-xl group-hover:bg-primary transition-all group-hover:text-white text-primary">
-                    <span className="material-symbols-outlined text-2xl group-hover:scale-110 transition-transform">{card.icon}</span>
+                  <div className="w-12 h-12 flex items-center justify-center bg-primary text-background-dark rounded-xl shadow-glow transition-all">
+                    <span className="material-symbols-outlined text-2xl font-bold group-hover:scale-110 transition-transform">{card.icon}</span>
                   </div>
                 </div>
-                <h3 className="text-slate-900 text-base font-black leading-tight uppercase tracking-tight">{card.label}</h3>
-                <p className="mt-2 text-slate-400 text-[10px] font-bold uppercase tracking-widest">{card.desc}</p>
+                <h3 className="text-white text-base font-black leading-tight uppercase tracking-tight group-hover:text-primary transition-colors">{card.label}</h3>
+                <p className="mt-2 text-primary/50 text-[10px] font-black uppercase tracking-widest">{card.desc}</p>
               </div>
             ))}
           </div>
