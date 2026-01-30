@@ -12,16 +12,68 @@ const ExerciseLibraryView: React.FC = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [activeTab, setActiveTab] = useState<'app' | 'yours' | 'favs'>('app');
 
-    // Mock data for initial visual (matching image categories)
-    const muscleGroups = ['Todos', 'Abdômen', 'Braços', 'Costas', 'Pernas', 'Peitoral', 'Ombros'];
+    const [dynamicMuscleGroups, setDynamicMuscleGroups] = useState<{ id: string, name: string }[]>([]);
     const categories = ['Todas', 'Musculação', 'Cardio', 'Alongamento', 'Funcional'];
 
     const [selectedMuscle, setSelectedMuscle] = useState('Todos');
     const [selectedCategory, setSelectedCategory] = useState('Todas');
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isGroupsModalOpen, setIsGroupsModalOpen] = useState(false);
     const [editingExercise, setEditingExercise] = useState<Exercise | null>(null);
     const [selectedVideoUrl, setSelectedVideoUrl] = useState<string | null>(null);
-    const [newExercise, setNewExercise] = useState({ name: '', muscle_group: 'Abdômen', category: 'Musculação', video_url: '' });
+    const [newExercise, setNewExercise] = useState({ name: '', muscle_group: '', category: 'Musculação', video_url: '' });
+
+    // Group management state
+    const [newGroupName, setNewGroupName] = useState('');
+    const [editingGroup, setEditingGroup] = useState<{ id: string, name: string } | null>(null);
+
+    const fetchMuscleGroups = async () => {
+        const { data, error } = await supabase
+            .from('muscle_groups')
+            .select('*')
+            .order('name', { ascending: true });
+
+        if (!error && data) {
+            setDynamicMuscleGroups(data);
+            if (!newExercise.muscle_group && data.length > 0) {
+                setNewExercise(prev => ({ ...prev, muscle_group: data[0].name }));
+            }
+        }
+    };
+
+    const handleSaveGroup = async () => {
+        if (!newGroupName) return;
+        try {
+            if (editingGroup) {
+                const { error } = await supabase
+                    .from('muscle_groups')
+                    .update({ name: newGroupName })
+                    .eq('id', editingGroup.id);
+                if (error) throw error;
+            } else {
+                const { error } = await supabase
+                    .from('muscle_groups')
+                    .insert([{ name: newGroupName }]);
+                if (error) throw error;
+            }
+            setNewGroupName('');
+            setEditingGroup(null);
+            fetchMuscleGroups();
+        } catch (err: any) {
+            alert('Erro ao salvar grupo: ' + err.message);
+        }
+    };
+
+    const handleDeleteGroup = async (id: string) => {
+        if (!confirm('Tem certeza? Isso pode afetar exercícios vinculados a este grupo.')) return;
+        try {
+            const { error } = await supabase.from('muscle_groups').delete().eq('id', id);
+            if (error) throw error;
+            fetchMuscleGroups();
+        } catch (err: any) {
+            alert('Erro ao excluir grupo: ' + err.message);
+        }
+    };
 
     const getYouTubeEmbedUrl = (url: string) => {
         let videoId = '';
@@ -54,7 +106,7 @@ const ExerciseLibraryView: React.FC = () => {
         setEditingExercise(exercise);
         setNewExercise({
             name: exercise.name,
-            muscle_group: exercise.muscle_group || 'Abdômen',
+            muscle_group: exercise.muscle_group || (dynamicMuscleGroups[0]?.name || ''),
             category: exercise.category || 'Musculação',
             video_url: exercise.videoUrl || ''
         });
@@ -105,7 +157,7 @@ const ExerciseLibraryView: React.FC = () => {
 
             setIsModalOpen(false);
             setEditingExercise(null);
-            setNewExercise({ name: '', muscle_group: 'Abdômen', category: 'Musculação', video_url: '' });
+            setNewExercise({ name: '', muscle_group: dynamicMuscleGroups[0]?.name || '', category: 'Musculação', video_url: '' });
             window.location.reload();
         } catch (err: any) {
             console.error('Error saving exercise:', err);
@@ -114,6 +166,7 @@ const ExerciseLibraryView: React.FC = () => {
     };
 
     useEffect(() => {
+        fetchMuscleGroups();
         const fetchExercises = async () => {
             setLoading(true);
             try {
@@ -188,7 +241,11 @@ const ExerciseLibraryView: React.FC = () => {
                 </div>
 
                 <button
-                    onClick={() => setIsModalOpen(true)}
+                    onClick={() => {
+                        setEditingExercise(null);
+                        setNewExercise({ name: '', muscle_group: dynamicMuscleGroups[0]?.name || '', category: 'Musculação', video_url: '' });
+                        setIsModalOpen(true);
+                    }}
                     className="w-full flex items-center justify-center gap-3 rounded-2xl h-16 bg-white/[0.03] border border-primary/30 text-primary font-black uppercase tracking-widest text-sm shadow-glow active:scale-[0.98] transition-all hover:bg-primary/5 mb-6"
                 >
                     <span className="material-symbols-outlined text-2xl">add_circle</span>
@@ -196,7 +253,12 @@ const ExerciseLibraryView: React.FC = () => {
                 </button>
 
                 <div className="flex gap-4">
-                    <button className="flex-1 h-14 bg-white/[0.03] border border-white/10 rounded-xl text-slate-400 font-bold uppercase tracking-widest text-[10px] hover:border-primary/50 hover:text-white transition-all">Grupos</button>
+                    <button
+                        onClick={() => setIsGroupsModalOpen(true)}
+                        className="flex-1 h-14 bg-white/[0.03] border border-white/10 rounded-xl text-slate-400 font-bold uppercase tracking-widest text-[10px] hover:border-primary/50 hover:text-white transition-all"
+                    >
+                        Grupos
+                    </button>
                     <button className="flex-1 h-14 bg-white/[0.03] border border-white/10 rounded-xl text-slate-400 font-bold uppercase tracking-widest text-[10px] hover:border-primary/50 hover:text-white transition-all">Categorias</button>
                 </div>
             </header>
@@ -243,7 +305,8 @@ const ExerciseLibraryView: React.FC = () => {
                             onChange={(e) => setSelectedMuscle(e.target.value)}
                             className="w-full h-12 bg-white/[0.02] border border-white/10 rounded-xl px-4 text-[10px] font-black uppercase tracking-widest text-slate-400 appearance-none outline-none focus:border-primary/50"
                         >
-                            {muscleGroups.map(m => <option key={m} value={m}>{m}</option>)}
+                            <option value="Todos">Todos os Grupos</option>
+                            {dynamicMuscleGroups.map(m => <option key={m.id} value={m.name}>{m.name}</option>)}
                         </select>
                         <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-600 pointer-events-none text-lg">expand_more</span>
                     </div>
@@ -364,7 +427,7 @@ const ExerciseLibraryView: React.FC = () => {
                                         onChange={e => setNewExercise({ ...newExercise, muscle_group: e.target.value })}
                                         className="w-full h-14 bg-card-header border border-white/10 rounded-xl px-4 text-white focus:border-primary outline-none font-bold appearance-none cursor-pointer"
                                     >
-                                        {muscleGroups.filter(m => m !== 'Todos').map(m => <option key={m} value={m}>{m}</option>)}
+                                        {dynamicMuscleGroups.map(m => <option key={m.id} value={m.name}>{m.name}</option>)}
                                     </select>
                                 </div>
                                 <div className="flex flex-col">
@@ -386,6 +449,59 @@ const ExerciseLibraryView: React.FC = () => {
                         >
                             {editingExercise ? 'Salvar Alterações' : 'Salvar Exercício'}
                         </button>
+                    </div>
+                </div>
+            )}
+
+            {/* Muscle Groups Management Modal */}
+            {isGroupsModalOpen && (
+                <div className="fixed inset-0 z-[120] flex items-center justify-center p-6 bg-background-dark/95 backdrop-blur-sm">
+                    <div className="w-full max-w-md bg-card-dark border border-white/10 rounded-[2.5rem] p-8 space-y-6 shadow-glow-lg">
+                        <div className="flex justify-between items-center">
+                            <h2 className="text-2xl font-black text-white uppercase tracking-tighter">Grupos Musculares</h2>
+                            <button onClick={() => { setIsGroupsModalOpen(false); setEditingGroup(null); setNewGroupName(''); }} className="text-slate-500 hover:text-white">
+                                <span className="material-symbols-outlined">close</span>
+                            </button>
+                        </div>
+
+                        {/* Create/Edit Group Form */}
+                        <div className="flex gap-3">
+                            <input
+                                type="text"
+                                placeholder="Novo grupo..."
+                                value={newGroupName}
+                                onChange={(e) => setNewGroupName(e.target.value)}
+                                className="flex-1 h-14 bg-white/[0.03] border border-white/10 rounded-xl px-4 text-white focus:border-primary outline-none font-bold"
+                            />
+                            <button
+                                onClick={handleSaveGroup}
+                                className="w-14 h-14 bg-primary text-background-dark rounded-xl flex items-center justify-center shadow-glow active:scale-90 transition-all font-black"
+                            >
+                                <span className="material-symbols-outlined">check</span>
+                            </button>
+                        </div>
+
+                        <div className="max-h-[40vh] overflow-y-auto pr-2 space-y-3 custom-scrollbar">
+                            {dynamicMuscleGroups.map(group => (
+                                <div key={group.id} className="flex items-center justify-between p-4 bg-white/[0.02] border border-white/5 rounded-2xl group">
+                                    <span className="text-white font-bold">{group.name}</span>
+                                    <div className="flex gap-2">
+                                        <button
+                                            onClick={() => { setEditingGroup(group); setNewGroupName(group.name); }}
+                                            className="w-8 h-8 rounded-full flex items-center justify-center text-slate-500 hover:text-primary transition-all"
+                                        >
+                                            <span className="material-symbols-outlined text-sm">edit</span>
+                                        </button>
+                                        <button
+                                            onClick={() => handleDeleteGroup(group.id)}
+                                            className="w-8 h-8 rounded-full flex items-center justify-center text-slate-500 hover:text-red-500 transition-all"
+                                        >
+                                            <span className="material-symbols-outlined text-sm">delete</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
                     </div>
                 </div>
             )}
