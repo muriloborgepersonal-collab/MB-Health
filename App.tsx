@@ -99,6 +99,9 @@ const AppContent: React.FC = () => {
         <Route path="/exercises-library" element={
           <ProtectedRoute><ExerciseLibraryView /></ProtectedRoute>
         } />
+        <Route path="/frequency-report" element={
+          <ProtectedRoute><FrequencyReportView /></ProtectedRoute>
+        } />
         <Route path="/profile" element={
           <ProtectedRoute><ProfileView /></ProtectedRoute>
         } />
