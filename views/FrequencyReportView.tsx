@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Button } from '../src/components/ui/Button';
 
 interface StudentFrequency {
     id: string;
@@ -55,18 +56,20 @@ const FrequencyReportView: React.FC = () => {
 
                 {/* Styled Tabs */}
                 <div className="flex bg-white/[0.03] p-1.5 rounded-2xl border border-white/5 mb-6">
-                    <button
+                    <Button
                         onClick={() => setActiveTab('routines')}
-                        className={`flex-1 h-14 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${activeTab === 'routines' ? 'bg-white text-background-dark shadow-xl' : 'text-slate-500 hover:text-white'}`}
+                        variant={activeTab === 'routines' ? 'primary' : 'glass'}
+                        className={`flex-1 h-14 rounded-xl text-xs ${activeTab === 'routines' ? 'bg-white text-background-dark' : ''}`}
                     >
                         Rotinas de Treino
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                         onClick={() => setActiveTab('aerobic')}
-                        className={`flex-1 h-14 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${activeTab === 'aerobic' ? 'bg-primary text-background-dark shadow-glow' : 'text-slate-500 hover:text-white'}`}
+                        variant={activeTab === 'aerobic' ? 'premium' : 'glass'}
+                        className="flex-1 h-14 rounded-xl text-xs"
                     >
                         Aeróbico
-                    </button>
+                    </Button>
                 </div>
 
                 {/* Date Picker Range Mock */}
@@ -123,13 +126,13 @@ const FrequencyReportView: React.FC = () => {
 
                 {/* Pagination */}
                 <div className="flex items-center justify-center gap-2 mt-10">
-                    <button className="w-10 h-10 rounded-xl bg-primary text-background-dark font-black text-sm">1</button>
+                    <Button variant="premium" className="w-10 h-10 rounded-xl text-sm">1</Button>
                     {[2, 3, 4, 5].map(n => (
-                        <button key={n} className="w-10 h-10 rounded-xl bg-white/[0.03] text-slate-500 font-black text-sm hover:text-white transition-colors">{n}</button>
+                        <Button key={n} variant="glass" className="w-10 h-10 rounded-xl text-sm text-slate-500">{n}</Button>
                     ))}
-                    <button className="w-10 h-10 rounded-xl bg-white/[0.03] text-slate-500 flex items-center justify-center hover:text-white transition-colors">
+                    <Button variant="glass" className="w-10 h-10 rounded-xl text-sm text-slate-500">
                         <span className="material-symbols-outlined text-lg">chevron_right</span>
-                    </button>
+                    </Button>
                 </div>
             </main>
         </div>

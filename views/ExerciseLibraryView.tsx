@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../src/lib/supabase';
 import { Exercise } from '../types';
+import { Button } from '../src/components/ui/Button';
 
 const ExerciseLibraryView: React.FC = () => {
     const navigate = useNavigate();
@@ -292,31 +293,34 @@ const ExerciseLibraryView: React.FC = () => {
                     <h1 className="text-2xl font-black tracking-tighter uppercase">Biblioteca de Exercícios</h1>
                 </div>
 
-                <button
+                <Button
                     onClick={() => {
                         setEditingExercise(null);
                         setNewExercise({ name: '', muscle_group: dynamicMuscleGroups[0]?.name || '', category: 'Musculação', video_url: '' });
                         setIsModalOpen(true);
                     }}
-                    className="w-full flex items-center justify-center gap-3 rounded-2xl h-16 bg-white/[0.03] border border-primary/30 text-primary font-black uppercase tracking-widest text-sm shadow-glow active:scale-[0.98] transition-all hover:bg-primary/5 mb-6"
+                    variant="premium"
+                    className="w-full h-16 rounded-2xl text-sm mb-6"
                 >
-                    <span className="material-symbols-outlined text-2xl">add_circle</span>
+                    <span className="material-symbols-outlined text-2xl mr-3 font-black">add_circle</span>
                     Criar Exercício
-                </button>
+                </Button>
 
                 <div className="flex gap-4">
-                    <button
+                    <Button
                         onClick={() => setIsGroupsModalOpen(true)}
-                        className="flex-1 h-14 bg-white/[0.03] border border-white/10 rounded-xl text-slate-400 font-bold uppercase tracking-widest text-[10px] hover:border-primary/50 hover:text-white transition-all"
+                        variant="glass"
+                        className="flex-1 h-14 rounded-xl text-[10px]"
                     >
                         Grupos
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                         onClick={() => setIsCategoriesModalOpen(true)}
-                        className="flex-1 h-14 bg-white/[0.03] border border-white/10 rounded-xl text-slate-400 font-bold uppercase tracking-widest text-[10px] hover:border-primary/50 hover:text-white transition-all"
+                        variant="glass"
+                        className="flex-1 h-14 rounded-xl text-[10px]"
                     >
                         Categorias
-                    </button>
+                    </Button>
                 </div>
             </header>
 
@@ -340,17 +344,15 @@ const ExerciseLibraryView: React.FC = () => {
                         { id: 'app', label: 'Do App', icon: 'apps' },
                         { id: 'yours', label: 'Seus', icon: 'person' }
                     ].map(tab => (
-                        <button
+                        <Button
                             key={tab.id}
                             onClick={() => setActiveTab(tab.id as any)}
-                            className={`flex-1 flex items-center justify-center gap-2 h-12 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === tab.id
-                                ? 'bg-primary text-background-dark shadow-glow'
-                                : 'text-slate-500 hover:text-white'
-                                }`}
+                            variant={activeTab === tab.id ? 'premium' : 'glass'}
+                            className="flex-1 h-12 rounded-xl text-[10px] bg-transparent border-none"
                         >
-                            <span className="material-symbols-outlined text-lg">{tab.icon}</span>
+                            <span className="material-symbols-outlined text-lg mr-2 font-black">{tab.icon}</span>
                             {tab.label}
-                        </button>
+                        </Button>
                     ))}
                 </div>
 
@@ -501,12 +503,13 @@ const ExerciseLibraryView: React.FC = () => {
                             </div>
                         </div>
 
-                        <button
+                        <Button
                             onClick={handleSave}
-                            className="w-full h-16 bg-primary text-background-dark font-black uppercase tracking-widest rounded-2xl shadow-glow active:scale-95 transition-all"
+                            variant="premium"
+                            className="w-full h-16 rounded-2xl"
                         >
                             {editingExercise ? 'Salvar Alterações' : 'Salvar Exercício'}
-                        </button>
+                        </Button>
                     </div>
                 </div>
             )}

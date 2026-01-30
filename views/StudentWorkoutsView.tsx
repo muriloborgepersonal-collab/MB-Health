@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useStudent } from '../contexts/StudentContext';
+import { Button } from '../src/components/ui/Button';
 
 const StudentWorkoutsView: React.FC = () => {
     const { id } = useParams();
@@ -51,24 +52,20 @@ const StudentWorkoutsView: React.FC = () => {
             <main className="flex-1 px-4 -mt-12 pb-24 space-y-4">
                 {/* Tabs Container */}
                 <div className="flex gap-3 bg-card-dark/50 backdrop-blur-xl p-1.5 rounded-[1.5rem] border border-white/5 shadow-2xl">
-                    <button
+                    <Button
                         onClick={() => setActiveTab('rotinas')}
-                        className={`flex-1 h-12 rounded-2xl font-black uppercase tracking-widest text-[10px] transition-all ${activeTab === 'rotinas'
-                            ? 'bg-primary text-background-dark shadow-glow'
-                            : 'text-slate-500 hover:text-white'
-                            }`}
+                        variant={activeTab === 'rotinas' ? 'premium' : 'glass'}
+                        className="flex-1 h-12 rounded-2xl text-[10px]"
                     >
                         Rotinas de treino
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                         onClick={() => setActiveTab('aerobico')}
-                        className={`flex-1 h-12 rounded-2xl font-black uppercase tracking-widest text-[10px] transition-all ${activeTab === 'aerobico'
-                            ? 'bg-primary text-background-dark shadow-glow'
-                            : 'text-slate-500 hover:text-white'
-                            }`}
+                        variant={activeTab === 'aerobico' ? 'premium' : 'glass'}
+                        className="flex-1 h-12 rounded-2xl text-[10px]"
                     >
                         Aeróbico
-                    </button>
+                    </Button>
                 </div>
 
                 {/* Content Card */}
@@ -76,25 +73,26 @@ const StudentWorkoutsView: React.FC = () => {
                     {activeTab === 'rotinas' ? (
                         <>
                             {/* Create Routine Button */}
-                            <button
+                            <Button
                                 onClick={() => navigate(`/routine/new/${id}`)}
-                                className="w-full flex items-center justify-center gap-3 rounded-[1.5rem] h-28 border-2 border-dashed border-primary/30 text-primary font-black uppercase tracking-widest text-xs hover:bg-primary/10 hover:border-primary/50 transition-all shadow-inner group"
+                                variant="premium"
+                                className="w-full h-28 rounded-[2rem] border-2 border-dashed border-primary/30 flex-col gap-2"
                                 id="create-routine-btn"
                             >
-                                <div className="size-10 rounded-full bg-primary/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                                <div className="h-10 w-10 rounded-full bg-white/20 flex items-center justify-center">
                                     <span className="material-symbols-outlined text-2xl">add</span>
                                 </div>
-                                <span className="mt-1">Criar Nova Rotina</span>
-                            </button>
+                                <span className="text-sm">Criar Nova Rotina</span>
+                            </Button>
 
                             {/* Filter Buttons */}
                             <div className="flex gap-3">
-                                <button className="flex-1 h-12 bg-white/5 border border-white/10 text-slate-400 rounded-2xl font-black uppercase tracking-widest text-[10px] hover:border-primary/30 active:scale-95 transition-all">
+                                <Button variant="glass" className="flex-1 h-12 rounded-2xl text-[10px] text-slate-400">
                                     Arquivadas
-                                </button>
-                                <button className="flex-1 h-12 bg-white/5 border border-white/10 text-slate-400 rounded-2xl font-black uppercase tracking-widest text-[10px] hover:border-primary/30 active:scale-95 transition-all">
+                                </Button>
+                                <Button variant="glass" className="flex-1 h-12 rounded-2xl text-[10px] text-slate-400">
                                     Excluídas
-                                </button>
+                                </Button>
                             </div>
 
                             {/* Routine Cards */}

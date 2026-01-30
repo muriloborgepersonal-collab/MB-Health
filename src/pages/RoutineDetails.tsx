@@ -10,7 +10,7 @@ export default function RoutineDetails() {
     const navigate = useNavigate();
 
     return (
-        <div className="flex flex-col min-h-screen pb-20">
+        <div className="flex flex-col min-h-screen pb-20 bg-background-dark text-white">
             <TopBar
                 title={
                     <div className="flex items-center gap-3">
@@ -27,42 +27,42 @@ export default function RoutineDetails() {
             <div className="flex-1 p-4 space-y-6">
 
                 {/* Routine Info Card */}
-                <Card className="bg-white p-5 space-y-4">
+                <Card className="bg-card-dark border-white/5 p-5 space-y-4 rounded-3xl">
                     <div className="flex justify-between items-start">
                         <div className="flex gap-4">
-                            <div className="h-12 w-12 rounded-full bg-primary/20 flex items-center justify-center">
-                                <Activity className="text-primary h-6 w-6" />
+                            <div className="h-12 w-12 rounded-2xl bg-primary text-background-dark flex items-center justify-center shadow-glow">
+                                <Activity className="h-6 w-6 font-bold" />
                             </div>
                             <div className="space-y-1">
-                                <h3 className="text-black font-bold text-xl leading-tight">POWERBUILDING 5x bloco 5</h3>
-                                <div className="flex items-center gap-1 text-gray-500 text-sm">
+                                <h3 className="text-white font-black text-xl leading-tight uppercase tracking-tight">POWERBUILDING 5x bloco 5</h3>
+                                <div className="flex items-center gap-1 text-slate-500 text-[10px] font-bold uppercase tracking-widest">
                                     <Calendar className="h-4 w-4" />
                                     <span>02/01/2026 - 02/02/2026</span>
                                 </div>
-                                <p className="text-gray-400 text-sm">Hipertrofia | Intermediário</p>
+                                <p className="text-primary text-[10px] font-black uppercase tracking-widest">Hipertrofia | Intermediário</p>
                             </div>
                         </div>
                         <button className="p-1">
-                            <MoreVertical className="text-gray-400 h-5 w-5" />
+                            <MoreVertical className="text-slate-500 h-5 w-5" />
                         </button>
                     </div>
 
-                    <div className="space-y-2 text-sm">
-                        <div className="flex justify-between border-b border-gray-100 pb-2">
-                            <span className="text-gray-600 font-bold">Tipo de treino:</span>
-                            <span className="text-gray-500">Numérico</span>
+                    <div className="space-y-3 text-xs">
+                        <div className="flex justify-between border-b border-white/5 pb-2">
+                            <span className="text-slate-400 font-bold uppercase tracking-widest">Tipo de treino:</span>
+                            <span className="text-white font-black uppercase">Numérico</span>
                         </div>
-                        <div className="flex justify-between border-b border-gray-100 pb-2">
-                            <span className="text-gray-600 font-bold">Mostrar para o aluno:</span>
-                            <span className="text-gray-500">Sempre</span>
+                        <div className="flex justify-between border-b border-white/5 pb-2">
+                            <span className="text-slate-400 font-bold uppercase tracking-widest">Mostrar para o aluno:</span>
+                            <span className="text-white font-black uppercase">Sempre</span>
                         </div>
                         <div className="flex justify-between pb-2">
-                            <span className="text-gray-600 font-bold">Arquivar automaticamente:</span>
-                            <span className="text-gray-500">Não</span>
+                            <span className="text-slate-400 font-bold uppercase tracking-widest">Arquivar automaticamente:</span>
+                            <span className="text-white font-black uppercase">Não</span>
                         </div>
                     </div>
 
-                    <button className="w-full bg-gray-100 rounded-lg py-3 px-4 flex justify-between items-center text-black font-bold text-sm hover:bg-gray-200 transition-colors">
+                    <button className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 px-4 flex justify-between items-center text-white font-black text-[10px] uppercase tracking-widest hover:bg-white/10 transition-colors">
                         <span>Orientações gerais</span>
                         <Eye className="h-4 w-4" />
                     </button>
@@ -70,11 +70,11 @@ export default function RoutineDetails() {
 
                 {/* Actions */}
                 <div className="flex gap-4">
-                    <Button variant="outline" className="flex-1 border-primary text-primary bg-white hover:bg-primary/5 gap-2">
-                        <ArrowUpDown className="h-4 w-4" />
+                    <Button variant="glass" className="flex-1 gap-2 h-14 rounded-2xl text-[10px]">
+                        <ArrowUpDown className="h-4 w-4 text-primary" />
                         Reordenar treinos
                     </Button>
-                    <Button className="flex-1 gap-2">
+                    <Button variant="premium" className="flex-1 gap-2 h-14 rounded-2xl text-[10px]">
                         <Plus className="h-4 w-4" />
                         Adicionar treino
                     </Button>
@@ -102,34 +102,45 @@ function WorkoutCard({ title, subtitle, onClick }: { title: string, subtitle: st
     const [expanded, setExpanded] = useState(false);
 
     return (
-        <Card className="bg-white p-0 overflow-hidden">
+        <Card className="bg-card-dark border-white/5 p-0 overflow-hidden rounded-[2.5rem] shadow-2xl relative">
             <div
-                className="p-4 flex items-center justify-between cursor-pointer hover:bg-gray-50"
+                className="p-6 flex items-center justify-between cursor-pointer group"
                 onClick={onClick}
             >
                 <div>
-                    <h4 className="text-black font-bold text-lg">{title}</h4>
-                    <p className="text-gray-500 text-sm">{subtitle}</p>
+                    <h4 className="text-white font-black text-xl uppercase tracking-tight group-hover:text-primary transition-colors">{title}</h4>
+                    <p className="text-slate-500 text-sm font-bold mt-1">{subtitle}</p>
                 </div>
-                <MoreVertical className="text-gray-400 h-5 w-5" />
+                <MoreVertical className="text-slate-500 h-5 w-5" />
             </div>
 
-            <div className="px-4 pb-2">
+            <div className="px-6 pb-4">
                 <button
                     onClick={(e) => {
                         e.stopPropagation();
                         setExpanded(!expanded);
                     }}
-                    className="flex text-gray-500 text-xs font-bold items-center gap-1 py-2"
+                    className="w-full flex bg-white/5 border border-white/10 rounded-2xl py-3 px-4 justify-between items-center text-white font-black text-[10px] uppercase tracking-widest hover:bg-white/10 transition-colors mb-4"
                 >
-                    Orientações gerais
+                    <span>Orientações gerais</span>
                     {expanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
                 </button>
                 {expanded && (
-                    <div className="mb-4 text-sm text-gray-600 bg-gray-50 p-3 rounded-lg">
+                    <div className="mb-4 text-xs font-bold text-slate-400 bg-white/5 p-4 rounded-2xl border border-white/5 animate-kinetic-reveal">
                         Realizar pré-exaustão antes de cargas máximas.
                     </div>
                 )}
+
+                <div className="flex gap-4">
+                    <Button variant="premium" className="flex-1 h-12 rounded-2xl text-[10px] gap-2">
+                        <Activity className="h-4 w-4" />
+                        Evolução
+                    </Button>
+                    <Button variant="glass" className="flex-1 h-12 rounded-2xl text-[10px] gap-2">
+                        <Eye className="h-4 w-4 text-primary" />
+                        Feedbacks
+                    </Button>
+                </div>
             </div>
         </Card>
     )
