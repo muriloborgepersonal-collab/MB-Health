@@ -28,7 +28,7 @@ const WorkoutsView: React.FC = () => {
               <span className="material-symbols-outlined text-primary text-5xl">fitness_center</span>
             </div>
             <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center">
-               <span className="material-symbols-outlined text-slate-400 text-lg">arrow_forward_ios</span>
+              <span className="material-symbols-outlined text-slate-400 text-lg">arrow_forward_ios</span>
             </div>
           </div>
           <div>
@@ -48,7 +48,18 @@ const WorkoutsView: React.FC = () => {
             { label: 'Relatório de Frequência', icon: 'monitoring', desc: 'Acompanhe a constância' },
             { label: 'Biblioteca de Exercícios', icon: 'menu_book', desc: 'Base de movimentos' }
           ].map((card, i) => (
-            <div key={i} className="flex flex-col rounded-3xl bg-white p-6 shadow-xl border border-slate-100 transition-all active:scale-[0.96] cursor-pointer group">
+            <div
+              key={i}
+              onClick={() => {
+                if (card.label === 'Biblioteca de Exercícios') {
+                  navigate('/exercises-library');
+                } else {
+                  // Fallback for other cards if needed, current labels point to general workouts/frequency
+                  navigate('/workouts');
+                }
+              }}
+              className="flex flex-col rounded-3xl bg-white p-6 shadow-xl border border-slate-100 transition-all active:scale-[0.96] cursor-pointer group"
+            >
               <div className="mb-6">
                 <div className="w-12 h-12 flex items-center justify-center bg-primary/10 rounded-xl group-hover:bg-primary transition-all group-hover:text-white text-primary">
                   <span className="material-symbols-outlined text-2xl group-hover:scale-110 transition-transform">{card.icon}</span>

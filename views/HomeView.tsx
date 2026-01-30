@@ -142,7 +142,13 @@ const HomeView: React.FC = () => {
             ].map((card, i) => (
               <div
                 key={i}
-                onClick={() => navigate('/workouts')}
+                onClick={() => {
+                  if (card.label === 'Biblioteca de Exercícios') {
+                    navigate('/exercises-library');
+                  } else {
+                    navigate('/workouts');
+                  }
+                }}
                 className="flex flex-col rounded-3xl bg-white p-6 shadow-xl border border-slate-100 transition-all active:scale-[0.96] cursor-pointer group"
               >
                 <div className="mb-6">
