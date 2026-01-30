@@ -18,43 +18,75 @@ const ExerciseLibraryView: React.FC = () => {
 
     const [selectedMuscle, setSelectedMuscle] = useState('Todos');
     const [selectedCategory, setSelectedCategory] = useState('Todas');
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [newExercise, setNewExercise] = useState({ name: '', muscle_group: 'Abdômen', category: 'Musculação', video_url: '' });
+
+    const handleSave = async () => {
+        if (!newExercise.name || !newExercise.video_url) return;
+
+        // Auto-extract thumbnail from YouTube link
+        let thumbnailUrl = '';
+        try {
+            const videoId = newExercise.video_url.split('v=')[1]?.split('&')[0];
+            if (videoId) thumbnailUrl = `https://img.youtube.com/vi/${videoId}/0.jpg`;
+        } catch (e) { }
+
+        try {
+            const { error } = await supabase
+                .from('exercise_library')
+                .insert([{
+                    name: newExercise.name,
+                    muscle_group: newExercise.muscle_group,
+                    category: newExercise.category,
+                    video_url: newExercise.video_url,
+                    thumbnail_url: thumbnailUrl
+                }]);
+
+            if (error) throw error;
+            setIsModalOpen(false);
+            setNewExercise({ name: '', muscle_group: 'Abdômen', category: 'Musculação', video_url: '' });
+            window.location.reload();
+        } catch (err) {
+            console.error('Error saving exercise:', err);
+        }
+    };
 
     useEffect(() => {
         const fetchExercises = async () => {
             setLoading(true);
             try {
-                // In a real app, we'd fetch from specialized tables. 
-                // For now, we fetch from the generic exercises table.
                 const { data, error } = await supabase
-                    .from('exercises')
+                    .from('exercise_library')
                     .select('*')
-                    .limit(50);
+                    .order('name', { ascending: true });
 
-                if (error) throw error;
+                if (error) {
+                    console.warn('exercise_library table not found or error, using fallback:', error);
+                    throw error;
+                }
 
                 const mapped: Exercise[] = (data || []).map(ex => ({
                     id: ex.id,
                     name: ex.name,
-                    sets: ex.sets || 3,
-                    reps: ex.reps || '12',
-                    load: ex.load || '0',
-                    rest: ex.rest || '60s',
+                    sets: 3, // Default for library selection
+                    reps: '12',
+                    load: '0',
+                    rest: '60s',
                     videoUrl: ex.video_url,
-                    thumbnailUrl: ex.thumbnail_url || `https://picsum.photos/seed/${ex.id}/400/225`
+                    thumbnailUrl: ex.thumbnail_url || (ex.video_url ? `https://img.youtube.com/vi/${ex.video_url.split('v=')[1]?.split('&')[0]}/0.jpg` : `https://picsum.photos/seed/${ex.id}/400/225`)
                 }));
 
-                // Add some default exercises if DB is empty for demo purposes
-                const defaultExercises: Exercise[] = [
-                    { id: '1', name: 'Abdominal Canivete', sets: 3, reps: '15', load: '0', rest: '45s', thumbnailUrl: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&q=80&w=400' },
-                    { id: '2', name: 'Abdominal Canivete Alternado', sets: 3, reps: '20', load: '0', rest: '45s', thumbnailUrl: 'https://images.unsplash.com/photo-1548691905-57c36cc8d935?auto=format&fit=crop&q=80&w=400' },
-                    { id: '3', name: 'Abdominal com Rodinha Solo', sets: 3, reps: '12', load: '0', rest: '60s', thumbnailUrl: 'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&q=80&w=400' }
-                ];
-
-                const finalExercises = mapped.length > 0 ? mapped : defaultExercises;
-                setExercises(finalExercises);
-                setFilteredExercises(finalExercises);
+                setExercises(mapped);
+                setFilteredExercises(mapped);
             } catch (err) {
-                console.error('Error fetching exercises:', err);
+                // Fallback mock data if table doesn't exist yet
+                const fallbackExercises: Exercise[] = [
+                    { id: '1', name: 'Supino Reto com Barra', sets: 3, reps: '10', load: '40kg', rest: '60s', thumbnailUrl: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&q=80&w=400' },
+                    { id: '2', name: 'Agachamento Livre', sets: 4, reps: '12', load: '60kg', rest: '90s', thumbnailUrl: 'https://images.unsplash.com/photo-1574680096145-d05b474e2155?auto=format&fit=crop&q=80&w=400' },
+                    { id: '3', name: 'Abdominal Canivete', sets: 3, reps: '15', load: '0', rest: '45s', thumbnailUrl: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&q=80&w=400' }
+                ];
+                setExercises(fallbackExercises);
+                setFilteredExercises(fallbackExercises);
             } finally {
                 setLoading(false);
             }
@@ -89,7 +121,10 @@ const ExerciseLibraryView: React.FC = () => {
                     <h1 className="text-2xl font-black tracking-tighter uppercase">Biblioteca de Exercícios</h1>
                 </div>
 
-                <button className="w-full flex items-center justify-center gap-3 rounded-2xl h-16 bg-white/[0.03] border border-primary/30 text-primary font-black uppercase tracking-widest text-sm shadow-glow active:scale-[0.98] transition-all hover:bg-primary/5 mb-6">
+                <button
+                    onClick={() => setIsModalOpen(true)}
+                    className="w-full flex items-center justify-center gap-3 rounded-2xl h-16 bg-white/[0.03] border border-primary/30 text-primary font-black uppercase tracking-widest text-sm shadow-glow active:scale-[0.98] transition-all hover:bg-primary/5 mb-6"
+                >
                     <span className="material-symbols-outlined text-2xl">add_circle</span>
                     Criar Exercício
                 </button>
@@ -124,8 +159,8 @@ const ExerciseLibraryView: React.FC = () => {
                             key={tab.id}
                             onClick={() => setActiveTab(tab.id as any)}
                             className={`flex-1 flex items-center justify-center gap-2 h-12 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === tab.id
-                                    ? 'bg-primary text-background-dark shadow-glow'
-                                    : 'text-slate-500 hover:text-white'
+                                ? 'bg-primary text-background-dark shadow-glow'
+                                : 'text-slate-500 hover:text-white'
                                 }`}
                         >
                             <span className="material-symbols-outlined text-lg">{tab.icon}</span>
@@ -205,6 +240,72 @@ const ExerciseLibraryView: React.FC = () => {
                     )}
                 </div>
             </main>
+
+            {/* Create Modal */}
+            {isModalOpen && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-background-dark/95 backdrop-blur-sm">
+                    <div className="w-full max-w-md bg-card-dark border border-white/10 rounded-[2.5rem] p-8 space-y-6 shadow-glow-lg">
+                        <div className="flex justify-between items-center">
+                            <h2 className="text-2xl font-black text-white uppercase tracking-tighter">Novo Exercício</h2>
+                            <button onClick={() => setIsModalOpen(false)} className="text-slate-500 hover:text-white">
+                                <span className="material-symbols-outlined">close</span>
+                            </button>
+                        </div>
+
+                        <div className="space-y-4">
+                            <div>
+                                <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2 block">Nome do Exercício</label>
+                                <input
+                                    type="text"
+                                    value={newExercise.name}
+                                    onChange={e => setNewExercise({ ...newExercise, name: e.target.value })}
+                                    placeholder="Ex: Supino Reto"
+                                    className="w-full h-14 bg-white/[0.03] border border-white/10 rounded-xl px-4 text-white focus:border-primary outline-none font-bold"
+                                />
+                            </div>
+                            <div>
+                                <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2 block">Link do YouTube</label>
+                                <input
+                                    type="text"
+                                    value={newExercise.video_url}
+                                    onChange={e => setNewExercise({ ...newExercise, video_url: e.target.value })}
+                                    placeholder="Cole o link aqui..."
+                                    className="w-full h-14 bg-white/[0.03] border border-white/10 rounded-xl px-4 text-white focus:border-primary outline-none font-bold"
+                                />
+                            </div>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="flex flex-col">
+                                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2 block">Grupo Muscular</label>
+                                    <select
+                                        value={newExercise.muscle_group}
+                                        onChange={e => setNewExercise({ ...newExercise, muscle_group: e.target.value })}
+                                        className="w-full h-14 bg-card-header border border-white/10 rounded-xl px-4 text-white focus:border-primary outline-none font-bold appearance-none cursor-pointer"
+                                    >
+                                        {muscleGroups.filter(m => m !== 'Todos').map(m => <option key={m} value={m}>{m}</option>)}
+                                    </select>
+                                </div>
+                                <div className="flex flex-col">
+                                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2 block">Categoria</label>
+                                    <select
+                                        value={newExercise.category}
+                                        onChange={e => setNewExercise({ ...newExercise, category: e.target.value })}
+                                        className="w-full h-14 bg-card-header border border-white/10 rounded-xl px-4 text-white focus:border-primary outline-none font-bold appearance-none cursor-pointer"
+                                    >
+                                        {categories.filter(c => c !== 'Todas').map(c => <option key={c} value={c}>{c}</option>)}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button
+                            onClick={handleSave}
+                            className="w-full h-16 bg-primary text-background-dark font-black uppercase tracking-widest rounded-2xl shadow-glow active:scale-95 transition-all"
+                        >
+                            Salvar Exercício
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
