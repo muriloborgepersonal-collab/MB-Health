@@ -76,6 +76,7 @@ export default function RoutineDetailView() {
                 .insert([{
                     workout_id: id,
                     name: `Treino ${nextNumber}`,
+                    subtitle: 'Novo Treino',
                     instructions: ''
                 }])
                 .select()
@@ -234,10 +235,10 @@ function WorkoutCard({ title, subtitle, onClick }: { title: string, subtitle: st
 
     return (
         <Card className="bg-card-dark border-white/5 p-0 overflow-hidden rounded-[2.5rem] shadow-2xl relative">
-            <div className="p-6 pb-2">
+            <div className="p-6 pb-2 cursor-pointer group" onClick={onClick}>
                 <div className="flex items-center justify-between mb-2">
                     <h4 className="text-white font-black text-xl uppercase tracking-tight group-hover:text-primary transition-colors">{title}</h4>
-                    <MoreVertical className="text-slate-500 h-5 w-5" />
+                    <MoreVertical className="text-slate-500 h-5 w-5 hover:text-white transition-colors" />
                 </div>
                 <p className="text-slate-500 text-sm font-bold">{subtitle}</p>
             </div>
