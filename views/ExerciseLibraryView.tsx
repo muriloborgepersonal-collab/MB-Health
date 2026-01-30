@@ -13,19 +13,22 @@ const ExerciseLibraryView: React.FC = () => {
     const [activeTab, setActiveTab] = useState<'app' | 'yours' | 'favs'>('app');
 
     const [dynamicMuscleGroups, setDynamicMuscleGroups] = useState<{ id: string, name: string }[]>([]);
-    const categories = ['Todas', 'Musculação', 'Cardio', 'Alongamento', 'Funcional'];
+    const [dynamicCategories, setDynamicCategories] = useState<{ id: string, name: string }[]>([]);
 
     const [selectedMuscle, setSelectedMuscle] = useState('Todos');
     const [selectedCategory, setSelectedCategory] = useState('Todas');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isGroupsModalOpen, setIsGroupsModalOpen] = useState(false);
+    const [isCategoriesModalOpen, setIsCategoriesModalOpen] = useState(false);
     const [editingExercise, setEditingExercise] = useState<Exercise | null>(null);
     const [selectedVideoUrl, setSelectedVideoUrl] = useState<string | null>(null);
-    const [newExercise, setNewExercise] = useState({ name: '', muscle_group: '', category: 'Musculação', video_url: '' });
+    const [newExercise, setNewExercise] = useState({ name: '', muscle_group: '', category: '', video_url: '' });
 
-    // Group management state
+    // Management state
     const [newGroupName, setNewGroupName] = useState('');
     const [editingGroup, setEditingGroup] = useState<{ id: string, name: string } | null>(null);
+    const [newCategoryName, setNewCategoryName] = useState('');
+    const [editingCategory, setEditingCategory] = useState<{ id: string, name: string } | null>(null);
 
     const fetchMuscleGroups = async () => {
         const { data, error } = await supabase
@@ -37,6 +40,20 @@ const ExerciseLibraryView: React.FC = () => {
             setDynamicMuscleGroups(data);
             if (!newExercise.muscle_group && data.length > 0) {
                 setNewExercise(prev => ({ ...prev, muscle_group: data[0].name }));
+            }
+        }
+    };
+
+    const fetchCategories = async () => {
+        const { data, error } = await supabase
+            .from('exercise_categories')
+            .select('*')
+            .order('name', { ascending: true });
+
+        if (!error && data) {
+            setDynamicCategories(data);
+            if (!newExercise.category && data.length > 0) {
+                setNewExercise(prev => ({ ...prev, category: data[0].name }));
             }
         }
     };
@@ -75,6 +92,40 @@ const ExerciseLibraryView: React.FC = () => {
         }
     };
 
+    const handleSaveCategory = async () => {
+        if (!newCategoryName) return;
+        try {
+            if (editingCategory) {
+                const { error } = await supabase
+                    .from('exercise_categories')
+                    .update({ name: newCategoryName })
+                    .eq('id', editingCategory.id);
+                if (error) throw error;
+            } else {
+                const { error } = await supabase
+                    .from('exercise_categories')
+                    .insert([{ name: newCategoryName }]);
+                if (error) throw error;
+            }
+            setNewCategoryName('');
+            setEditingCategory(null);
+            fetchCategories();
+        } catch (err: any) {
+            alert('Erro ao salvar categoria: ' + err.message);
+        }
+    };
+
+    const handleDeleteCategory = async (id: string) => {
+        if (!confirm('Tem certeza? Isso pode afetar exercícios vinculados a esta categoria.')) return;
+        try {
+            const { error } = await supabase.from('exercise_categories').delete().eq('id', id);
+            if (error) throw error;
+            fetchCategories();
+        } catch (err: any) {
+            alert('Erro ao excluir categoria: ' + err.message);
+        }
+    };
+
     const getYouTubeEmbedUrl = (url: string) => {
         let videoId = '';
         if (url.includes('v=')) {
@@ -107,7 +158,7 @@ const ExerciseLibraryView: React.FC = () => {
         setNewExercise({
             name: exercise.name,
             muscle_group: exercise.muscle_group || (dynamicMuscleGroups[0]?.name || ''),
-            category: exercise.category || 'Musculação',
+            category: exercise.category || (dynamicCategories[0]?.name || 'Musculação'),
             video_url: exercise.videoUrl || ''
         });
         setIsModalOpen(true);
@@ -157,7 +208,7 @@ const ExerciseLibraryView: React.FC = () => {
 
             setIsModalOpen(false);
             setEditingExercise(null);
-            setNewExercise({ name: '', muscle_group: dynamicMuscleGroups[0]?.name || '', category: 'Musculação', video_url: '' });
+            setNewExercise({ name: '', muscle_group: dynamicMuscleGroups[0]?.name || '', category: dynamicCategories[0]?.name || '', video_url: '' });
             window.location.reload();
         } catch (err: any) {
             console.error('Error saving exercise:', err);
@@ -167,6 +218,7 @@ const ExerciseLibraryView: React.FC = () => {
 
     useEffect(() => {
         fetchMuscleGroups();
+        fetchCategories();
         const fetchExercises = async () => {
             setLoading(true);
             try {
@@ -259,7 +311,12 @@ const ExerciseLibraryView: React.FC = () => {
                     >
                         Grupos
                     </button>
-                    <button className="flex-1 h-14 bg-white/[0.03] border border-white/10 rounded-xl text-slate-400 font-bold uppercase tracking-widest text-[10px] hover:border-primary/50 hover:text-white transition-all">Categorias</button>
+                    <button
+                        onClick={() => setIsCategoriesModalOpen(true)}
+                        className="flex-1 h-14 bg-white/[0.03] border border-white/10 rounded-xl text-slate-400 font-bold uppercase tracking-widest text-[10px] hover:border-primary/50 hover:text-white transition-all"
+                    >
+                        Categorias
+                    </button>
                 </div>
             </header>
 
@@ -316,7 +373,8 @@ const ExerciseLibraryView: React.FC = () => {
                             onChange={(e) => setSelectedCategory(e.target.value)}
                             className="w-full h-12 bg-white/[0.02] border border-white/10 rounded-xl px-4 text-[10px] font-black uppercase tracking-widest text-slate-400 appearance-none outline-none focus:border-primary/50"
                         >
-                            {categories.map(c => <option key={c} value={c}>{c}</option>)}
+                            <option value="Todas">Todas as Categorias</option>
+                            {dynamicCategories.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
                         </select>
                         <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-600 pointer-events-none text-lg">expand_more</span>
                     </div>
@@ -437,7 +495,7 @@ const ExerciseLibraryView: React.FC = () => {
                                         onChange={e => setNewExercise({ ...newExercise, category: e.target.value })}
                                         className="w-full h-14 bg-card-header border border-white/10 rounded-xl px-4 text-white focus:border-primary outline-none font-bold appearance-none cursor-pointer"
                                     >
-                                        {categories.filter(c => c !== 'Todas').map(c => <option key={c} value={c}>{c}</option>)}
+                                        {dynamicCategories.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
                                     </select>
                                 </div>
                             </div>
@@ -494,6 +552,59 @@ const ExerciseLibraryView: React.FC = () => {
                                         </button>
                                         <button
                                             onClick={() => handleDeleteGroup(group.id)}
+                                            className="w-8 h-8 rounded-full flex items-center justify-center text-slate-500 hover:text-red-500 transition-all"
+                                        >
+                                            <span className="material-symbols-outlined text-sm">delete</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Categories Management Modal */}
+            {isCategoriesModalOpen && (
+                <div className="fixed inset-0 z-[120] flex items-center justify-center p-6 bg-background-dark/95 backdrop-blur-sm">
+                    <div className="w-full max-w-md bg-card-dark border border-white/10 rounded-[2.5rem] p-8 space-y-6 shadow-glow-lg">
+                        <div className="flex justify-between items-center">
+                            <h2 className="text-2xl font-black text-white uppercase tracking-tighter">Categorias</h2>
+                            <button onClick={() => { setIsCategoriesModalOpen(false); setEditingCategory(null); setNewCategoryName(''); }} className="text-slate-500 hover:text-white">
+                                <span className="material-symbols-outlined">close</span>
+                            </button>
+                        </div>
+
+                        {/* Create/Edit Category Form */}
+                        <div className="flex gap-3">
+                            <input
+                                type="text"
+                                placeholder="Nova categoria..."
+                                value={newCategoryName}
+                                onChange={(e) => setNewCategoryName(e.target.value)}
+                                className="flex-1 h-14 bg-white/[0.03] border border-white/10 rounded-xl px-4 text-white focus:border-primary outline-none font-bold"
+                            />
+                            <button
+                                onClick={handleSaveCategory}
+                                className="w-14 h-14 bg-primary text-background-dark rounded-xl flex items-center justify-center shadow-glow active:scale-90 transition-all font-black"
+                            >
+                                <span className="material-symbols-outlined">check</span>
+                            </button>
+                        </div>
+
+                        <div className="max-h-[40vh] overflow-y-auto pr-2 space-y-3 custom-scrollbar">
+                            {dynamicCategories.map(category => (
+                                <div key={category.id} className="flex items-center justify-between p-4 bg-white/[0.02] border border-white/5 rounded-2xl group">
+                                    <span className="text-white font-bold">{category.name}</span>
+                                    <div className="flex gap-2">
+                                        <button
+                                            onClick={() => { setEditingCategory(category); setNewCategoryName(category.name); }}
+                                            className="w-8 h-8 rounded-full flex items-center justify-center text-slate-500 hover:text-primary transition-all"
+                                        >
+                                            <span className="material-symbols-outlined text-sm">edit</span>
+                                        </button>
+                                        <button
+                                            onClick={() => handleDeleteCategory(category.id)}
                                             className="w-8 h-8 rounded-full flex items-center justify-center text-slate-500 hover:text-red-500 transition-all"
                                         >
                                             <span className="material-symbols-outlined text-sm">delete</span>
