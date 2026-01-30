@@ -135,7 +135,7 @@ const StudentWorkoutsView: React.FC = () => {
                                     routines.map((routine) => (
                                         <div
                                             key={routine.id}
-                                            onClick={() => navigate(`/editor/${routine.id}`)}
+                                            onClick={() => navigate(`/routine/${routine.id}`)}
                                             className="flex items-center gap-5 p-5 bg-white/[0.02] border border-white/5 rounded-[1.5rem] hover:border-primary/30 hover:bg-white/[0.04] transition-all cursor-pointer group"
                                         >
                                             <div className="size-16 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center shadow-glow transition-transform group-hover:scale-110">

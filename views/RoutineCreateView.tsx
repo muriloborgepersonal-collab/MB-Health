@@ -58,8 +58,8 @@ const RoutineCreateView: React.FC = () => {
 
             console.log('Routine created with ID:', workoutId);
 
-            // Redirect to editor for the newly created routine
-            navigate(`/editor/${workoutId}`);
+            // Redirect to routine details
+            navigate(`/routine/${workoutId}`);
         } catch (error) {
             console.error('Error saving routine:', error);
             alert('Erro ao salvar a rotina. Tente novamente.');
