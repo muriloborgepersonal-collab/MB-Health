@@ -1,12 +1,18 @@
-
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '../src/lib/supabase';
 import { Exercise } from '../types';
 import { Button } from '../src/components/ui/Button';
+import { cn } from '../src/lib/utils';
+import { Star, Play, Plus, Search, ChevronDown, Loader2, Edit2, Trash2, Info, X, Check, ChevronLeft } from 'lucide-react';
 
 const ExerciseLibraryView: React.FC = () => {
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
+    const mode = searchParams.get('mode');
+    const workoutId = searchParams.get('workoutId');
+    const dayId = searchParams.get('dayId');
+
     const [exercises, setExercises] = useState<Exercise[]>([]);
     const [filteredExercises, setFilteredExercises] = useState<Exercise[]>([]);
     const [loading, setLoading] = useState(true);
@@ -217,6 +223,31 @@ const ExerciseLibraryView: React.FC = () => {
         }
     };
 
+    const handleAddToWorkout = async (ex: Exercise) => {
+        if (!workoutId) return;
+        try {
+            const { error } = await supabase
+                .from('exercises')
+                .insert([{
+                    workout_id: workoutId,
+                    workout_day_id: dayId || null,
+                    name: ex.name,
+                    sets: 3,
+                    reps: '12',
+                    load: '0',
+                    rest: '60s',
+                    video_url: ex.videoUrl,
+                    thumbnail_url: ex.thumbnailUrl
+                }]);
+
+            if (error) throw error;
+            alert(`${ex.name} adicionado ao treino!`);
+        } catch (err: any) {
+            console.error('Error adding to workout:', err);
+            alert('Erro ao adicionar ao treino.');
+        }
+    };
+
     useEffect(() => {
         fetchMuscleGroups();
         fetchCategories();
@@ -288,9 +319,9 @@ const ExerciseLibraryView: React.FC = () => {
             <header className="sticky top-0 z-50 bg-card-header/80 backdrop-blur-md px-6 pt-12 pb-6 border-b border-white/5">
                 <div className="flex items-center gap-4 mb-6">
                     <button onClick={() => navigate(-1)} className="text-primary hover:text-white transition-colors">
-                        <span className="material-symbols-outlined text-3xl">chevron_left</span>
+                        <ChevronLeft size={32} />
                     </button>
-                    <h1 className="text-2xl font-black tracking-tighter uppercase">Biblioteca de Exercícios</h1>
+                    <h1 className="text-2xl font-black tracking-tighter uppercase text-white">Biblioteca de Exercícios</h1>
                 </div>
 
                 <Button
@@ -302,7 +333,7 @@ const ExerciseLibraryView: React.FC = () => {
                     variant="premium"
                     className="w-full h-16 rounded-2xl text-sm mb-6"
                 >
-                    <span className="material-symbols-outlined text-2xl mr-3 font-black">add_circle</span>
+                    <Plus className="mr-3 font-black" size={24} />
                     Criar Exercício
                 </Button>
 
@@ -310,79 +341,81 @@ const ExerciseLibraryView: React.FC = () => {
                     <Button
                         onClick={() => setIsGroupsModalOpen(true)}
                         variant="glass"
-                        className="flex-1 h-14 rounded-xl text-[10px]"
+                        className="flex-1 h-14 rounded-xl text-[10px] uppercase font-black tracking-widest"
                     >
                         Grupos
                     </Button>
                     <Button
                         onClick={() => setIsCategoriesModalOpen(true)}
                         variant="glass"
-                        className="flex-1 h-14 rounded-xl text-[10px]"
+                        className="flex-1 h-14 rounded-xl text-[10px] uppercase font-black tracking-widest"
                     >
                         Categorias
                     </Button>
                 </div>
             </header>
 
-            <main className="px-6 py-8 space-y-8">
+            <main className="px-6 py-8 space-y-6">
                 {/* Search */}
                 <div className="relative group">
-                    <span className="material-symbols-outlined absolute left-5 top-1/2 -translate-y-1/2 text-slate-600 group-focus-within:text-primary transition-colors">search</span>
+                    <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-600 group-focus-within:text-primary transition-colors" size={20} />
                     <input
                         type="text"
                         placeholder="Buscar exercícios..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full h-16 bg-white/[0.02] border border-white/5 rounded-2xl pl-14 pr-4 text-white focus:border-primary/50 focus:ring-4 focus:ring-primary/5 transition-all font-bold placeholder:text-slate-700 outline-none"
+                        className="w-full h-14 bg-white/[0.02] border border-white/10 rounded-2xl pl-14 pr-4 text-white focus:border-primary/50 focus:ring-4 focus:ring-primary/5 transition-all font-bold placeholder:text-slate-700 outline-none"
                     />
                 </div>
 
                 {/* Filter Tabs */}
-                <div className="flex bg-white/[0.02] p-1.5 rounded-2xl border border-white/5">
+                <div className="flex bg-white/[0.02] p-1 rounded-2xl border border-white/5">
                     {[
-                        { id: 'favs', label: 'Favoritos', icon: 'star' },
-                        { id: 'app', label: 'Do App', icon: 'apps' },
-                        { id: 'yours', label: 'Seus', icon: 'person' }
+                        { id: 'favs', label: 'Favoritos', icon: Star },
+                        { id: 'app', label: 'Do App', icon: Info },
+                        { id: 'yours', label: 'Seus', icon: Plus }
                     ].map(tab => (
-                        <Button
+                        <button
                             key={tab.id}
                             onClick={() => setActiveTab(tab.id as any)}
-                            variant={activeTab === tab.id ? 'premium' : 'glass'}
-                            className="flex-1 h-12 rounded-xl text-[10px] bg-transparent border-none"
+                            className={cn(
+                                "flex-1 h-12 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2 transition-all",
+                                activeTab === tab.id ? "bg-primary text-background-dark shadow-glow" : "text-slate-500 hover:text-white"
+                            )}
                         >
-                            <span className="material-symbols-outlined text-lg mr-2 font-black">{tab.icon}</span>
+                            <tab.icon size={16} />
                             {tab.label}
-                        </Button>
+                        </button>
                     ))}
                 </div>
 
                 {/* Dropdowns */}
-                <div className="flex gap-4">
-                    <div className="flex-1 relative">
+                <div className="flex flex-wrap gap-4 items-center">
+                    <div className="flex-1 min-w-[140px] relative">
                         <select
                             value={selectedMuscle}
                             onChange={(e) => setSelectedMuscle(e.target.value)}
                             className="w-full h-12 bg-white/[0.02] border border-white/10 rounded-xl px-4 text-[10px] font-black uppercase tracking-widest text-slate-400 appearance-none outline-none focus:border-primary/50"
                         >
-                            <option value="Todos">Todos os Grupos</option>
+                            <option value="Todos">Grupos musculares</option>
                             {dynamicMuscleGroups.map(m => <option key={m.id} value={m.name}>{m.name}</option>)}
                         </select>
-                        <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-600 pointer-events-none text-lg">expand_more</span>
+                        <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-600 pointer-events-none" size={16} />
                     </div>
-                    <div className="flex-1 relative">
+                    <div className="flex-1 min-w-[140px] relative">
                         <select
                             value={selectedCategory}
                             onChange={(e) => setSelectedCategory(e.target.value)}
                             className="w-full h-12 bg-white/[0.02] border border-white/10 rounded-xl px-4 text-[10px] font-black uppercase tracking-widest text-slate-400 appearance-none outline-none focus:border-primary/50"
                         >
-                            <option value="Todas">Todas as Categorias</option>
+                            <option value="Todas">Categorias</option>
                             {dynamicCategories.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
                         </select>
-                        <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-600 pointer-events-none text-lg">expand_more</span>
+                        <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-600 pointer-events-none" size={16} />
                     </div>
                     <button
                         onClick={() => { setSelectedMuscle('Todos'); setSelectedCategory('Todas'); setSearchQuery(''); }}
-                        className="px-4 text-[10px] font-black uppercase tracking-widest text-primary hover:text-white transition-colors"
+                        className="text-[10px] font-black uppercase tracking-widest text-primary hover:text-white transition-colors"
                     >
                         Limpar
                     </button>
@@ -392,13 +425,13 @@ const ExerciseLibraryView: React.FC = () => {
                 <div className="space-y-4">
                     {loading ? (
                         <div className="flex justify-center py-20">
-                            <span className="material-symbols-outlined animate-spin text-primary text-4xl">progress_activity</span>
+                            <Loader2 className="animate-spin text-primary" size={40} />
                         </div>
                     ) : filteredExercises.length > 0 ? (
                         filteredExercises.map(ex => (
-                            <div key={ex.id} className="bg-white/[0.03] border border-white/5 rounded-3xl p-4 flex gap-5 items-center hover:border-primary/30 transition-all group">
+                            <div key={ex.id} className="bg-white border-none rounded-3xl p-4 flex gap-5 items-center shadow-lg hover:shadow-xl transition-all relative overflow-hidden group">
                                 <div
-                                    className="relative w-32 aspect-video rounded-2xl overflow-hidden shadow-2xl flex-shrink-0 cursor-pointer active:scale-95 transition-transform"
+                                    className="relative w-28 aspect-video rounded-xl overflow-hidden shadow-md flex-shrink-0 cursor-pointer active:scale-95 transition-transform"
                                     onClick={() => ex.videoUrl && setSelectedVideoUrl(ex.videoUrl)}
                                 >
                                     <img
@@ -406,55 +439,68 @@ const ExerciseLibraryView: React.FC = () => {
                                         alt={ex.name}
                                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                                     />
-                                    <div className="absolute inset-0 bg-black/30 group-hover:bg-black/10 transition-all flex items-center justify-center">
-                                        <div className="w-10 h-10 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-white scale-90 group-hover:scale-100 transition-transform">
-                                            <span className="material-symbols-outlined fill-1">play_arrow</span>
+                                    <div className="absolute inset-0 bg-black/20 group-hover:bg-black/0 transition-all flex items-center justify-center">
+                                        <div className="size-8 rounded-full bg-white/20 backdrop-blur-md border border-white/20 flex items-center justify-center text-white">
+                                            <Play size={16} className="fill-white" />
                                         </div>
                                     </div>
                                 </div>
-                                <div
-                                    className="flex-1 min-w-0 cursor-pointer"
-                                    onClick={() => ex.videoUrl && setSelectedVideoUrl(ex.videoUrl)}
-                                >
-                                    <h3 className="text-white font-black text-lg tracking-tight truncate group-hover:text-primary transition-colors">{ex.name}</h3>
+                                <div className="flex-1 min-w-0 pr-10">
+                                    <h3 className="text-black font-black text-sm uppercase tracking-tight truncate leading-tight">{ex.name}</h3>
                                     <div className="flex flex-wrap gap-2 mt-2">
-                                        <span className="px-2 py-1 bg-white/5 border border-white/10 rounded-lg text-[8px] font-black uppercase tracking-widest text-slate-400">{ex.muscle_group || 'Musculação'}</span>
-                                        <span className="px-2 py-1 bg-white/5 border border-white/10 rounded-lg text-[8px] font-black uppercase tracking-widest text-slate-400">{ex.category || 'Geral'}</span>
+                                        <span className="px-2 py-0.5 bg-gray-100 rounded-md text-[8px] font-black uppercase tracking-widest text-gray-400">{ex.muscle_group || 'Geral'}</span>
+                                        <span className="px-2 py-0.5 bg-gray-100 rounded-md text-[8px] font-black uppercase tracking-widest text-gray-400">{ex.category || 'Musculação'}</span>
                                     </div>
+                                    {mode === 'select' && (
+                                        <button
+                                            onClick={() => handleAddToWorkout(ex)}
+                                            className="mt-3 text-primary text-[10px] font-black uppercase tracking-widest flex items-center gap-1 hover:gap-2 transition-all"
+                                        >
+                                            <Plus size={14} />
+                                            <span>Adicionar ao treino</span>
+                                        </button>
+                                    )}
                                 </div>
-                                <div className="flex gap-2">
-                                    <button
-                                        onClick={() => handleEdit(ex)}
-                                        className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-slate-500 hover:text-primary hover:border-primary/50 transition-all"
-                                    >
-                                        <span className="material-symbols-outlined text-xl">edit</span>
-                                    </button>
-                                    <button
-                                        onClick={() => handleDelete(ex.id)}
-                                        className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-slate-500 hover:text-red-500 hover:border-red-500/50 transition-all"
-                                    >
-                                        <span className="material-symbols-outlined text-xl">delete</span>
-                                    </button>
-                                </div>
+
+                                <button className="absolute right-4 top-4 text-gray-300 hover:text-yellow-400 transition-colors">
+                                    <Star size={18} />
+                                </button>
+
+                                {mode !== 'select' && (
+                                    <div className="absolute right-4 bottom-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <button
+                                            onClick={() => handleEdit(ex)}
+                                            className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 hover:text-primary transition-all"
+                                        >
+                                            <Edit2 size={14} />
+                                        </button>
+                                        <button
+                                            onClick={() => handleDelete(ex.id)}
+                                            className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 hover:text-red-500 transition-all"
+                                        >
+                                            <Trash2 size={14} />
+                                        </button>
+                                    </div>
+                                )}
                             </div>
                         ))
                     ) : (
                         <div className="text-center py-20 opacity-30">
-                            <span className="material-symbols-outlined text-6xl block mb-4">search_off</span>
-                            <p className="font-black uppercase tracking-widest text-sm">Nenhum resultado encontrado</p>
+                            <Info size={60} className="mx-auto mb-4 text-white" />
+                            <p className="font-black uppercase tracking-widest text-sm text-white">Nenhum resultado encontrado</p>
                         </div>
                     )}
                 </div>
             </main>
 
-            {/* Create/Edit Modal */}
+            {/* Modals are unchanged in logic, just using Lucide icons */}
             {isModalOpen && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-background-dark/95 backdrop-blur-sm">
                     <div className="w-full max-w-md bg-card-dark border border-white/10 rounded-[2.5rem] p-8 space-y-6 shadow-glow-lg">
                         <div className="flex justify-between items-center">
                             <h2 className="text-2xl font-black text-white uppercase tracking-tighter">{editingExercise ? 'Editar Exercício' : 'Novo Exercício'}</h2>
                             <button onClick={() => { setIsModalOpen(false); setEditingExercise(null); }} className="text-slate-500 hover:text-white">
-                                <span className="material-symbols-outlined">close</span>
+                                <X size={24} />
                             </button>
                         </div>
 
@@ -514,18 +560,16 @@ const ExerciseLibraryView: React.FC = () => {
                 </div>
             )}
 
-            {/* Muscle Groups Management Modal */}
             {isGroupsModalOpen && (
                 <div className="fixed inset-0 z-[120] flex items-center justify-center p-6 bg-background-dark/95 backdrop-blur-sm">
                     <div className="w-full max-w-md bg-card-dark border border-white/10 rounded-[2.5rem] p-8 space-y-6 shadow-glow-lg">
                         <div className="flex justify-between items-center">
                             <h2 className="text-2xl font-black text-white uppercase tracking-tighter">Grupos Musculares</h2>
                             <button onClick={() => { setIsGroupsModalOpen(false); setEditingGroup(null); setNewGroupName(''); }} className="text-slate-500 hover:text-white">
-                                <span className="material-symbols-outlined">close</span>
+                                <X size={24} />
                             </button>
                         </div>
 
-                        {/* Create/Edit Group Form */}
                         <div className="flex gap-3">
                             <input
                                 type="text"
@@ -538,7 +582,7 @@ const ExerciseLibraryView: React.FC = () => {
                                 onClick={handleSaveGroup}
                                 className="w-14 h-14 bg-primary text-background-dark rounded-xl flex items-center justify-center shadow-glow active:scale-90 transition-all font-black"
                             >
-                                <span className="material-symbols-outlined">check</span>
+                                <Check size={20} />
                             </button>
                         </div>
 
@@ -551,13 +595,13 @@ const ExerciseLibraryView: React.FC = () => {
                                             onClick={() => { setEditingGroup(group); setNewGroupName(group.name); }}
                                             className="w-8 h-8 rounded-full flex items-center justify-center text-slate-500 hover:text-primary transition-all"
                                         >
-                                            <span className="material-symbols-outlined text-sm">edit</span>
+                                            <Edit2 size={14} />
                                         </button>
                                         <button
                                             onClick={() => handleDeleteGroup(group.id)}
                                             className="w-8 h-8 rounded-full flex items-center justify-center text-slate-500 hover:text-red-500 transition-all"
                                         >
-                                            <span className="material-symbols-outlined text-sm">delete</span>
+                                            <Trash2 size={14} />
                                         </button>
                                     </div>
                                 </div>
@@ -567,18 +611,16 @@ const ExerciseLibraryView: React.FC = () => {
                 </div>
             )}
 
-            {/* Categories Management Modal */}
             {isCategoriesModalOpen && (
                 <div className="fixed inset-0 z-[120] flex items-center justify-center p-6 bg-background-dark/95 backdrop-blur-sm">
                     <div className="w-full max-w-md bg-card-dark border border-white/10 rounded-[2.5rem] p-8 space-y-6 shadow-glow-lg">
                         <div className="flex justify-between items-center">
                             <h2 className="text-2xl font-black text-white uppercase tracking-tighter">Categorias</h2>
                             <button onClick={() => { setIsCategoriesModalOpen(false); setEditingCategory(null); setNewCategoryName(''); }} className="text-slate-500 hover:text-white">
-                                <span className="material-symbols-outlined">close</span>
+                                <X size={24} />
                             </button>
                         </div>
 
-                        {/* Create/Edit Category Form */}
                         <div className="flex gap-3">
                             <input
                                 type="text"
@@ -591,7 +633,7 @@ const ExerciseLibraryView: React.FC = () => {
                                 onClick={handleSaveCategory}
                                 className="w-14 h-14 bg-primary text-background-dark rounded-xl flex items-center justify-center shadow-glow active:scale-90 transition-all font-black"
                             >
-                                <span className="material-symbols-outlined">check</span>
+                                <Check size={20} />
                             </button>
                         </div>
 
@@ -604,13 +646,13 @@ const ExerciseLibraryView: React.FC = () => {
                                             onClick={() => { setEditingCategory(category); setNewCategoryName(category.name); }}
                                             className="w-8 h-8 rounded-full flex items-center justify-center text-slate-500 hover:text-primary transition-all"
                                         >
-                                            <span className="material-symbols-outlined text-sm">edit</span>
+                                            <Edit2 size={14} />
                                         </button>
                                         <button
                                             onClick={() => handleDeleteCategory(category.id)}
                                             className="w-8 h-8 rounded-full flex items-center justify-center text-slate-500 hover:text-red-500 transition-all"
                                         >
-                                            <span className="material-symbols-outlined text-sm">delete</span>
+                                            <Trash2 size={14} />
                                         </button>
                                     </div>
                                 </div>
@@ -620,7 +662,6 @@ const ExerciseLibraryView: React.FC = () => {
                 </div>
             )}
 
-            {/* Video Modal */}
             {selectedVideoUrl && (
                 <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-background-dark/98 backdrop-blur-xl">
                     <div className="w-full max-w-4xl aspect-video bg-black rounded-[2rem] overflow-hidden border border-white/10 shadow-glow-lg relative">
@@ -628,20 +669,21 @@ const ExerciseLibraryView: React.FC = () => {
                             onClick={() => setSelectedVideoUrl(null)}
                             className="absolute top-4 right-4 z-10 w-12 h-12 rounded-full bg-black/50 backdrop-blur-md border border-white/10 text-white flex items-center justify-center hover:bg-primary hover:text-background-dark transition-all"
                         >
-                            <span className="material-symbols-outlined">close</span>
+                            <X size={24} />
                         </button>
 
                         {getYouTubeEmbedUrl(selectedVideoUrl) ? (
                             <iframe
                                 src={getYouTubeEmbedUrl(selectedVideoUrl)!}
+                                title="Video Player"
                                 className="w-full h-full"
                                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                                 allowFullScreen
                             />
                         ) : (
                             <div className="w-full h-full flex flex-col items-center justify-center text-slate-500">
-                                <span className="material-symbols-outlined text-6xl mb-4">video_off</span>
-                                <p className="font-black uppercase tracking-widest">Link de vídeo inválido</p>
+                                <Info size={60} className="mb-4" />
+                                <p className="font-black uppercase tracking-widest text-white">Link de vídeo inválido</p>
                             </div>
                         )}
                     </div>
