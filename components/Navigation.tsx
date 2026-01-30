@@ -10,7 +10,7 @@ const Navigation: React.FC = () => {
 
   const navItems = [
     { label: 'Início', icon: 'home', path: '/' },
-    { label: 'Assinatura', icon: 'fitness_center', path: '/workouts' },
+    { label: 'Assinatura', icon: 'fitness_center', path: '/subscriptions' },
     { label: 'Alunos', icon: 'group', path: '/students' },
     { label: 'Perfil', icon: 'person', path: '/profile' },
   ];

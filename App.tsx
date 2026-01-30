@@ -25,6 +25,7 @@ import CreateNotificationSelectionView from './views/CreateNotificationSelection
 import WorkoutEditorView from './views/WorkoutEditorView';
 import RoutineCreateView from './views/RoutineCreateView';
 import StudentWorkoutsView from './views/StudentWorkoutsView';
+import SubscriptionView from './views/SubscriptionView';
 
 // Components
 import Navigation from './components/Navigation';
@@ -93,6 +94,9 @@ const AppContent: React.FC = () => {
         } />
         <Route path="/profile" element={
           <ProtectedRoute><ProfileView /></ProtectedRoute>
+        } />
+        <Route path="/subscriptions" element={
+          <ProtectedRoute><SubscriptionView /></ProtectedRoute>
         } />
       </Routes>
 

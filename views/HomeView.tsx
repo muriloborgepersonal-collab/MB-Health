@@ -86,7 +86,19 @@ const HomeView: React.FC = () => {
             <div className="flex flex-col gap-8">
               <div>
                 <p className="text-slate-400 text-sm font-bold uppercase tracking-widest mb-1">Total de Alunos</p>
-                <h4 className="text-5xl font-black text-white tracking-tighter">{totalStudents}</h4>
+                <div className="flex items-end justify-between">
+                  <h4 className="text-5xl font-black text-white tracking-tighter">{totalStudents}</h4>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate('/subscriptions');
+                    }}
+                    className="mb-1 flex items-center gap-2 px-4 py-2 bg-primary/10 border border-primary/30 rounded-xl text-primary text-[10px] font-black uppercase tracking-widest hover:bg-primary hover:text-background-dark transition-all"
+                  >
+                    <span className="material-symbols-outlined text-lg">payments</span>
+                    Assinantes
+                  </button>
+                </div>
               </div>
               <div className="flex items-center gap-10 border-t border-white/10 pt-8">
                 <div className="flex items-center gap-4">
@@ -108,6 +120,50 @@ const HomeView: React.FC = () => {
             <div className="w-full mt-10 bg-white/5 group-hover:bg-white/10 border border-white/10 text-white text-sm font-bold py-4 rounded-2xl text-center transition-all">
               Ver Lista Completa
             </div>
+          </div>
+        </section>
+
+        {/* Workout Management Section (from image) */}
+        <section className="space-y-6">
+          <div
+            onClick={() => navigate('/workouts')}
+            className="relative group cursor-pointer overflow-hidden rounded-[2.5rem] border-4 border-primary bg-white shadow-2xl transition-all active:scale-[0.98] p-8"
+          >
+            <div className="flex justify-between items-start mb-8">
+              <div className="p-4 bg-primary/10 rounded-2xl">
+                <span className="material-symbols-outlined text-primary text-5xl">fitness_center</span>
+              </div>
+              <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center">
+                <span className="material-symbols-outlined text-slate-400 text-lg">arrow_forward_ios</span>
+              </div>
+            </div>
+            <div>
+              <h2 className="text-primary text-3xl font-black mb-3 uppercase tracking-tighter leading-tight">Biblioteca de Treinos</h2>
+              <p className="text-slate-500 text-sm font-bold leading-relaxed">
+                Crie, edite e organize rotinas personalizadas para cada perfil de aluno.
+              </p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            {[
+              { label: 'Relatório de Frequência', icon: 'monitoring', desc: 'Acompanhe a constância' },
+              { label: 'Biblioteca de Exercícios', icon: 'menu_book', desc: 'Base de movimentos' }
+            ].map((card, i) => (
+              <div
+                key={i}
+                onClick={() => navigate('/workouts')}
+                className="flex flex-col rounded-3xl bg-white p-6 shadow-xl border border-slate-100 transition-all active:scale-[0.96] cursor-pointer group"
+              >
+                <div className="mb-6">
+                  <div className="w-12 h-12 flex items-center justify-center bg-primary/10 rounded-xl group-hover:bg-primary transition-all group-hover:text-white text-primary">
+                    <span className="material-symbols-outlined text-2xl group-hover:scale-110 transition-transform">{card.icon}</span>
+                  </div>
+                </div>
+                <h3 className="text-slate-900 text-base font-black leading-tight uppercase tracking-tight">{card.label}</h3>
+                <p className="mt-2 text-slate-400 text-[10px] font-bold uppercase tracking-widest">{card.desc}</p>
+              </div>
+            ))}
           </div>
         </section>
 
