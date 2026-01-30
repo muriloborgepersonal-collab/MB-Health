@@ -27,6 +27,7 @@ import FrequencyReportView from './views/FrequencyReportView';
 import WorkoutEditorView from './views/WorkoutEditorView';
 import RoutineCreateView from './views/RoutineCreateView';
 import StudentWorkoutsView from './views/StudentWorkoutsView';
+import RoutineDetailView from './views/RoutineDetailView';
 import SubscriptionView from './views/SubscriptionView';
 
 // Components
@@ -93,6 +94,9 @@ const AppContent: React.FC = () => {
         } />
         <Route path="/routine/new/:studentId" element={
           <ProtectedRoute><RoutineCreateView /></ProtectedRoute>
+        } />
+        <Route path="/routine/:id" element={
+          <ProtectedRoute><RoutineDetailView /></ProtectedRoute>
         } />
         <Route path="/subscriptions" element={
           <ProtectedRoute><SubscriptionView /></ProtectedRoute>
