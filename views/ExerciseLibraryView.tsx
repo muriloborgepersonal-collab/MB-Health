@@ -28,7 +28,12 @@ const ExerciseLibraryView: React.FC = () => {
         let thumbnailUrl = '';
         try {
             const videoId = newExercise.video_url.split('v=')[1]?.split('&')[0];
-            if (videoId) thumbnailUrl = `https://img.youtube.com/vi/${videoId}/0.jpg`;
+            if (videoId) {
+                thumbnailUrl = `https://img.youtube.com/vi/${videoId}/0.jpg`;
+            } else if (newExercise.video_url.includes('youtu.be/')) {
+                const shortId = newExercise.video_url.split('youtu.be/')[1]?.split('?')[0];
+                if (shortId) thumbnailUrl = `https://img.youtube.com/vi/${shortId}/0.jpg`;
+            }
         } catch (e) { }
 
         try {
@@ -42,12 +47,20 @@ const ExerciseLibraryView: React.FC = () => {
                     thumbnail_url: thumbnailUrl
                 }]);
 
-            if (error) throw error;
+            if (error) {
+                console.error('Supabase error:', error);
+                alert(`Erro ao salvar: ${error.message}. Verifique se a tabela 'exercise_library' existe no Supabase.`);
+                throw error;
+            }
+
             setIsModalOpen(false);
             setNewExercise({ name: '', muscle_group: 'Abdômen', category: 'Musculação', video_url: '' });
             window.location.reload();
-        } catch (err) {
+        } catch (err: any) {
             console.error('Error saving exercise:', err);
+            if (!err.message?.includes('exercise_library')) {
+                alert('Erro ao salvar. Verifique se você criou a tabela no Supabase conforme as instruções.');
+            }
         }
     };
 
@@ -68,7 +81,9 @@ const ExerciseLibraryView: React.FC = () => {
                 const mapped: Exercise[] = (data || []).map(ex => ({
                     id: ex.id,
                     name: ex.name,
-                    sets: 3, // Default for library selection
+                    muscle_group: ex.muscle_group,
+                    category: ex.category,
+                    sets: 3,
                     reps: '12',
                     load: '0',
                     rest: '60s',
@@ -79,11 +94,10 @@ const ExerciseLibraryView: React.FC = () => {
                 setExercises(mapped);
                 setFilteredExercises(mapped);
             } catch (err) {
-                // Fallback mock data if table doesn't exist yet
                 const fallbackExercises: Exercise[] = [
-                    { id: '1', name: 'Supino Reto com Barra', sets: 3, reps: '10', load: '40kg', rest: '60s', thumbnailUrl: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&q=80&w=400' },
-                    { id: '2', name: 'Agachamento Livre', sets: 4, reps: '12', load: '60kg', rest: '90s', thumbnailUrl: 'https://images.unsplash.com/photo-1574680096145-d05b474e2155?auto=format&fit=crop&q=80&w=400' },
-                    { id: '3', name: 'Abdominal Canivete', sets: 3, reps: '15', load: '0', rest: '45s', thumbnailUrl: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&q=80&w=400' }
+                    { id: '1', name: 'Supino Reto com Barra', sets: 3, reps: '10', load: '40kg', rest: '60s', thumbnailUrl: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&q=80&w=400', muscle_group: 'Peitoral', category: 'Musculação' },
+                    { id: '2', name: 'Agachamento Livre', sets: 4, reps: '12', load: '60kg', rest: '90s', thumbnailUrl: 'https://images.unsplash.com/photo-1574680096145-d05b474e2155?auto=format&fit=crop&q=80&w=400', muscle_group: 'Pernas', category: 'Musculação' },
+                    { id: '3', name: 'Abdominal Canivete', sets: 3, reps: '15', load: '0', rest: '45s', thumbnailUrl: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&q=80&w=400', muscle_group: 'Abdômen', category: 'Musculação' }
                 ];
                 setExercises(fallbackExercises);
                 setFilteredExercises(fallbackExercises);
@@ -102,9 +116,12 @@ const ExerciseLibraryView: React.FC = () => {
             result = result.filter(ex => ex.name.toLowerCase().includes(searchQuery.toLowerCase()));
         }
 
-        // Muscle group filter (mock logic)
         if (selectedMuscle !== 'Todos') {
-            // In real app, check muscle_group field
+            result = result.filter(ex => ex.muscle_group === selectedMuscle);
+        }
+
+        if (selectedCategory !== 'Todas') {
+            result = result.filter(ex => ex.category === selectedCategory);
         }
 
         setFilteredExercises(result);
@@ -223,8 +240,8 @@ const ExerciseLibraryView: React.FC = () => {
                                 <div className="flex-1 min-w-0">
                                     <h3 className="text-white font-black text-lg tracking-tight truncate group-hover:text-primary transition-colors">{ex.name}</h3>
                                     <div className="flex flex-wrap gap-2 mt-2">
-                                        <span className="px-2 py-1 bg-white/5 border border-white/10 rounded-lg text-[8px] font-black uppercase tracking-widest text-slate-400">Abdômen</span>
-                                        <span className="px-2 py-1 bg-white/5 border border-white/10 rounded-lg text-[8px] font-black uppercase tracking-widest text-slate-400">Musculação</span>
+                                        <span className="px-2 py-1 bg-white/5 border border-white/10 rounded-lg text-[8px] font-black uppercase tracking-widest text-slate-400">{ex.muscle_group || 'Musculação'}</span>
+                                        <span className="px-2 py-1 bg-white/5 border border-white/10 rounded-lg text-[8px] font-black uppercase tracking-widest text-slate-400">{ex.category || 'Geral'}</span>
                                     </div>
                                 </div>
                                 <button className="text-slate-600 hover:text-yellow-500 transition-colors">
