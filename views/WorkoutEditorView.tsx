@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '../src/lib/supabase';
 import { Workout, Exercise } from '../types';
 import { Button } from '../src/components/ui/Button';
@@ -7,7 +7,11 @@ import { Button } from '../src/components/ui/Button';
 const WorkoutEditorView: React.FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [workout, setWorkout] = useState<Workout | null>(null);
+  const [searchParams] = useSearchParams();
+  const dayId = searchParams.get('dayId');
+
+  const [workout, setWorkout] = useState<any>(null);
+  const [workoutDay, setWorkoutDay] = useState<any>(null);
   const [exercises, setExercises] = useState<Exercise[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -26,11 +30,30 @@ const WorkoutEditorView: React.FC = () => {
         if (workoutError) throw workoutError;
         setWorkout(workoutData);
 
+        // Fetch workout day if dayId exists
+        if (dayId) {
+          const { data: dayData, error: dayError } = await supabase
+            .from('workout_days')
+            .select('*')
+            .eq('id', dayId)
+            .single();
+          if (dayError) throw dayError;
+          setWorkoutDay(dayData);
+        }
+
         // Fetch exercises
-        const { data: exercisesData, error: exercisesError } = await supabase
+        let query = supabase
           .from('exercises')
           .select('*')
-          .eq('workout_id', id)
+          .eq('workout_id', id);
+
+        if (dayId) {
+          query = query.eq('workout_day_id', dayId);
+        } else {
+          query = query.is('workout_day_id', null);
+        }
+
+        const { data: exercisesData, error: exercisesError } = await query
           .order('created_at', { ascending: true });
 
         if (exercisesError) throw exercisesError;
@@ -65,6 +88,7 @@ const WorkoutEditorView: React.FC = () => {
         .from('exercises')
         .insert([{
           workout_id: id,
+          workout_day_id: dayId || null,
           name: 'Novo Exercício',
           sets: 3,
           reps: '12',
@@ -146,7 +170,7 @@ const WorkoutEditorView: React.FC = () => {
           <button onClick={() => navigate(-1)} className="text-primary hover:text-white transition-colors group">
             <span className="material-symbols-outlined group-hover:-translate-x-1 transition-transform">arrow_back_ios</span>
           </button>
-          <h2 className="text-white text-lg font-black tracking-widest uppercase">{workout?.name || 'Editor de Exercícios'}</h2>
+          <h2 className="text-white text-lg font-black tracking-widest uppercase">{workoutDay?.name || workout?.name || 'Editor de Exercícios'}</h2>
           <button className="text-slate-500 hover:text-white transition-colors">
             <span className="material-symbols-outlined">more_vert</span>
           </button>
