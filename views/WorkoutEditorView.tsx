@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '../src/lib/supabase';
 import { Workout, Exercise } from '../types';
+import { Button } from '../src/components/ui/Button';
 
 const WorkoutEditorView: React.FC = () => {
   const { id } = useParams();
@@ -178,13 +179,14 @@ const WorkoutEditorView: React.FC = () => {
         </div>
 
         {/* Add Button */}
-        <button
+        <Button
           onClick={handleAddExercise}
-          className="w-full flex items-center justify-center gap-3 rounded-[1.5rem] h-16 bg-primary text-background-dark font-black uppercase tracking-widest text-sm shadow-glow active:scale-[0.98] transition-all hover:shadow-neon"
+          variant="premium"
+          className="w-full h-16 rounded-[1.5rem] text-sm"
         >
-          <span className="material-symbols-outlined text-2xl font-black">add_circle</span>
+          <span className="material-symbols-outlined text-2xl font-black mr-3">add_circle</span>
           <span>Adicionar Exercício</span>
-        </button>
+        </Button>
 
         {/* Exercise List */}
         <div className="space-y-6">

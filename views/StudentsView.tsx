@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useStudent } from '../contexts/StudentContext';
+import { Button } from '../src/components/ui/Button';
 
 const StudentsView: React.FC = () => {
   const navigate = useNavigate();
@@ -83,13 +84,14 @@ const StudentsView: React.FC = () => {
             </button>
           </div>
 
-          <button
+          <Button
             onClick={() => navigate('/students/new')}
-            className="flex items-center justify-center gap-3 w-full h-14 bg-white/5 border border-primary/20 rounded-2xl text-primary font-black uppercase tracking-widest text-xs hover:bg-primary/10 transition-all shadow-inner active:scale-95"
+            variant="premium"
+            className="w-full h-14 rounded-2xl text-xs"
           >
-            <span className="material-symbols-outlined">person_add</span>
+            <span className="material-symbols-outlined mr-3">person_add</span>
             Adicionar Novo Aluno
-          </button>
+          </Button>
         </div>
 
         {/* Student List */}
