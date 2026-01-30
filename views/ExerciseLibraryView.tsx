@@ -19,12 +19,51 @@ const ExerciseLibraryView: React.FC = () => {
     const [selectedMuscle, setSelectedMuscle] = useState('Todos');
     const [selectedCategory, setSelectedCategory] = useState('Todas');
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [editingExercise, setEditingExercise] = useState<Exercise | null>(null);
+    const [selectedVideoUrl, setSelectedVideoUrl] = useState<string | null>(null);
     const [newExercise, setNewExercise] = useState({ name: '', muscle_group: 'Abdômen', category: 'Musculação', video_url: '' });
+
+    const getYouTubeEmbedUrl = (url: string) => {
+        let videoId = '';
+        if (url.includes('v=')) {
+            videoId = url.split('v=')[1]?.split('&')[0];
+        } else if (url.includes('youtu.be/')) {
+            videoId = url.split('youtu.be/')[1]?.split('?')[0];
+        }
+        return videoId ? `https://www.youtube.com/embed/${videoId}?autoplay=1` : null;
+    };
+
+    const handleDelete = async (id: string) => {
+        if (!confirm('Tem certeza que deseja excluir este exercício?')) return;
+
+        try {
+            const { error } = await supabase
+                .from('exercise_library')
+                .delete()
+                .eq('id', id);
+
+            if (error) throw error;
+            setExercises(prev => prev.filter(ex => ex.id !== id));
+        } catch (err: any) {
+            console.error('Error deleting exercise:', err);
+            alert('Erro ao excluir exercício: ' + err.message);
+        }
+    };
+
+    const handleEdit = (exercise: Exercise) => {
+        setEditingExercise(exercise);
+        setNewExercise({
+            name: exercise.name,
+            muscle_group: exercise.muscle_group || 'Abdômen',
+            category: exercise.category || 'Musculação',
+            video_url: exercise.videoUrl || ''
+        });
+        setIsModalOpen(true);
+    };
 
     const handleSave = async () => {
         if (!newExercise.name || !newExercise.video_url) return;
 
-        // Auto-extract thumbnail from YouTube link
         let thumbnailUrl = '';
         try {
             const videoId = newExercise.video_url.split('v=')[1]?.split('&')[0];
@@ -37,30 +76,40 @@ const ExerciseLibraryView: React.FC = () => {
         } catch (e) { }
 
         try {
-            const { error } = await supabase
-                .from('exercise_library')
-                .insert([{
-                    name: newExercise.name,
-                    muscle_group: newExercise.muscle_group,
-                    category: newExercise.category,
-                    video_url: newExercise.video_url,
-                    thumbnail_url: thumbnailUrl
-                }]);
+            if (editingExercise) {
+                const { error } = await supabase
+                    .from('exercise_library')
+                    .update({
+                        name: newExercise.name,
+                        muscle_group: newExercise.muscle_group,
+                        category: newExercise.category,
+                        video_url: newExercise.video_url,
+                        thumbnail_url: thumbnailUrl
+                    })
+                    .eq('id', editingExercise.id);
 
-            if (error) {
-                console.error('Supabase error:', error);
-                alert(`Erro ao salvar: ${error.message}. Verifique se a tabela 'exercise_library' existe no Supabase.`);
-                throw error;
+                if (error) throw error;
+            } else {
+                const { error } = await supabase
+                    .from('exercise_library')
+                    .insert([{
+                        name: newExercise.name,
+                        muscle_group: newExercise.muscle_group,
+                        category: newExercise.category,
+                        video_url: newExercise.video_url,
+                        thumbnail_url: thumbnailUrl
+                    }]);
+
+                if (error) throw error;
             }
 
             setIsModalOpen(false);
+            setEditingExercise(null);
             setNewExercise({ name: '', muscle_group: 'Abdômen', category: 'Musculação', video_url: '' });
             window.location.reload();
         } catch (err: any) {
             console.error('Error saving exercise:', err);
-            if (!err.message?.includes('exercise_library')) {
-                alert('Erro ao salvar. Verifique se você criou a tabela no Supabase conforme as instruções.');
-            }
+            alert(`Erro ao salvar: ${err.message}`);
         }
     };
 
@@ -224,8 +273,11 @@ const ExerciseLibraryView: React.FC = () => {
                         </div>
                     ) : filteredExercises.length > 0 ? (
                         filteredExercises.map(ex => (
-                            <div key={ex.id} className="bg-white/[0.03] border border-white/5 rounded-3xl p-4 flex gap-5 items-center hover:border-primary/30 transition-all group active:scale-[0.98]">
-                                <div className="relative w-32 aspect-video rounded-2xl overflow-hidden shadow-2xl flex-shrink-0">
+                            <div key={ex.id} className="bg-white/[0.03] border border-white/5 rounded-3xl p-4 flex gap-5 items-center hover:border-primary/30 transition-all group">
+                                <div
+                                    className="relative w-32 aspect-video rounded-2xl overflow-hidden shadow-2xl flex-shrink-0 cursor-pointer active:scale-95 transition-transform"
+                                    onClick={() => ex.videoUrl && setSelectedVideoUrl(ex.videoUrl)}
+                                >
                                     <img
                                         src={ex.thumbnailUrl}
                                         alt={ex.name}
@@ -237,16 +289,30 @@ const ExerciseLibraryView: React.FC = () => {
                                         </div>
                                     </div>
                                 </div>
-                                <div className="flex-1 min-w-0">
+                                <div
+                                    className="flex-1 min-w-0 cursor-pointer"
+                                    onClick={() => ex.videoUrl && setSelectedVideoUrl(ex.videoUrl)}
+                                >
                                     <h3 className="text-white font-black text-lg tracking-tight truncate group-hover:text-primary transition-colors">{ex.name}</h3>
                                     <div className="flex flex-wrap gap-2 mt-2">
                                         <span className="px-2 py-1 bg-white/5 border border-white/10 rounded-lg text-[8px] font-black uppercase tracking-widest text-slate-400">{ex.muscle_group || 'Musculação'}</span>
                                         <span className="px-2 py-1 bg-white/5 border border-white/10 rounded-lg text-[8px] font-black uppercase tracking-widest text-slate-400">{ex.category || 'Geral'}</span>
                                     </div>
                                 </div>
-                                <button className="text-slate-600 hover:text-yellow-500 transition-colors">
-                                    <span className="material-symbols-outlined text-2xl">star</span>
-                                </button>
+                                <div className="flex gap-2">
+                                    <button
+                                        onClick={() => handleEdit(ex)}
+                                        className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-slate-500 hover:text-primary hover:border-primary/50 transition-all"
+                                    >
+                                        <span className="material-symbols-outlined text-xl">edit</span>
+                                    </button>
+                                    <button
+                                        onClick={() => handleDelete(ex.id)}
+                                        className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-slate-500 hover:text-red-500 hover:border-red-500/50 transition-all"
+                                    >
+                                        <span className="material-symbols-outlined text-xl">delete</span>
+                                    </button>
+                                </div>
                             </div>
                         ))
                     ) : (
@@ -258,13 +324,13 @@ const ExerciseLibraryView: React.FC = () => {
                 </div>
             </main>
 
-            {/* Create Modal */}
+            {/* Create/Edit Modal */}
             {isModalOpen && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-background-dark/95 backdrop-blur-sm">
                     <div className="w-full max-w-md bg-card-dark border border-white/10 rounded-[2.5rem] p-8 space-y-6 shadow-glow-lg">
                         <div className="flex justify-between items-center">
-                            <h2 className="text-2xl font-black text-white uppercase tracking-tighter">Novo Exercício</h2>
-                            <button onClick={() => setIsModalOpen(false)} className="text-slate-500 hover:text-white">
+                            <h2 className="text-2xl font-black text-white uppercase tracking-tighter">{editingExercise ? 'Editar Exercício' : 'Novo Exercício'}</h2>
+                            <button onClick={() => { setIsModalOpen(false); setEditingExercise(null); }} className="text-slate-500 hover:text-white">
                                 <span className="material-symbols-outlined">close</span>
                             </button>
                         </div>
@@ -318,8 +384,36 @@ const ExerciseLibraryView: React.FC = () => {
                             onClick={handleSave}
                             className="w-full h-16 bg-primary text-background-dark font-black uppercase tracking-widest rounded-2xl shadow-glow active:scale-95 transition-all"
                         >
-                            Salvar Exercício
+                            {editingExercise ? 'Salvar Alterações' : 'Salvar Exercício'}
                         </button>
+                    </div>
+                </div>
+            )}
+
+            {/* Video Modal */}
+            {selectedVideoUrl && (
+                <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-background-dark/98 backdrop-blur-xl">
+                    <div className="w-full max-w-4xl aspect-video bg-black rounded-[2rem] overflow-hidden border border-white/10 shadow-glow-lg relative">
+                        <button
+                            onClick={() => setSelectedVideoUrl(null)}
+                            className="absolute top-4 right-4 z-10 w-12 h-12 rounded-full bg-black/50 backdrop-blur-md border border-white/10 text-white flex items-center justify-center hover:bg-primary hover:text-background-dark transition-all"
+                        >
+                            <span className="material-symbols-outlined">close</span>
+                        </button>
+
+                        {getYouTubeEmbedUrl(selectedVideoUrl) ? (
+                            <iframe
+                                src={getYouTubeEmbedUrl(selectedVideoUrl)!}
+                                className="w-full h-full"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowFullScreen
+                            />
+                        ) : (
+                            <div className="w-full h-full flex flex-col items-center justify-center text-slate-500">
+                                <span className="material-symbols-outlined text-6xl mb-4">video_off</span>
+                                <p className="font-black uppercase tracking-widest">Link de vídeo inválido</p>
+                            </div>
+                        )}
                     </div>
                 </div>
             )}
