@@ -1,26 +1,42 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '../src/lib/supabase';
-import { Workout, Exercise } from '../types';
+import { useStudent } from '../contexts/AuthContext'; // Using auth context for trainer info or student context? 
+// Actually using student context is better to find the student by ID
+import { useStudent as useStudentData } from '../contexts/StudentContext';
+import { Exercise } from '../types';
 import { Button } from '../src/components/ui/Button';
+import { Card } from '../src/components/ui/Card';
+import { cn } from '../src/lib/utils';
+import {
+  MoreVertical, Eye, Play, Plus, Trash2,
+  ChevronDown, ChevronUp, Loader2, Download,
+  TrendingUp, AutoAwesome, GripVertical, Copy
+} from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
-const WorkoutEditorView: React.FC = () => {
+export default function WorkoutEditorView() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const dayId = searchParams.get('dayId');
+  const { students } = useStudentData();
 
   const [workout, setWorkout] = useState<any>(null);
   const [workoutDay, setWorkoutDay] = useState<any>(null);
   const [exercises, setExercises] = useState<Exercise[]>([]);
   const [loading, setLoading] = useState(true);
+  const [expandAll, setExpandAll] = useState(true);
+  const [showGuidelines, setShowGuidelines] = useState(false);
+
+  const student = students.find(s => s.id === workout?.student_id);
 
   useEffect(() => {
     const fetchData = async () => {
       if (!id) return;
       setLoading(true);
       try {
-        // Fetch workout details
+        // Fetch workout
         const { data: workoutData, error: workoutError } = await supabase
           .from('workouts')
           .select('*')
@@ -30,15 +46,14 @@ const WorkoutEditorView: React.FC = () => {
         if (workoutError) throw workoutError;
         setWorkout(workoutData);
 
-        // Fetch workout day if dayId exists
+        // Fetch workout day
         if (dayId) {
           const { data: dayData, error: dayError } = await supabase
             .from('workout_days')
             .select('*')
             .eq('id', dayId)
             .single();
-          if (dayError) throw dayError;
-          setWorkoutDay(dayData);
+          if (!dayError) setWorkoutDay(dayData);
         }
 
         // Fetch exercises
@@ -58,8 +73,7 @@ const WorkoutEditorView: React.FC = () => {
 
         if (exercisesError) throw exercisesError;
 
-        // Map DB snake_case to frontend camelCase
-        const mappedExercises: Exercise[] = (exercisesData || []).map(ex => ({
+        const mapped = (exercisesData || []).map(ex => ({
           id: ex.id,
           name: ex.name,
           sets: ex.sets,
@@ -70,16 +84,16 @@ const WorkoutEditorView: React.FC = () => {
           thumbnailUrl: ex.thumbnail_url
         }));
 
-        setExercises(mappedExercises);
+        setExercises(mapped);
       } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error('Error fetching editor data:', error);
       } finally {
         setLoading(false);
       }
     };
 
     fetchData();
-  }, [id]);
+  }, [id, dayId]);
 
   const handleAddExercise = async () => {
     if (!id) return;
@@ -95,20 +109,20 @@ const WorkoutEditorView: React.FC = () => {
           load: '0',
           rest: '60s'
         }])
-        .select();
+        .select()
+        .single();
 
       if (error) throw error;
 
-      const newEx = data[0];
       setExercises(prev => [...prev, {
-        id: newEx.id,
-        name: newEx.name,
-        sets: newEx.sets,
-        reps: newEx.reps,
-        load: newEx.load,
-        rest: newEx.rest,
-        videoUrl: newEx.video_url,
-        thumbnailUrl: newEx.thumbnail_url
+        id: data.id,
+        name: data.name,
+        sets: data.sets,
+        reps: data.reps,
+        load: data.load,
+        rest: data.rest,
+        videoUrl: data.video_url,
+        thumbnailUrl: data.thumbnail_url
       }]);
     } catch (error) {
       console.error('Error adding exercise:', error);
@@ -116,10 +130,8 @@ const WorkoutEditorView: React.FC = () => {
   };
 
   const handleUpdateExercise = async (exId: string, updates: Partial<Exercise>) => {
-    // Optimistic update
     setExercises(prev => prev.map(ex => ex.id === exId ? { ...ex, ...updates } : ex));
 
-    // DB update (snake_case)
     const dbUpdates: any = {};
     if (updates.name !== undefined) dbUpdates.name = updates.name;
     if (updates.sets !== undefined) dbUpdates.sets = updates.sets;
@@ -129,185 +141,238 @@ const WorkoutEditorView: React.FC = () => {
     if (updates.videoUrl !== undefined) dbUpdates.video_url = updates.videoUrl;
 
     try {
-      const { error } = await supabase
-        .from('exercises')
-        .update(dbUpdates)
-        .eq('id', exId);
-
-      if (error) throw error;
+      await supabase.from('exercises').update(dbUpdates).eq('id', exId);
     } catch (error) {
       console.error('Error updating exercise:', error);
-      // Revert on error if needed
     }
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-background-dark flex items-center justify-center">
-        <span className="material-symbols-outlined animate-spin text-primary text-5xl">progress_activity</span>
-      </div>
-    );
-  }
-
   const handleDeleteExercise = async (exId: string) => {
     try {
-      const { error } = await supabase
-        .from('exercises')
-        .delete()
-        .eq('id', exId);
-
-      if (error) throw error;
+      await supabase.from('exercises').delete().eq('id', exId);
       setExercises(prev => prev.filter(ex => ex.id !== exId));
     } catch (error) {
       console.error('Error deleting exercise:', error);
     }
   };
 
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background-dark flex items-center justify-center">
+        <Loader2 className="h-10 w-10 text-primary animate-spin" />
+      </div>
+    );
+  }
+
   return (
-    <div className="flex flex-col min-h-screen bg-background-dark">
-      <header className="sticky top-0 z-50 bg-card-header/80 backdrop-blur-md p-6 border-b border-white/5">
-        <div className="flex items-center justify-between max-w-lg mx-auto">
-          <button onClick={() => navigate(-1)} className="text-primary hover:text-white transition-colors group">
-            <span className="material-symbols-outlined group-hover:-translate-x-1 transition-transform">arrow_back_ios</span>
-          </button>
-          <h2 className="text-white text-lg font-black tracking-widest uppercase">{workoutDay?.name || workout?.name || 'Editor de Exercícios'}</h2>
-          <button className="text-slate-500 hover:text-white transition-colors">
-            <span className="material-symbols-outlined">more_vert</span>
-          </button>
+    <div className="flex flex-col min-h-screen bg-background-dark text-white pb-12">
+      {/* Header */}
+      <header className="bg-card-header px-6 pt-12 pb-16 border-b border-white/5 relative overflow-hidden">
+        <button
+          onClick={() => navigate(-1)}
+          className="flex items-center gap-1 text-primary mb-8 group relative z-10"
+        >
+          <span className="material-symbols-outlined !text-xl group-hover:-translate-x-1 transition-transform">chevron_left</span>
+          <span className="text-sm font-black uppercase tracking-widest">Voltar</span>
+        </button>
+
+        <div className="flex items-center gap-5 relative z-10">
+          <img
+            src={student?.image_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(student?.name || 'Aluno')}&background=random`}
+            alt={student?.name}
+            className="size-16 rounded-2xl border-2 border-white/10 object-cover shadow-2xl"
+          />
+          <h1 className="text-2xl font-black text-white uppercase tracking-tight">{student?.name || 'Aluno'}</h1>
         </div>
       </header>
 
-      <main className="px-4 py-8 space-y-8 max-w-lg mx-auto w-full">
-        {/* Actions Bar */}
-        <div className="overflow-x-auto hide-scrollbar -mx-4 px-4">
-          <div className="flex gap-6 min-w-max pb-2">
-            {[
-              { label: 'Baixar treino', icon: 'download' },
-              { label: 'Visão aluno', icon: 'visibility' },
-              { label: 'Evolução', icon: 'trending_up' },
-              { label: 'MFITIA', icon: 'auto_awesome', highlight: true }
-            ].map((action, i) => (
-              <div
-                key={i}
-                className="flex flex-col items-center gap-3 py-2 w-24 cursor-pointer group"
-              >
-                <div className={`rounded-2xl p-4 transition-all ${action.highlight ? 'bg-primary shadow-glow scale-110' : 'bg-white/5 border border-white/5 hover:border-primary/30 group-hover:bg-white/10'}`}>
-                  <span className={`material-symbols-outlined ${action.highlight ? 'text-background-dark font-black' : 'text-slate-400 group-hover:text-primary'}`}>{action.icon}</span>
-                </div>
-                <p className={`text-[9px] font-black uppercase tracking-[0.2em] text-center ${action.highlight ? 'text-primary' : 'text-slate-500 group-hover:text-white'}`}>
-                  {action.label}
-                </p>
-              </div>
+      <div className="px-4 -mt-8 space-y-6 relative z-10">
+        {/* Action Grid */}
+        <div className="bg-white rounded-3xl p-6 shadow-2xl grid grid-cols-4 gap-2">
+          <EditorAction icon={Download} label="Baixar treino" />
+          <EditorAction icon={Eye} label="Visão do aluno" />
+          <EditorAction icon={TrendingUp} label="Evolução de cargas" />
+          <EditorAction icon={AutoAwesome} label="Prescrever com MFITIA" active />
+        </div>
+
+        {/* Guidelines */}
+        <button
+          onClick={() => setShowGuidelines(!showGuidelines)}
+          className="w-full bg-white rounded-2xl p-4 flex justify-between items-center text-black font-bold shadow-lg"
+        >
+          <span className="text-sm">Orientações gerais</span>
+          {showGuidelines ? <ChevronUp className="text-gray-400" /> : <ChevronDown className="text-gray-400" />}
+        </button>
+
+        {/* Add Exercise */}
+        <Button
+          variant="premium"
+          className="w-full h-14 rounded-2xl text-md font-black uppercase tracking-widest"
+          onClick={handleAddExercise}
+        >
+          Adicionar Exercício
+        </Button>
+
+        {/* Workout Title and Toggle All */}
+        <div className="space-y-4">
+          <div className="flex justify-between items-end px-2">
+            <div>
+              <p className="text-primary text-[10px] font-black uppercase tracking-widest mb-1">
+                {workoutDay?.name || 'Geral'}
+              </p>
+              <h2 className="text-xl font-black text-white uppercase tracking-tight">
+                {workoutDay?.subtitle || workout?.name}
+              </h2>
+            </div>
+            <button
+              onClick={() => setExpandAll(!expandAll)}
+              className="text-primary text-[10px] font-black uppercase tracking-widest flex items-center gap-1 mb-1"
+            >
+              {expandAll ? 'Recolher todos' : 'Expandir todos'}
+              <ChevronDown className={cn("transition-transform", expandAll && "rotate-180")} size={14} />
+            </button>
+          </div>
+
+          {/* Exercise List */}
+          <div className="space-y-3">
+            {exercises.map((ex) => (
+              <ExerciseItem
+                key={ex.id}
+                exercise={ex}
+                initialExpanded={expandAll}
+                onUpdate={handleUpdateExercise}
+                onDelete={handleDeleteExercise}
+              />
             ))}
           </div>
         </div>
+      </div>
+    </div>
+  );
+}
 
-        {/* Add Button */}
-        <Button
-          onClick={handleAddExercise}
-          variant="premium"
-          className="w-full h-16 rounded-[1.5rem] text-sm"
-        >
-          <span className="material-symbols-outlined text-2xl font-black mr-3">add_circle</span>
-          <span>Adicionar Exercício</span>
-        </Button>
+function EditorAction({ icon: Icon, label, active }: { icon: any, label: string, active?: boolean }) {
+  return (
+    <div className="flex flex-col items-center gap-2 cursor-pointer group">
+      <div className={cn(
+        "size-12 rounded-full flex items-center justify-center transition-all",
+        active ? "bg-primary/10 text-primary border-2 border-primary/20" : "bg-primary/5 text-primary"
+      )}>
+        <Icon size={20} className={cn(active && "animate-pulse")} />
+      </div>
+      <p className={cn(
+        "text-[9px] font-black uppercase tracking-tight text-center leading-tight max-w-[60px]",
+        active ? "text-primary" : "text-slate-400 group-hover:text-primary"
+      )}>
+        {label}
+      </p>
+    </div>
+  );
+}
 
-        {/* Exercise List */}
-        <div className="space-y-6">
-          {exercises.map((ex) => (
-            <div key={ex.id} className="bg-white/5 border border-white/10 rounded-[2rem] overflow-hidden shadow-2xl animate-kinetic-reveal">
-              <div className="flex items-center p-6 pb-2">
-                <span className="material-symbols-outlined text-slate-600 cursor-grab active:cursor-grabbing">drag_indicator</span>
-                <input
-                  type="text"
-                  value={ex.name}
-                  onChange={(e) => handleUpdateExercise(ex.id, { name: e.target.value })}
-                  className="bg-transparent border-none text-white text-xl font-black tracking-tight ml-4 flex-1 outline-none focus:text-primary transition-colors"
+function ExerciseItem({ exercise, initialExpanded, onUpdate, onDelete }: {
+  exercise: Exercise,
+  initialExpanded: boolean,
+  onUpdate: (id: string, updates: Partial<Exercise>) => void,
+  onDelete: (id: string) => void
+}) {
+  const [expanded, setExpanded] = useState(initialExpanded);
+
+  useEffect(() => {
+    setExpanded(initialExpanded);
+  }, [initialExpanded]);
+
+  return (
+    <Card className="bg-white border-none p-0 overflow-hidden rounded-2xl shadow-lg transition-all">
+      {/* Collapsed Header */}
+      <div
+        className="p-4 flex items-center gap-4 cursor-pointer"
+        onClick={() => setExpanded(!expanded)}
+      >
+        <GripVertical className="text-gray-300" size={20} />
+        <div className="size-5 border-2 border-gray-200 rounded-md" />
+        <span className="flex-1 font-bold text-black text-sm uppercase tracking-tight">{exercise.name}</span>
+        <div className="flex items-center gap-2">
+          <button className="p-1 hover:bg-gray-100 rounded-lg">
+            <MoreVertical className="text-gray-400" size={18} />
+          </button>
+          {expanded ? <ChevronUp className="text-gray-400" size={18} /> : <ChevronDown className="text-gray-400" size={18} />}
+        </div>
+      </div>
+
+      {/* Expanded Body */}
+      <AnimatePresence>
+        {expanded && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            className="overflow-hidden bg-white border-t border-gray-50"
+          >
+            <div className="p-4 space-y-6">
+              {/* Video Container */}
+              <div className="relative aspect-video bg-black rounded-xl overflow-hidden group cursor-pointer">
+                <img
+                  src={exercise.thumbnailUrl || 'https://picsum.photos/800/450?fitness'}
+                  className="w-full h-full object-cover opacity-60 group-hover:opacity-80 transition-opacity"
                 />
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="size-16 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/30 group-hover:scale-110 transition-transform shadow-2xl">
+                    <Play className="text-white fill-white ml-1" size={32} />
+                  </div>
+                </div>
+              </div>
+
+              {/* Controls Grid */}
+              <div className="flex gap-4 items-end">
+                <div className="flex-1 grid grid-cols-3 gap-3">
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest pl-1">Série/rep</label>
+                    <input
+                      value={exercise.reps}
+                      onChange={(e) => onUpdate(exercise.id, { reps: e.target.value })}
+                      className="w-full h-12 bg-gray-50 border-none rounded-xl text-center font-black text-black focus:ring-2 focus:ring-primary/20"
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest pl-1">Carga</label>
+                    <input
+                      value={exercise.load}
+                      onChange={(e) => onUpdate(exercise.id, { load: e.target.value })}
+                      className="w-full h-12 bg-gray-50 border-none rounded-xl text-center font-black text-black focus:ring-2 focus:ring-primary/20"
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest pl-1">Intervalo</label>
+                    <input
+                      value={exercise.rest}
+                      onChange={(e) => onUpdate(exercise.id, { rest: e.target.value })}
+                      className="w-full h-12 bg-gray-50 border-none rounded-xl text-center font-black text-black focus:ring-2 focus:ring-primary/20"
+                    />
+                  </div>
+                </div>
                 <button
-                  onClick={() => handleDeleteExercise(ex.id)}
-                  className="text-slate-600 hover:text-red-500 transition-colors ml-2"
+                  onClick={() => onDelete(exercise.id)}
+                  className="p-3 text-red-500 hover:bg-red-50 rounded-2xl transition-colors mb-0.5"
                 >
-                  <span className="material-symbols-outlined">delete</span>
+                  <Trash2 size={22} />
                 </button>
               </div>
 
-              <div className="p-6 pt-2">
-                <div
-                  className="relative flex items-center justify-center bg-zinc-800 bg-cover bg-center aspect-video rounded-3xl overflow-hidden group shadow-inner border border-white/5"
-                  style={{ backgroundImage: `url("${ex.thumbnailUrl || 'https://picsum.photos/600/400?fitness'}")` }}
-                >
-                  <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-all"></div>
-                  <button className="relative z-10 flex items-center justify-center rounded-full size-20 bg-white/10 backdrop-blur-xl text-white border border-white/20 hover:scale-110 transition-transform shadow-2xl">
-                    <span className="material-symbols-outlined text-4xl fill-1">play_arrow</span>
-                  </button>
-
-                  {/* Video URL Input Overlay (Subtle) */}
-                  <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <div className="flex bg-black/60 backdrop-blur-md rounded-full px-3 py-1.5 border border-white/10">
-                      <span className="material-symbols-outlined text-xs text-primary mr-2">link</span>
-                      <input
-                        placeholder="Link do vídeo..."
-                        value={ex.videoUrl || ''}
-                        onChange={(e) => handleUpdateExercise(ex.id, { videoUrl: e.target.value })}
-                        className="bg-transparent border-none text-[10px] text-white outline-none w-24"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Inputs Grid */}
-                <div className="grid grid-cols-3 gap-4 mt-8">
-                  <div className="space-y-2">
-                    <label className="text-[10px] uppercase font-black tracking-widest text-slate-500 ml-1 text-center block">Séries</label>
-                    <input
-                      type="number"
-                      className="w-full bg-white/5 border border-white/10 rounded-2xl h-14 px-4 text-white text-sm font-bold focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all text-center"
-                      value={ex.sets}
-                      onChange={(e) => handleUpdateExercise(ex.id, { sets: parseInt(e.target.value) || 0 })}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-[10px] uppercase font-black tracking-widest text-slate-500 ml-1 text-center block">Reps</label>
-                    <input
-                      className="w-full bg-white/5 border border-white/10 rounded-2xl h-14 px-4 text-white text-sm font-bold focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all text-center"
-                      value={ex.reps}
-                      onChange={(e) => handleUpdateExercise(ex.id, { reps: e.target.value })}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-[10px] uppercase font-black tracking-widest text-slate-500 ml-1 text-center block">Carga</label>
-                    <input
-                      className="w-full bg-white/5 border border-white/10 rounded-2xl h-14 px-4 text-white text-sm font-bold focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all text-center"
-                      value={ex.load}
-                      onChange={(e) => handleUpdateExercise(ex.id, { load: e.target.value })}
-                    />
-                  </div>
-                </div>
-
-                <div className="mt-4">
-                  <label className="text-[10px] uppercase font-black tracking-widest text-slate-500 ml-1 mb-2 block">Intervalo de Descanso</label>
-                  <input
-                    className="w-full bg-white/5 border border-white/10 rounded-2xl h-14 px-6 text-white text-sm font-bold focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all"
-                    value={ex.rest}
-                    onChange={(e) => handleUpdateExercise(ex.id, { rest: e.target.value })}
-                    placeholder="Ex: 60s"
-                  />
-                </div>
+              {/* Bottom Buttons */}
+              <div className="flex gap-4">
+                <Button className="flex-1 h-12 rounded-xl text-[11px] font-black uppercase tracking-widest bg-primary hover:bg-primary-dark">
+                  Adicionar série
+                </Button>
+                <Button variant="outline" className="flex-1 h-12 rounded-xl text-[11px] font-black uppercase tracking-widest border-primary text-primary hover:bg-primary/5 flex items-center justify-center gap-2">
+                  <Copy size={16} />
+                  Replicar séries
+                </Button>
               </div>
             </div>
-          ))}
-        </div>
-
-        {exercises.length === 0 && (
-          <div className="py-20 text-center space-y-4 opacity-30">
-            <span className="material-symbols-outlined text-6xl">fitness_center</span>
-            <p className="font-black uppercase tracking-[0.2em] text-sm">Nenhum exercício adicionado</p>
-          </div>
+          </motion.div>
         )}
-      </main>
-    </div>
+      </AnimatePresence>
+    </Card>
   );
-};
-
-export default WorkoutEditorView;
+}
