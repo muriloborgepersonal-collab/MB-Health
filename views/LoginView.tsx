@@ -72,7 +72,7 @@ const LoginView: React.FC = () => {
 
             {/* Background Ambience */}
             <div className="absolute top-[-20%] left-[-20%] w-[100%] h-[100%] bg-primary/10 rounded-full blur-[150px] pointer-events-none opacity-50"></div>
-            <div className="absolute bottom-[-20%] right-[-20%] w-[80%] h-[80%] bg-blue-900/10 rounded-full blur-[120px] pointer-events-none opacity-30"></div>
+            <div className="absolute bottom-[-20%] right-[-20%] w-[80%] h-[80%] bg-primary/5 rounded-full blur-[120px] pointer-events-none opacity-30"></div>
             <div className="absolute top-0 left-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-[0.03] pointer-events-none"></div>
 
             <div className="w-full max-w-sm relative z-10 flex flex-col items-center">
@@ -99,7 +99,7 @@ const LoginView: React.FC = () => {
                                 opacity: [0.1, 0.2, 0.1]
                             }}
                             transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-                            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[200%] h-[200%] bg-blue-500/5 rounded-full blur-[100px]"
+                            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[200%] h-[200%] bg-primary/5 rounded-full blur-[100px]"
                         ></motion.div>
                     </div>
 

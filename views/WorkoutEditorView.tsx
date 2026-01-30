@@ -166,7 +166,7 @@ const WorkoutEditorView: React.FC = () => {
                 key={i}
                 className="flex flex-col items-center gap-3 py-2 w-24 cursor-pointer group"
               >
-                <div className={`rounded-2xl p-4 transition-all ${action.highlight ? 'bg-gradient-to-tr from-primary to-blue-600 shadow-glow scale-110' : 'bg-white/5 border border-white/5 hover:border-primary/30 group-hover:bg-white/10'}`}>
+                <div className={`rounded-2xl p-4 transition-all ${action.highlight ? 'bg-primary shadow-glow scale-110' : 'bg-white/5 border border-white/5 hover:border-primary/30 group-hover:bg-white/10'}`}>
                   <span className={`material-symbols-outlined ${action.highlight ? 'text-background-dark font-black' : 'text-slate-400 group-hover:text-primary'}`}>{action.icon}</span>
                 </div>
                 <p className={`text-[9px] font-black uppercase tracking-[0.2em] text-center ${action.highlight ? 'text-primary' : 'text-slate-500 group-hover:text-white'}`}>

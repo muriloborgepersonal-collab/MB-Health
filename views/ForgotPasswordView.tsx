@@ -38,7 +38,7 @@ const ForgotPasswordView: React.FC = () => {
             <div className="min-h-screen bg-background-dark flex flex-col items-center justify-center p-6 relative overflow-hidden">
                 {/* Background Ambience */}
                 <div className="absolute top-[-20%] left-[-20%] w-[100%] h-[100%] bg-primary/10 rounded-full blur-[150px] pointer-events-none opacity-50"></div>
-                <div className="absolute bottom-[-20%] right-[-20%] w-[80%] h-[80%] bg-blue-900/10 rounded-full blur-[120px] pointer-events-none opacity-30"></div>
+                <div className="absolute bottom-[-20%] right-[-20%] w-[80%] h-[80%] bg-primary/5 rounded-full blur-[120px] pointer-events-none opacity-30"></div>
                 <div className="absolute top-0 left-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-[0.03] pointer-events-none"></div>
 
                 <div className="w-full max-w-sm relative z-10 flex flex-col items-center text-center">
@@ -65,7 +65,7 @@ const ForgotPasswordView: React.FC = () => {
 
             {/* Background Ambience */}
             <div className="absolute top-[-20%] left-[-20%] w-[100%] h-[100%] bg-primary/10 rounded-full blur-[150px] pointer-events-none opacity-50"></div>
-            <div className="absolute bottom-[-20%] right-[-20%] w-[80%] h-[80%] bg-blue-900/10 rounded-full blur-[120px] pointer-events-none opacity-30"></div>
+            <div className="absolute bottom-[-20%] right-[-20%] w-[80%] h-[80%] bg-primary/5 rounded-full blur-[120px] pointer-events-none opacity-30"></div>
             <div className="absolute top-0 left-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-[0.03] pointer-events-none"></div>
 
             <div className="w-full max-w-sm relative z-10 flex flex-col items-center">
