@@ -2,6 +2,7 @@
 import React, { useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useStudent } from '../contexts/StudentContext';
+import { Button } from '../src/components/ui/Button';
 
 const StudentDetailView: React.FC = () => {
   const { id } = useParams();
@@ -126,24 +127,20 @@ const StudentDetailView: React.FC = () => {
       <main className="flex-1 px-4 -mt-12 pb-24 space-y-4">
         {/* Tabs Container */}
         <div className="flex gap-3 bg-card-dark/50 backdrop-blur-xl p-1.5 rounded-[1.5rem] border border-white/5 shadow-2xl">
-          <button
+          <Button
             onClick={() => setActiveTab('inicio')}
-            className={`flex-1 h-12 rounded-2xl font-black uppercase tracking-widest text-[10px] transition-all ${activeTab === 'inicio'
-              ? 'bg-primary text-background-dark shadow-glow'
-              : 'text-slate-500 hover:text-white'
-              }`}
+            variant={activeTab === 'inicio' ? 'premium' : 'glass'}
+            className="flex-1 h-12 rounded-2xl text-[10px]"
           >
             Início
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={() => setActiveTab('opcoes')}
-            className={`flex-1 h-12 rounded-2xl font-black uppercase tracking-widest text-[10px] transition-all ${activeTab === 'opcoes'
-              ? 'bg-primary text-background-dark shadow-glow'
-              : 'text-slate-500 hover:text-white'
-              }`}
+            variant={activeTab === 'opcoes' ? 'premium' : 'glass'}
+            className="flex-1 h-12 rounded-2xl text-[10px]"
           >
             Opções
-          </button>
+          </Button>
         </div>
 
         {/* Content Card */}
