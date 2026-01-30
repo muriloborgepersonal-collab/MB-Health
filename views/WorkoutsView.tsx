@@ -53,8 +53,9 @@ const WorkoutsView: React.FC = () => {
               onClick={() => {
                 if (card.label === 'Biblioteca de Exercícios') {
                   navigate('/exercises-library');
+                } else if (card.label === 'Relatório de Frequência') {
+                  navigate('/frequency-report');
                 } else {
-                  // Fallback for other cards if needed, current labels point to general workouts/frequency
                   navigate('/workouts');
                 }
               }}

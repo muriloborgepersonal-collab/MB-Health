@@ -23,6 +23,7 @@ import WorkoutUpdatesView from './views/WorkoutUpdatesView';
 import NotificationsView from './views/NotificationsView';
 import CreateNotificationSelectionView from './views/CreateNotificationSelectionView';
 import ExerciseLibraryView from './views/ExerciseLibraryView';
+import FrequencyReportView from './views/FrequencyReportView';
 import WorkoutEditorView from './views/WorkoutEditorView';
 import RoutineCreateView from './views/RoutineCreateView';
 import StudentWorkoutsView from './views/StudentWorkoutsView';
