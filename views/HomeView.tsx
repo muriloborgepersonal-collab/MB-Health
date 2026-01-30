@@ -88,16 +88,6 @@ const HomeView: React.FC = () => {
                 <p className="text-slate-400 text-sm font-bold uppercase tracking-widest mb-1">Total de Alunos</p>
                 <div className="flex items-end justify-between">
                   <h4 className="text-5xl font-black text-white tracking-tighter">{totalStudents}</h4>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      navigate('/subscriptions');
-                    }}
-                    className="mb-1 flex items-center gap-2 px-4 py-2 bg-primary/10 border border-primary/30 rounded-xl text-primary text-[10px] font-black uppercase tracking-widest hover:bg-primary hover:text-background-dark transition-all"
-                  >
-                    <span className="material-symbols-outlined text-lg">payments</span>
-                    Assinantes
-                  </button>
                 </div>
               </div>
               <div className="flex items-center gap-10 border-t border-white/10 pt-8">
