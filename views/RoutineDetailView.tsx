@@ -192,13 +192,13 @@ export default function RoutineDetailView() {
 
                 {/* Actions */}
                 <div className="flex gap-4">
-                    <Button variant="glass" className="flex-1 gap-2 h-14 rounded-2xl text-[10px]">
+                    <Button variant="glass" className="flex-1 gap-2 h-14 rounded-2xl text-[10px] uppercase font-black tracking-widest border-primary/20">
                         <ArrowUpDown className="h-4 w-4 text-primary" />
                         Reordenar treinos
                     </Button>
                     <Button
                         variant="premium"
-                        className="flex-1 gap-2 h-14 rounded-2xl text-[10px]"
+                        className="flex-1 gap-2 h-14 rounded-2xl text-[10px] uppercase font-black tracking-widest"
                         onClick={handleAddWorkout}
                         disabled={isAddingWorkout}
                     >
@@ -234,41 +234,42 @@ function WorkoutCard({ title, subtitle, onClick }: { title: string, subtitle: st
 
     return (
         <Card className="bg-card-dark border-white/5 p-0 overflow-hidden rounded-[2.5rem] shadow-2xl relative">
-            <div
-                className="p-6 flex items-center justify-between cursor-pointer group"
-                onClick={onClick}
-            >
-                <div>
+            <div className="p-6 pb-2">
+                <div className="flex items-center justify-between mb-2">
                     <h4 className="text-white font-black text-xl uppercase tracking-tight group-hover:text-primary transition-colors">{title}</h4>
-                    <p className="text-slate-500 text-sm font-bold mt-1">{subtitle}</p>
+                    <MoreVertical className="text-slate-500 h-5 w-5" />
                 </div>
-                <MoreVertical className="text-slate-500 h-5 w-5" />
+                <p className="text-slate-500 text-sm font-bold">{subtitle}</p>
             </div>
 
-            <div className="px-6 pb-4">
+            <div className="px-6 pb-6 space-y-4">
                 <button
                     onClick={(e) => {
                         e.stopPropagation();
                         setExpanded(!expanded);
                     }}
-                    className="w-full flex bg-white/5 border border-white/10 rounded-2xl py-3 px-4 justify-between items-center text-white font-black text-[10px] uppercase tracking-widest hover:bg-white/10 transition-colors mb-4"
+                    className="w-full flex bg-white/5 border border-white/10 rounded-2xl py-3 px-4 justify-between items-center text-white font-black text-[10px] uppercase tracking-widest hover:bg-white/10 transition-colors"
                 >
                     <span>Orientações gerais</span>
                     {expanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
                 </button>
+
                 {expanded && (
-                    <div className="mb-4 text-xs font-bold text-slate-400 bg-white/5 p-4 rounded-2xl border border-white/5 animate-kinetic-reveal">
-                        Sem orientações específicas.
+                    <div className="text-xs font-bold text-slate-400 bg-white/5 p-4 rounded-2xl border border-white/5 animate-kinetic-reveal">
+                        Sem orientações específicas cadastradas para este treino.
                     </div>
                 )}
 
+                <div className="flex items-center gap-2 text-primary/50 text-[9px] font-black uppercase tracking-widest py-1">
+                    <Activity size={12} />
+                    <span>Executado 0 vezes • {new Date().toLocaleDateString('pt-BR')}</span>
+                </div>
+
                 <div className="flex gap-4">
-                    <Button variant="premium" className="flex-1 h-12 rounded-2xl text-[10px] gap-2">
-                        <Activity className="h-4 w-4" />
+                    <Button variant="premium" className="flex-1 h-12 rounded-2xl text-[10px] uppercase font-black tracking-widest lg:text-xs">
                         Evolução
                     </Button>
-                    <Button variant="glass" className="flex-1 h-12 rounded-2xl text-[10px] gap-2">
-                        <Eye className="h-4 w-4 text-primary" />
+                    <Button variant="glass" className="flex-1 h-12 rounded-2xl text-[10px] uppercase font-black tracking-widest lg:text-xs border-primary/20">
                         Feedbacks
                     </Button>
                 </div>
