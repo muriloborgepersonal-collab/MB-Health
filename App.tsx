@@ -93,11 +93,14 @@ const AppContent: React.FC = () => {
         <Route path="/routine/new/:studentId" element={
           <ProtectedRoute><RoutineCreateView /></ProtectedRoute>
         } />
-        <Route path="/profile" element={
-          <ProtectedRoute><ProfileView /></ProtectedRoute>
-        } />
         <Route path="/subscriptions" element={
           <ProtectedRoute><SubscriptionView /></ProtectedRoute>
+        } />
+        <Route path="/exercises-library" element={
+          <ProtectedRoute><ExerciseLibraryView /></ProtectedRoute>
+        } />
+        <Route path="/profile" element={
+          <ProtectedRoute><ProfileView /></ProtectedRoute>
         } />
       </Routes>
 
