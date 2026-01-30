@@ -43,8 +43,17 @@ const RoutineCreateView: React.FC = () => {
                 name: formData.name,
                 type: formData.type,
                 objective: formData.objective,
-                level: (formData.difficulty.charAt(0).toUpperCase() + formData.difficulty.slice(1)) as any,
-                dateRange: `${formData.startDate} - ${formData.endDate}`
+                level: ({
+                    'iniciante': 'Iniciante',
+                    'intermediario': 'Intermediário',
+                    'avancado': 'Avançado'
+                }[formData.difficulty] || 'Iniciante') as any,
+                dateRange: `${formData.startDate} - ${formData.endDate}`,
+                instructions: formData.instructions,
+                allowPdf: formData.allowPdf === 'sim',
+                showTime: formData.showTime === 'sim',
+                expireOnEnd: formData.expireOnEnd,
+                hideBeforeStart: formData.hideBeforeStart
             });
 
             console.log('Routine created with ID:', workoutId);

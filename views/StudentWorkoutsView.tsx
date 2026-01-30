@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useStudent } from '../contexts/StudentContext';
+import { supabase } from '../src/lib/supabase';
+import { Workout } from '../types';
 import { Button } from '../src/components/ui/Button';
 
 const StudentWorkoutsView: React.FC = () => {
@@ -10,15 +12,43 @@ const StudentWorkoutsView: React.FC = () => {
     const student = students.find(s => s.id === id);
     const [activeTab, setActiveTab] = useState<'rotinas' | 'aerobico'>('rotinas');
 
-    const routines = [
-        {
-            id: '1',
-            name: 'POWERBUILDING 5x bloco 5',
-            startDate: '02/01/2026',
-            endDate: '02/02/2026',
-            tags: ['Hipertrofia', 'Intermediário'],
-        }
-    ];
+    const [routines, setRoutines] = useState<Workout[]>([]);
+    const [loadingRoutines, setLoadingRoutines] = useState(true);
+
+    useEffect(() => {
+        const fetchRoutines = async () => {
+            if (!id) return;
+            setLoadingRoutines(true);
+            try {
+                const { data, error } = await supabase
+                    .from('workouts')
+                    .select('*')
+                    .eq('student_id', id)
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+
+                // Map snake_case to camelCase
+                const mapped: Workout[] = (data || []).map(w => ({
+                    id: w.id,
+                    name: w.name,
+                    type: w.type,
+                    objective: w.objective,
+                    level: w.level,
+                    dateRange: w.date_range,
+                    exercises: [] // We don't need exercises here
+                }));
+
+                setRoutines(mapped);
+            } catch (error) {
+                console.error('Error fetching routines:', error);
+            } finally {
+                setLoadingRoutines(false);
+            }
+        };
+
+        fetchRoutines();
+    }, [id]);
 
     return (
         <div className="flex flex-col min-h-screen bg-background-dark">
@@ -97,34 +127,45 @@ const StudentWorkoutsView: React.FC = () => {
 
                             {/* Routine Cards */}
                             <div className="space-y-4">
-                                {routines.map((routine) => (
-                                    <div
-                                        key={routine.id}
-                                        onClick={() => navigate(`/editor/${routine.id}`)}
-                                        className="flex items-center gap-5 p-5 bg-white/[0.02] border border-white/5 rounded-[1.5rem] hover:border-primary/30 hover:bg-white/[0.04] transition-all cursor-pointer group"
-                                    >
-                                        <div className="size-16 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center shadow-glow transition-transform group-hover:scale-110">
-                                            <span className="material-symbols-outlined text-primary text-3xl">fitness_center</span>
-                                        </div>
-                                        <div className="flex-1">
-                                            <h3 className="text-white font-black text-lg uppercase tracking-tight group-hover:text-primary transition-colors">{routine.name}</h3>
-                                            <div className="flex items-center gap-2 text-slate-500 text-[10px] font-bold uppercase tracking-widest mt-1">
-                                                <span className="material-symbols-outlined !text-xs">calendar_month</span>
-                                                <span>{routine.startDate} - {routine.endDate}</span>
-                                            </div>
-                                            <div className="flex flex-wrap gap-2 mt-3">
-                                                {routine.tags.map(tag => (
-                                                    <span key={tag} className="text-[9px] font-black uppercase tracking-widest bg-white/5 px-2 py-1 rounded-md text-slate-500">
-                                                        {tag}
-                                                    </span>
-                                                ))}
-                                            </div>
-                                        </div>
-                                        <button className="text-slate-700 hover:text-primary transition-colors">
-                                            <span className="material-symbols-outlined">more_vert</span>
-                                        </button>
+                                {loadingRoutines ? (
+                                    <div className="flex justify-center py-10">
+                                        <span className="material-symbols-outlined animate-spin text-primary">progress_activity</span>
                                     </div>
-                                ))}
+                                ) : routines.length > 0 ? (
+                                    routines.map((routine) => (
+                                        <div
+                                            key={routine.id}
+                                            onClick={() => navigate(`/editor/${routine.id}`)}
+                                            className="flex items-center gap-5 p-5 bg-white/[0.02] border border-white/5 rounded-[1.5rem] hover:border-primary/30 hover:bg-white/[0.04] transition-all cursor-pointer group"
+                                        >
+                                            <div className="size-16 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center shadow-glow transition-transform group-hover:scale-110">
+                                                <span className="material-symbols-outlined text-primary text-3xl">fitness_center</span>
+                                            </div>
+                                            <div className="flex-1">
+                                                <h3 className="text-white font-black text-lg uppercase tracking-tight group-hover:text-primary transition-colors">{routine.name}</h3>
+                                                <div className="flex items-center gap-2 text-slate-500 text-[10px] font-bold uppercase tracking-widest mt-1">
+                                                    <span className="material-symbols-outlined !text-xs">calendar_month</span>
+                                                    <span>{routine.dateRange || 'Sem período definido'}</span>
+                                                </div>
+                                                <div className="flex flex-wrap gap-2 mt-3">
+                                                    <span className="text-[9px] font-black uppercase tracking-widest bg-white/5 px-2 py-1 rounded-md text-slate-500">
+                                                        {routine.objective}
+                                                    </span>
+                                                    <span className="text-[9px] font-black uppercase tracking-widest bg-white/5 px-2 py-1 rounded-md text-slate-500">
+                                                        {routine.level}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <button className="text-slate-700 hover:text-primary transition-colors">
+                                                <span className="material-symbols-outlined">more_vert</span>
+                                            </button>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <div className="text-center py-10 opacity-30">
+                                        <p className="font-black uppercase tracking-widest text-[10px]">Nenhuma rotina encontrada</p>
+                                    </div>
+                                )}
                             </div>
                         </>
                     ) : (

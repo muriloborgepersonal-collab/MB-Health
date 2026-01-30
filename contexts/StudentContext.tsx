@@ -109,7 +109,12 @@ export const StudentProvider: React.FC<{ children: React.ReactNode }> = ({ child
                 type: workoutData.type,
                 objective: workoutData.objective,
                 level: workoutData.level,
-                date_range: workoutData.dateRange
+                date_range: workoutData.dateRange,
+                instructions: workoutData.instructions,
+                allow_pdf: workoutData.allowPdf,
+                show_time: workoutData.showTime,
+                expire_on_end: workoutData.expireOnEnd,
+                hide_before_start: workoutData.hideBeforeStart
             }])
             .select();
 

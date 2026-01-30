@@ -23,6 +23,11 @@ export interface Workout {
   dateRange?: string;
   level: 'Iniciante' | 'Intermediário' | 'Avançado';
   objective: string;
+  instructions?: string;
+  allowPdf?: boolean;
+  showTime?: boolean;
+  expireOnEnd?: boolean;
+  hideBeforeStart?: boolean;
 }
 
 export interface Exercise {
