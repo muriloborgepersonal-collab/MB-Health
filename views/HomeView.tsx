@@ -2,6 +2,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useStudent } from '../contexts/StudentContext';
+import { Logo } from '../src/components/ui/Logo';
 
 const HomeView: React.FC = () => {
   const navigate = useNavigate();
@@ -17,11 +18,7 @@ const HomeView: React.FC = () => {
       <header className="bg-card-header sticky top-0 z-50 px-6 pt-12 pb-6 border-b border-white/5 backdrop-blur-md">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <img
-              src="/logo.png"
-              alt="MB Health Logo"
-              className="h-10 w-auto object-contain"
-            />
+            <Logo size="sm" />
           </div>
           <button onClick={() => navigate('/profile')} className="flex size-11 items-center justify-center rounded-full bg-card-dark text-white border border-primary/20 hover:border-primary transition-all">
             <span className="material-symbols-outlined">person</span>

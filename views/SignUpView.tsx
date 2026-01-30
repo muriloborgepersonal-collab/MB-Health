@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useAuth } from '../contexts/AuthContext';
+import { Logo } from '../src/components/ui/Logo';
 
 const SignUpView: React.FC = () => {
     const navigate = useNavigate();
@@ -101,11 +102,7 @@ const SignUpView: React.FC = () => {
                     </div>
 
                     <div className="relative z-10">
-                        <img
-                            src="/logo.png"
-                            alt="MB Health Logo"
-                            className="h-16 w-auto object-contain drop-shadow-[0_0_12px_rgba(0,212,255,0.3)]"
-                        />
+                        <Logo size="lg" />
                     </div>
                 </motion.div>
 

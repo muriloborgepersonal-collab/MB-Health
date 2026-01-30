@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useAuth } from '../contexts/AuthContext';
+import { Logo } from '../src/components/ui/Logo';
 
 const ForgotPasswordView: React.FC = () => {
     const navigate = useNavigate();
@@ -91,11 +92,7 @@ const ForgotPasswordView: React.FC = () => {
                     </div>
 
                     <div className="relative z-10 mb-8">
-                        <img
-                            src="/logo.png"
-                            alt="MB Health Logo"
-                            className="h-16 w-auto object-contain drop-shadow-[0_0_12px_rgba(0,212,255,0.3)]"
-                        />
+                        <Logo size="lg" />
                     </div>
 
                     <h1 className="text-xl font-black text-white tracking-tight uppercase">Recuperar Senha</h1>

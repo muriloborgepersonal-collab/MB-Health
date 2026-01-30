@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { supabase } from '../src/lib/supabase';
+import { Logo } from '../src/components/ui/Logo';
 
 const PublicRegistrationView: React.FC = () => {
     const navigate = useNavigate();
@@ -156,16 +157,10 @@ const PublicRegistrationView: React.FC = () => {
                         {/* Glow for integration */}
                         <div className="absolute inset-0 -m-8 bg-primary/10 rounded-full blur-2xl pointer-events-none opacity-50"></div>
 
-                        <div className="relative z-10 w-16 h-16 flex items-center justify-center p-2">
-                            <img
-                                src="/logo.png"
-                                alt="MB Health Logo"
-                                className="w-full h-full object-contain drop-shadow-[0_0_8px_rgba(0,212,255,0.2)]"
-                            />
+                        <div className="relative z-10 w-full flex items-center justify-center">
+                            <Logo size="lg" />
                         </div>
                     </motion.div>
-                    <h1 className="text-2xl font-black text-white uppercase tracking-widest leading-none">MB Health</h1>
-                    <div className="h-[1px] w-8 bg-primary/20 mx-auto mt-4 mb-2" />
                     <p className="text-slate-400 text-[11px] font-bold uppercase tracking-wider">Crie sua conta para acessar seus treinos</p>
                 </div>
 

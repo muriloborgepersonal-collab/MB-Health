@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../contexts/AuthContext';
+import { Logo } from '../src/components/ui/Logo';
 
 const LoginView: React.FC = () => {
     const navigate = useNavigate();
@@ -103,13 +104,8 @@ const LoginView: React.FC = () => {
                         ></motion.div>
                     </div>
 
-                    {/* Logo Body */}
                     <div className="relative z-10 p-4">
-                        <img
-                            src="/logo.png"
-                            alt="MB Health Logo"
-                            className="h-24 w-auto object-contain drop-shadow-[0_0_15px_rgba(0,212,255,0.4)] hover:drop-shadow-[0_0_25px_rgba(0,212,255,0.6)] transition-all duration-700"
-                        />
+                        <Logo size="xl" />
                     </div>
 
                     {/* Subtle Horizon Line (Integrated instead of text) */}
