@@ -39,6 +39,8 @@ export interface Exercise {
   rest: string;
   videoUrl?: string;
   thumbnailUrl?: string;
+  muscle_group?: string;
+  category?: string;
 }
 
 export interface Feedback {
