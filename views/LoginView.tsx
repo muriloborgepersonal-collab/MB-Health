@@ -195,6 +195,7 @@ const LoginView: React.FC = () => {
                     >
                         Cadastre-se
                     </button>
+                    <p className="text-[10px] text-slate-700 mt-8">v2.0.5 - DEBUG</p>
                 </div>
 
             </div>
