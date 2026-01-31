@@ -12,6 +12,7 @@ export default {
     extend: {
       colors: {
         background: '#000000', // Deep Pitch Black
+        'background-dark': '#000000', // Alias for backward compatibility
         surface: '#0a0a0a', // very dark card
         primary: '#00d4ff', // Electric Blue
         'primary-dark': '#0088aa',
