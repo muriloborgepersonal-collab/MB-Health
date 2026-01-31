@@ -2,9 +2,10 @@
 import { GoogleGenAI, Type } from "@google/genai";
 
 export const getGeminiResponse = async (prompt: string, context?: string) => {
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
-  
+  // const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
+
   try {
+    /*
     const response = await ai.models.generateContent({
       model: 'gemini-3-flash-preview',
       contents: `
@@ -22,6 +23,8 @@ export const getGeminiResponse = async (prompt: string, context?: string) => {
     });
 
     return response.text;
+    */
+    return "Serviço temporariamente desativado.";
   } catch (error) {
     console.error("Gemini API Error:", error);
     return "Desculpe, tive um problema ao processar sua solicitação. Tente novamente mais tarde.";
