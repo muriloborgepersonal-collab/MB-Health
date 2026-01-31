@@ -230,7 +230,7 @@ export default function RoutineDetailView() {
     );
 }
 
-function WorkoutCard({ title, subtitle, onClick }: { title: string, subtitle: string, onClick: () => void }) {
+function WorkoutCard({ title, subtitle, onClick }: { key?: string | number, title: string, subtitle: string, onClick: () => void }) {
     const [expanded, setExpanded] = useState(false);
 
     return (

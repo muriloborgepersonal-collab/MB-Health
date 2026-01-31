@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '../src/lib/supabase';
-import { useStudent } from '../contexts/AuthContext'; // Using auth context for trainer info or student context? 
-// Actually using student context is better to find the student by ID
-import { useStudent as useStudentData } from '../contexts/StudentContext';
+import { useStudent } from '../contexts/StudentContext';
 import { Exercise } from '../types';
 import { Button } from '../src/components/ui/Button';
 import { Card } from '../src/components/ui/Card';
@@ -20,7 +18,7 @@ export default function WorkoutEditorView() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const dayId = searchParams.get('dayId');
-  const { students } = useStudentData();
+  const { students } = useStudent();
 
   const [workout, setWorkout] = useState<any>(null);
   const [workoutDay, setWorkoutDay] = useState<any>(null);
@@ -243,8 +241,8 @@ function EditorAction({ icon: Icon, label, active }: { icon: any, label: string,
 function ExerciseItem({ exercise, initialExpanded, onUpdate, onDelete }: {
   exercise: Exercise,
   initialExpanded: boolean,
-  onUpdate: (id: string, updates: Partial<Exercise>) => void,
-  onDelete: (id: string) => void
+  onUpdate: (id: string, updates: Partial<Exercise>) => void | Promise<void>,
+  onDelete: (id: string) => void | Promise<void>
 }) {
   const [expanded, setExpanded] = useState(initialExpanded);
 
