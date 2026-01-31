@@ -1,6 +1,4 @@
-
 import React, { useState, useEffect } from 'react';
-// Force Vercel Update - LoginView
 import { useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../contexts/AuthContext';
@@ -195,7 +193,6 @@ const LoginView: React.FC = () => {
                     >
                         Cadastre-se
                     </button>
-                    <p className="text-[10px] text-slate-700 mt-8">v2.0.5 - DEBUG</p>
                 </div>
 
             </div>
