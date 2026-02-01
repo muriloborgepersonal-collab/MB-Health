@@ -2,7 +2,7 @@
 import React, { useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useStudent } from '../contexts/StudentContext';
-import { Button } from '../src/components/ui/Button';
+import { Button } from '@/components/ui/Button';
 
 const StudentDetailView: React.FC = () => {
   const { id } = useParams();

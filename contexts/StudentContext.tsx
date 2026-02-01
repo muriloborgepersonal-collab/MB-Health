@@ -1,7 +1,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Student, Feedback, WorkoutNotification, Workout } from '../types';
-import { supabase } from '../src/lib/supabase';
+import { supabase } from '@/lib/supabase';
 
 const MOCK_FEEDBACKS: Feedback[] = [
     { id: '1', studentId: '1', studentName: 'Lucas Silva', date: '2025-01-24T10:00:00', rating: 8, comment: 'Treino muito bom, senti bastante o peitoral.' },

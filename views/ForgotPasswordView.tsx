@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useAuth } from '../contexts/AuthContext';
-import { Logo } from '../src/components/ui/Logo';
+import { Logo } from '@/components/ui/Logo';
 
 const ForgotPasswordView: React.FC = () => {
     const navigate = useNavigate();

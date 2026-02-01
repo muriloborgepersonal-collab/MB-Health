@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useStudent } from '../contexts/StudentContext';
-import { supabase } from '../src/lib/supabase';
+import { supabase } from '@/lib/supabase';
 import { Workout } from '../types';
-import { Button } from '../src/components/ui/Button';
+import { Button } from '@/components/ui/Button';
 
 const StudentWorkoutsView: React.FC = () => {
     const { id } = useParams();

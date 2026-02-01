@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../contexts/AuthContext';
-import { Logo } from '../src/components/ui/Logo';
+import { Logo } from '@/components/ui/Logo';
 
 const LoginView: React.FC = () => {
     const navigate = useNavigate();

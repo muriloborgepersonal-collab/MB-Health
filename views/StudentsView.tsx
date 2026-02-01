@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useStudent } from '../contexts/StudentContext';
-import { Button } from '../src/components/ui/Button';
+import { Button } from '@/components/ui/Button';
 
 const StudentsView: React.FC = () => {
   const navigate = useNavigate();

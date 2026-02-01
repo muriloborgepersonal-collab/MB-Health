@@ -2,7 +2,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useStudent } from '../contexts/StudentContext';
-import { Logo } from '../src/components/ui/Logo';
+import { Logo } from '@/components/ui/Logo';
 
 const HomeView: React.FC = () => {
   const navigate = useNavigate();

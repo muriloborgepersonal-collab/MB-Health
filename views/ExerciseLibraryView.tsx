@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { supabase } from '../src/lib/supabase';
+import { supabase } from '@/lib/supabase';
 import { Exercise } from '../types';
-import { Button } from '../src/components/ui/Button';
-import { cn } from '../src/lib/utils';
+import { Button } from '@/components/ui/Button';
+import { cn } from '@/lib/utils';
 import { Star, Play, Plus, Search, ChevronDown, Loader2, Edit2, Trash2, Info, X, Check, ChevronLeft } from 'lucide-react';
 
 const ExerciseLibraryView: React.FC = () => {

@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button } from '../src/components/ui/Button';
+import { Button } from '@/components/ui/Button';
 
 interface StudentFrequency {
     id: string;

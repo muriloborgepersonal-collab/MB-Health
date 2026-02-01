@@ -2,8 +2,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { supabase } from '../src/lib/supabase';
-import { Logo } from '../src/components/ui/Logo';
+import { supabase } from '@/lib/supabase';
+import { Logo } from '@/components/ui/Logo';
 
 const PublicRegistrationView: React.FC = () => {
     const navigate = useNavigate();

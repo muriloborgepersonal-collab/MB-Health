@@ -2,7 +2,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useStudent } from '../contexts/StudentContext';
-import { cn } from '../src/lib/utils';
+import { cn } from '@/lib/utils';
 
 const SubscriptionView: React.FC = () => {
     const navigate = useNavigate();
