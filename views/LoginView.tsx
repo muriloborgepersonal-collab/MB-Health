@@ -78,24 +78,8 @@ const LoginView: React.FC = () => {
                     <div className="relative group p-6">
                         {/* Glow Layer */}
                         <div className="absolute inset-0 bg-primary/10 rounded-full blur-3xl group-hover:bg-primary/20 transition-all duration-700" />
-                        <Logo size="xl" />
-
-                        {/* Kinetic Horizon Line */}
-                        <motion.div
-                            initial={{ scaleX: 0 }}
-                            animate={{ scaleX: 1 }}
-                            transition={{ delay: 0.8, duration: 1.2 }}
-                            className="absolute -bottom-2 left-1/2 -translate-x-1/2 h-[2px] w-32 bg-gradient-to-r from-transparent via-primary/50 to-transparent"
-                        />
+                        <Logo size="xl" showTagline={true} />
                     </div>
-                    <motion.h1
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: 0.5 }}
-                        className="text-xs font-black uppercase tracking-[0.4em] text-primary/60 mt-4"
-                    >
-                        Performance Intelligence
-                    </motion.h1>
                 </motion.div>
 
                 {/* Login Card */}
