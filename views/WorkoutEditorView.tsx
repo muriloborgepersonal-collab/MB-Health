@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
-import { supabase } from '../src/lib/supabase';
+import { supabase } from '../lib/supabase';
 import { useStudent } from '../contexts/StudentContext';
 import { Exercise } from '../types';
-import { Button } from '../src/components/ui/Button';
-import { Card } from '../src/components/ui/Card';
-import { cn } from '../src/lib/utils';
+import { Button } from '../components/ui/Button';
+import { Card } from '../components/ui/Card';
+import { cn } from '../lib/utils';
 import {
   MoreVertical, Eye, Play, Plus, Trash2,
   ChevronDown, ChevronUp, Loader2, Download,
-  TrendingUp, AutoAwesome, GripVertical, Copy
+  TrendingUp, Sparkles, GripVertical, Copy
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -160,7 +160,7 @@ export default function WorkoutEditorView() {
           <EditorAction icon={Download} label="Baixar treino" />
           <EditorAction icon={Eye} label="Visão do aluno" />
           <EditorAction icon={TrendingUp} label="Evolução de cargas" />
-          <EditorAction icon={AutoAwesome} label="Prescrever com MFITIA" active />
+          <EditorAction icon={Sparkles} label="Prescrever com MFITIA" active />
         </div>
 
         {/* Guidelines */}
