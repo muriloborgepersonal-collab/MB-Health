@@ -29,6 +29,7 @@ const ExerciseLibraryView: React.FC = () => {
     const [isCategoriesModalOpen, setIsCategoriesModalOpen] = useState(false);
     const [editingExercise, setEditingExercise] = useState<Exercise | null>(null);
     const [selectedVideoUrl, setSelectedVideoUrl] = useState<string | null>(null);
+    const [addedExercises, setAddedExercises] = useState<Set<string>>(new Set());
     const [newExercise, setNewExercise] = useState({ name: '', muscle_group: '', category: '', video_url: '' });
 
     // Management state
@@ -241,7 +242,9 @@ const ExerciseLibraryView: React.FC = () => {
                 }]);
 
             if (error) throw error;
-            alert(`${ex.name} adicionado ao treino!`);
+
+            // Mark as added
+            setAddedExercises(prev => new Set([...prev, ex.id]));
         } catch (err: any) {
             console.error('Error adding to workout:', err);
             alert('Erro ao adicionar ao treino.');
@@ -321,38 +324,64 @@ const ExerciseLibraryView: React.FC = () => {
                     <button onClick={() => navigate(-1)} className="text-primary hover:text-white transition-colors">
                         <ChevronLeft size={32} />
                     </button>
-                    <h1 className="text-2xl font-black tracking-tighter uppercase text-white">Biblioteca de Exercícios</h1>
+                    <div className="flex-1">
+                        <h1 className="text-2xl font-black tracking-tighter uppercase text-white">
+                            {mode === 'select' ? 'Selecionar Exercícios' : 'Biblioteca de Exercícios'}
+                        </h1>
+                        {mode === 'select' && addedExercises.size > 0 && (
+                            <p className="text-primary text-sm font-bold mt-1">
+                                {addedExercises.size} exercício{addedExercises.size > 1 ? 's' : ''} adicionado{addedExercises.size > 1 ? 's' : ''}
+                            </p>
+                        )}
+                    </div>
                 </div>
 
-                <Button
-                    onClick={() => {
-                        setEditingExercise(null);
-                        setNewExercise({ name: '', muscle_group: dynamicMuscleGroups[0]?.name || '', category: 'Musculação', video_url: '' });
-                        setIsModalOpen(true);
-                    }}
-                    variant="premium"
-                    className="w-full h-16 rounded-2xl text-sm mb-6"
-                >
-                    <Plus className="mr-3 font-black" size={24} />
-                    Criar Exercício
-                </Button>
+                {/* Show "Concluir" button when in select mode */}
+                {mode === 'select' && addedExercises.size > 0 && (
+                    <Button
+                        onClick={() => navigate(-1)}
+                        variant="premium"
+                        className="w-full h-14 rounded-2xl text-sm mb-4"
+                    >
+                        <Check className="mr-2" size={20} />
+                        Concluir e Voltar ao Treino
+                    </Button>
+                )}
 
-                <div className="flex gap-4">
+                {/* Show "Criar Exercício" button when NOT in select mode */}
+                {mode !== 'select' && (
                     <Button
-                        onClick={() => setIsGroupsModalOpen(true)}
-                        variant="glass"
-                        className="flex-1 h-14 rounded-xl text-[10px] uppercase font-black tracking-widest"
+                        onClick={() => {
+                            setEditingExercise(null);
+                            setNewExercise({ name: '', muscle_group: dynamicMuscleGroups[0]?.name || '', category: 'Musculação', video_url: '' });
+                            setIsModalOpen(true);
+                        }}
+                        variant="premium"
+                        className="w-full h-16 rounded-2xl text-sm mb-6"
                     >
-                        Grupos
+                        <Plus className="mr-3 font-black" size={24} />
+                        Criar Exercício
                     </Button>
-                    <Button
-                        onClick={() => setIsCategoriesModalOpen(true)}
-                        variant="glass"
-                        className="flex-1 h-14 rounded-xl text-[10px] uppercase font-black tracking-widest"
-                    >
-                        Categorias
-                    </Button>
-                </div>
+                )}
+
+                {mode !== 'select' && (
+                    <div className="flex gap-4">
+                        <Button
+                            onClick={() => setIsGroupsModalOpen(true)}
+                            variant="glass"
+                            className="flex-1 h-14 rounded-xl text-[10px] uppercase font-black tracking-widest"
+                        >
+                            Grupos
+                        </Button>
+                        <Button
+                            onClick={() => setIsCategoriesModalOpen(true)}
+                            variant="glass"
+                            className="flex-1 h-14 rounded-xl text-[10px] uppercase font-black tracking-widest"
+                        >
+                            Categorias
+                        </Button>
+                    </div>
+                )}
             </header>
 
             <main className="px-6 py-8 space-y-6">
@@ -452,13 +481,20 @@ const ExerciseLibraryView: React.FC = () => {
                                         <span className="px-2 py-0.5 bg-gray-100 rounded-md text-[8px] font-black uppercase tracking-widest text-gray-400">{ex.category || 'Musculação'}</span>
                                     </div>
                                     {mode === 'select' && (
-                                        <button
-                                            onClick={() => handleAddToWorkout(ex)}
-                                            className="mt-3 text-primary text-[10px] font-black uppercase tracking-widest flex items-center gap-1 hover:gap-2 transition-all"
-                                        >
-                                            <Plus size={14} />
-                                            <span>Adicionar ao treino</span>
-                                        </button>
+                                        addedExercises.has(ex.id) ? (
+                                            <div className="mt-3 text-green-500 text-[10px] font-black uppercase tracking-widest flex items-center gap-1">
+                                                <Check size={14} />
+                                                <span>Adicionado</span>
+                                            </div>
+                                        ) : (
+                                            <button
+                                                onClick={() => handleAddToWorkout(ex)}
+                                                className="mt-3 text-primary text-[10px] font-black uppercase tracking-widest flex items-center gap-1 hover:gap-2 transition-all"
+                                            >
+                                                <Plus size={14} />
+                                                <span>Adicionar ao treino</span>
+                                            </button>
+                                        )
                                     )}
                                 </div>
 
