@@ -144,8 +144,8 @@ const HomeView: React.FC = () => {
                 onClick={() => {
                   if (card.label === 'Biblioteca de Exercícios') {
                     navigate('/exercises-library');
-                  } else {
-                    navigate('/workouts');
+                  } else if (card.label === 'Relatório de Frequência') {
+                    navigate('/frequency-report');
                   }
                 }}
                 className="flex flex-col rounded-3xl bg-gradient-to-br from-primary/20 to-primary/5 p-6 shadow-xl border border-primary/30 transition-all active:scale-[0.96] cursor-pointer group hover:shadow-neon"
