@@ -4,6 +4,7 @@ import { useStudent } from '../contexts/StudentContext';
 import { supabase } from '@/lib/supabase';
 import { Workout } from '../types';
 import { Button } from '@/components/ui/Button';
+import { DropdownMenu, DropdownMenuItem } from '@/components/ui/DropdownMenu';
 
 const StudentWorkoutsView: React.FC = () => {
     const { id } = useParams();
@@ -156,9 +157,50 @@ const StudentWorkoutsView: React.FC = () => {
                                                     </span>
                                                 </div>
                                             </div>
-                                            <button className="text-slate-700 hover:text-primary transition-colors">
-                                                <span className="material-symbols-outlined">more_vert</span>
-                                            </button>
+                                            <DropdownMenu
+                                                items={[
+                                                    {
+                                                        label: 'Compartilhar',
+                                                        icon: 'share',
+                                                        onClick: () => {
+                                                            // TODO: Implementar compartilhamento
+                                                            console.log('Compartilhar:', routine.id);
+                                                        }
+                                                    },
+                                                    {
+                                                        label: 'Clonar',
+                                                        icon: 'content_copy',
+                                                        onClick: () => {
+                                                            // TODO: Implementar clonagem
+                                                            console.log('Clonar:', routine.id);
+                                                        }
+                                                    },
+                                                    {
+                                                        label: 'Editar',
+                                                        icon: 'edit',
+                                                        onClick: () => {
+                                                            navigate(`/routine/${routine.id}/edit`);
+                                                        }
+                                                    },
+                                                    {
+                                                        label: 'Arquivar',
+                                                        icon: 'archive',
+                                                        onClick: () => {
+                                                            // TODO: Implementar arquivamento
+                                                            console.log('Arquivar:', routine.id);
+                                                        }
+                                                    },
+                                                    {
+                                                        label: 'Excluir',
+                                                        icon: 'delete',
+                                                        onClick: () => {
+                                                            // TODO: Implementar exclusão com confirmação
+                                                            console.log('Excluir:', routine.id);
+                                                        },
+                                                        variant: 'danger'
+                                                    }
+                                                ]}
+                                            />
                                         </div>
                                     ))
                                 ) : (

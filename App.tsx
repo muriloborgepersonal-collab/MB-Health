@@ -4,7 +4,7 @@ import { Routes, Route, useLocation } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 
-// Views
+// Trainer Views
 import HomeView from './views/HomeView';
 import LoginView from './views/LoginView';
 import SignUpView from './views/SignUpView';
@@ -30,6 +30,10 @@ import StudentWorkoutsView from './views/StudentWorkoutsView';
 import RoutineDetailView from './views/RoutineDetailView';
 import SubscriptionView from './views/SubscriptionView';
 
+// Student Views
+import StudentHomeView from './views/StudentHomeView';
+import StudentWorkoutExecutionView from './views/StudentWorkoutExecutionView';
+
 // Components
 import Navigation from './components/Navigation';
 import AIModal from './components/AIModal';
@@ -38,9 +42,10 @@ const AppContent: React.FC = () => {
   const [isAIModalOpen, setIsAIModalOpen] = useState(false);
   const location = useLocation();
 
-  // Routes where navigation should be hidden
+  // Routes where trainer navigation should be hidden
   const hideNavRoutes = ['/', '/signup', '/forgot-password', '/register/public'];
-  const showNav = !hideNavRoutes.includes(location.pathname);
+  const studentRoutes = location.pathname.startsWith('/student');
+  const showTrainerNav = !hideNavRoutes.includes(location.pathname) && !studentRoutes;
 
   return (
     <div className="flex flex-col min-h-screen bg-background-dark pb-24">
@@ -110,12 +115,29 @@ const AppContent: React.FC = () => {
         <Route path="/profile" element={
           <ProtectedRoute><ProfileView /></ProtectedRoute>
         } />
+
+        {/* Student Routes */}
+        <Route path="/student-home" element={
+          <ProtectedRoute><StudentHomeView /></ProtectedRoute>
+        } />
+        <Route path="/student/workout/:id" element={
+          <ProtectedRoute><StudentWorkoutExecutionView /></ProtectedRoute>
+        } />
+        <Route path="/student/workouts" element={
+          <ProtectedRoute><StudentHomeView /></ProtectedRoute>
+        } />
+        <Route path="/student/history" element={
+          <ProtectedRoute><StudentHomeView /></ProtectedRoute>
+        } />
+        <Route path="/student/profile" element={
+          <ProtectedRoute><ProfileView /></ProtectedRoute>
+        } />
       </Routes>
 
-      {showNav && <Navigation />}
+      {showTrainerNav && <Navigation />}
 
-      {/* Global AI Assistant Button - only show on protected routes */}
-      {showNav && (
+      {/* Global AI Assistant Button - only show on trainer routes */}
+      {showTrainerNav && (
         <button
           onClick={() => setIsAIModalOpen(true)}
           className="fixed bottom-24 right-6 z-50 w-16 h-16 rounded-full flex items-center justify-center shadow-2xl shadow-primary/40 bg-primary border-2 border-white/20 active:scale-90 transition-transform group"
