@@ -28,11 +28,11 @@ export const Logo: React.FC<LogoProps> = ({
         xl: 'w-20 h-20'
     };
 
-    const mbTextClasses = {
-        sm: 'text-lg',
-        md: 'text-2xl',
-        lg: 'text-4xl',
-        xl: 'text-5xl'
+    const bTextClasses = {
+        sm: 'text-xl',
+        md: 'text-3xl',
+        lg: 'text-5xl',
+        xl: 'text-6xl'
     };
 
     const healthTextClasses = {
@@ -68,24 +68,51 @@ export const Logo: React.FC<LogoProps> = ({
                     {/* Hover Glow Effect */}
                     <div className="absolute inset-0 bg-primary/10 blur-xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
 
-                    <img
-                        src="/logo.png"
-                        alt="MB Health Logo"
+                    {/* SVG Logo Icon - M with Lightning Bolt */}
+                    <svg
+                        viewBox="0 0 100 100"
                         className={cn(
-                            "relative z-10 drop-shadow-[0_0_8px_rgba(0,212,255,0.2)] group-hover:drop-shadow-[0_0_12px_rgba(0,212,255,0.4)] transition-all duration-500 object-contain",
+                            "relative z-10 drop-shadow-[0_0_8px_rgba(0,212,255,0.3)] group-hover:drop-shadow-[0_0_12px_rgba(0,212,255,0.5)] transition-all duration-500",
                             iconSizeClasses[size]
                         )}
-                    />
+                        aria-label="MB Health Logo"
+                    >
+                        {/* M Shape - Left pillar */}
+                        <path
+                            d="M5,5 L25,5 L25,95 L5,95 Z"
+                            fill="white"
+                        />
+                        {/* M Shape - Right pillar */}
+                        <path
+                            d="M75,5 L95,5 L95,95 L75,95 Z"
+                            fill="white"
+                        />
+                        {/* M Shape - Left diagonal */}
+                        <path
+                            d="M25,5 L50,45 L50,55 L25,20 Z"
+                            fill="white"
+                        />
+                        {/* M Shape - Right diagonal */}
+                        <path
+                            d="M75,5 L50,45 L50,55 L75,20 Z"
+                            fill="white"
+                        />
+                        {/* Lightning Bolt cutting through center */}
+                        <path
+                            d="M55,0 L35,42 L48,42 L40,100 L65,50 L52,50 L70,0 Z"
+                            fill="#0a0a0a"
+                        />
+                    </svg>
                 </div>
 
                 {!iconOnly && (
                     <div className="flex flex-col leading-none">
-                        {/* MB */}
+                        {/* B */}
                         <span className={cn(
                             "font-['Kanit'] font-black italic tracking-tight text-white -mb-1",
-                            mbTextClasses[size]
+                            bTextClasses[size]
                         )}>
-                            MB
+                            B
                         </span>
 
                         {/* HEALTH */}
