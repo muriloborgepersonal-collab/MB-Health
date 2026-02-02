@@ -28,6 +28,7 @@ export interface Workout {
   showTime?: boolean;
   expireOnEnd?: boolean;
   hideBeforeStart?: boolean;
+  status?: 'active' | 'archived' | 'deleted';
 }
 
 export interface Exercise {

@@ -4,56 +4,138 @@ import { useStudent } from '../contexts/StudentContext';
 import { supabase } from '@/lib/supabase';
 import { Workout } from '../types';
 import { Button } from '@/components/ui/Button';
-import { DropdownMenu, DropdownMenuItem } from '@/components/ui/DropdownMenu';
+import { DropdownMenu } from '@/components/ui/DropdownMenu';
+import { ShareWorkoutModal } from '@/components/ui/ShareWorkoutModal';
+import { CloneWorkoutModal } from '@/components/ui/CloneWorkoutModal';
+import { DeleteWorkoutModal } from '@/components/ui/DeleteWorkoutModal';
 
 const StudentWorkoutsView: React.FC = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const { students } = useStudent();
     const student = students.find(s => s.id === id);
+
     const [activeTab, setActiveTab] = useState<'rotinas' | 'aerobico'>('rotinas');
+    const [viewMode, setViewMode] = useState<'active' | 'archived' | 'deleted'>('active');
 
     const [routines, setRoutines] = useState<Workout[]>([]);
     const [loadingRoutines, setLoadingRoutines] = useState(true);
 
+    // Modal States
+    const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+    const [isCloneModalOpen, setIsCloneModalOpen] = useState(false);
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [selectedWorkout, setSelectedWorkout] = useState<Workout | null>(null);
+
+    const fetchRoutines = async () => {
+        if (!id) return;
+        setLoadingRoutines(true);
+        try {
+            const { data, error } = await supabase
+                .from('workouts')
+                .select('*')
+                .eq('student_id', id)
+                .order('created_at', { ascending: false });
+
+            if (error) throw error;
+
+            const mapped: Workout[] = (data || []).map(w => ({
+                id: w.id,
+                name: w.name,
+                type: w.type,
+                objective: w.objective,
+                level: w.level,
+                dateRange: w.date_range,
+                status: w.status || 'active',
+                exercises: []
+            }));
+
+            setRoutines(mapped);
+        } catch (error) {
+            console.error('Error fetching routines:', error);
+        } finally {
+            setLoadingRoutines(false);
+        }
+    };
+
     useEffect(() => {
-        const fetchRoutines = async () => {
-            if (!id) return;
-            setLoadingRoutines(true);
-            try {
-                const { data, error } = await supabase
-                    .from('workouts')
-                    .select('*')
-                    .eq('student_id', id)
-                    .order('created_at', { ascending: false });
-
-                if (error) throw error;
-
-                // Map snake_case to camelCase
-                const mapped: Workout[] = (data || []).map(w => ({
-                    id: w.id,
-                    name: w.name,
-                    type: w.type,
-                    objective: w.objective,
-                    level: w.level,
-                    dateRange: w.date_range,
-                    exercises: [] // We don't need exercises here
-                }));
-
-                setRoutines(mapped);
-            } catch (error) {
-                console.error('Error fetching routines:', error);
-            } finally {
-                setLoadingRoutines(false);
-            }
-        };
-
         fetchRoutines();
     }, [id]);
 
+    const handleUpdateStatus = async (workoutId: string, newStatus: 'active' | 'archived' | 'deleted') => {
+        try {
+            const { error } = await supabase
+                .from('workouts')
+                .update({ status: newStatus })
+                .eq('id', workoutId);
+            if (error) throw error;
+            await fetchRoutines();
+        } catch (error) {
+            console.error(`Error updating workout status to ${newStatus}:`, error);
+        }
+    };
+
+    const handleClone = async (cloneData: any) => {
+        try {
+            // First get the original workout with its exercises
+            const { data: originalWorkout, error: fetchError } = await supabase
+                .from('workouts')
+                .select('*, workout_exercises(*)')
+                .eq('id', cloneData.originalWorkoutId)
+                .single();
+
+            if (fetchError) throw fetchError;
+
+            // Create the new workout
+            const { data: newWorkout, error: createError } = await supabase
+                .from('workouts')
+                .insert([{
+                    name: cloneData.name,
+                    student_id: cloneData.studentId,
+                    type: originalWorkout.type,
+                    objective: originalWorkout.objective,
+                    level: originalWorkout.level,
+                    date_range: `${new Date(cloneData.startDate).toLocaleDateString()} - ${new Date(cloneData.endDate).toLocaleDateString()}`,
+                    status: 'active'
+                }])
+                .select()
+                .single();
+
+            if (createError) throw createError;
+
+            // Clone exercises if they exist
+            if (originalWorkout.workout_exercises && originalWorkout.workout_exercises.length > 0) {
+                const exercisesToInsert = originalWorkout.workout_exercises.map((ex: any) => ({
+                    workout_id: newWorkout.id,
+                    exercise_id: ex.exercise_id,
+                    sets: ex.sets,
+                    reps: ex.reps,
+                    load: ex.load,
+                    rest: ex.rest,
+                    order: ex.order,
+                    notes: ex.notes
+                }));
+
+                const { error: exercisesError } = await supabase
+                    .from('workout_exercises')
+                    .insert(exercisesToInsert);
+
+                if (exercisesError) throw exercisesError;
+            }
+
+            if (cloneData.studentId === id) {
+                await fetchRoutines();
+            }
+        } catch (error) {
+            console.error('Error in handleClone:', error);
+            throw error;
+        }
+    };
+
+    const filteredRoutines = routines.filter(r => r.status === viewMode);
+
     return (
         <div className="flex flex-col min-h-screen bg-background-dark">
-            {/* Dark Header */}
             <header className="bg-card-header px-6 pt-12 pb-24 border-b border-white/5 relative overflow-hidden">
                 <div className="absolute top-0 right-0 p-10 opacity-5">
                     <span className="material-symbols-outlined text-[120px]">fitness_center</span>
@@ -79,9 +161,7 @@ const StudentWorkoutsView: React.FC = () => {
                 </div>
             </header>
 
-            {/* Main Content */}
             <main className="flex-1 px-4 -mt-12 pb-24 space-y-4">
-                {/* Tabs Container */}
                 <div className="flex gap-3 bg-card-dark/50 backdrop-blur-xl p-1.5 rounded-[1.5rem] border border-white/5 shadow-2xl">
                     <Button
                         onClick={() => setActiveTab('rotinas')}
@@ -99,60 +179,91 @@ const StudentWorkoutsView: React.FC = () => {
                     </Button>
                 </div>
 
-                {/* Content Card */}
-                <div className="bg-card-dark border border-white/5 rounded-[2rem] p-6 shadow-2xl space-y-8">
+                <div className="bg-card-dark border border-white/5 rounded-[2rem] p-6 shadow-2xl space-y-8 min-h-[400px]">
                     {activeTab === 'rotinas' ? (
                         <>
-                            {/* Create Routine Button */}
-                            <Button
-                                onClick={() => navigate(`/routine/new/${id}`)}
-                                variant="premium"
-                                className="w-full h-28 rounded-[2rem] border-2 border-dashed border-primary/30 flex-col gap-2"
-                                id="create-routine-btn"
-                            >
-                                <div className="h-10 w-10 rounded-full bg-white/20 flex items-center justify-center">
-                                    <span className="material-symbols-outlined text-2xl">add</span>
-                                </div>
-                                <span className="text-sm">Criar Nova Rotina</span>
-                            </Button>
+                            {viewMode === 'active' && (
+                                <Button
+                                    onClick={() => navigate(`/routine/new/${id}`)}
+                                    variant="premium"
+                                    className="w-full h-28 rounded-[2rem] border-2 border-dashed border-primary/30 flex-col gap-2"
+                                >
+                                    <div className="h-10 w-10 rounded-full bg-white/20 flex items-center justify-center">
+                                        <span className="material-symbols-outlined text-2xl">add</span>
+                                    </div>
+                                    <span className="text-sm">Criar Nova Rotina</span>
+                                </Button>
+                            )}
 
-                            {/* Filter Buttons */}
+                            {viewMode === 'deleted' && (
+                                <h2 className="text-white font-black text-xl uppercase tracking-tight">Rotinas excluídas</h2>
+                            )}
+
                             <div className="flex gap-3">
-                                <Button variant="glass" className="flex-1 h-12 rounded-2xl text-[10px] text-slate-400">
+                                <Button
+                                    onClick={() => setViewMode('archived')}
+                                    variant={viewMode === 'archived' ? 'premium' : 'glass'}
+                                    className={`flex-1 h-12 rounded-2xl text-[10px] ${viewMode !== 'archived' ? 'text-slate-400' : ''}`}
+                                >
                                     Arquivadas
                                 </Button>
-                                <Button variant="glass" className="flex-1 h-12 rounded-2xl text-[10px] text-slate-400">
+                                <Button
+                                    onClick={() => setViewMode('deleted')}
+                                    variant={viewMode === 'deleted' ? 'premium' : 'glass'}
+                                    className={`flex-1 h-12 rounded-2xl text-[10px] ${viewMode !== 'deleted' ? 'text-slate-400' : ''}`}
+                                >
                                     Excluídas
                                 </Button>
+                                {(viewMode === 'archived' || viewMode === 'deleted') && (
+                                    <Button
+                                        onClick={() => setViewMode('active')}
+                                        variant="glass"
+                                        className="size-12 rounded-2xl text-slate-400"
+                                    >
+                                        <span className="material-symbols-outlined">close</span>
+                                    </Button>
+                                )}
                             </div>
 
-                            {/* Routine Cards */}
-                            <div className="space-y-4">
+                            <div className={`space-y-4 ${viewMode === 'deleted' ? 'bg-white rounded-[2rem] p-4' : ''}`}>
                                 {loadingRoutines ? (
                                     <div className="flex justify-center py-10">
                                         <span className="material-symbols-outlined animate-spin text-primary">progress_activity</span>
                                     </div>
-                                ) : routines.length > 0 ? (
-                                    routines.map((routine) => (
+                                ) : filteredRoutines.length > 0 ? (
+                                    filteredRoutines.map((routine) => (
                                         <div
                                             key={routine.id}
-                                            onClick={() => navigate(`/routine/${routine.id}`)}
-                                            className="flex items-center gap-5 p-5 bg-white/[0.02] border border-white/5 rounded-[1.5rem] hover:border-primary/30 hover:bg-white/[0.04] transition-all cursor-pointer group"
+                                            onClick={() => viewMode === 'active' && navigate(`/routine/${routine.id}`)}
+                                            className={`flex items-center gap-5 p-5 border transition-all ${viewMode === 'deleted'
+                                                ? 'bg-transparent border-slate-100 rounded-none first:rounded-t-[1.5rem] last:rounded-b-[1.5rem] hover:bg-slate-50'
+                                                : 'bg-white/[0.02] border-white/5 rounded-[1.5rem] hover:border-primary/30 hover:bg-white/[0.04] cursor-pointer group'
+                                                }`}
                                         >
-                                            <div className="size-16 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center shadow-glow transition-transform group-hover:scale-110">
-                                                <span className="material-symbols-outlined text-primary text-3xl">fitness_center</span>
+                                            <div className={`size-16 rounded-2xl flex items-center justify-center transition-transform ${viewMode === 'deleted'
+                                                ? 'bg-[#E1F1FF]'
+                                                : 'bg-primary/10 border border-primary/20 shadow-glow group-hover:scale-110'
+                                                }`}>
+                                                <span className={`material-symbols-outlined text-3xl ${viewMode === 'deleted' ? 'text-[#0080FF]' : 'text-primary'}`}>
+                                                    {viewMode === 'deleted' ? 'fitness_center' : 'fitness_center'}
+                                                </span>
                                             </div>
                                             <div className="flex-1">
-                                                <h3 className="text-white font-black text-lg uppercase tracking-tight group-hover:text-primary transition-colors">{routine.name}</h3>
+                                                <h3 className={`font-black text-lg uppercase tracking-tight transition-colors ${viewMode === 'deleted' ? 'text-slate-900' : 'text-white group-hover:text-primary'
+                                                    }`}>
+                                                    {routine.name}
+                                                </h3>
                                                 <div className="flex items-center gap-2 text-slate-500 text-[10px] font-bold uppercase tracking-widest mt-1">
                                                     <span className="material-symbols-outlined !text-xs">calendar_month</span>
                                                     <span>{routine.dateRange || 'Sem período definido'}</span>
                                                 </div>
                                                 <div className="flex flex-wrap gap-2 mt-3">
-                                                    <span className="text-[9px] font-black uppercase tracking-widest bg-white/5 px-2 py-1 rounded-md text-slate-500">
+                                                    <span className={`text-[9px] font-black uppercase tracking-widest px-2 py-1 rounded-md ${viewMode === 'deleted' ? 'bg-slate-100 text-slate-500' : 'bg-white/5 text-slate-500'
+                                                        }`}>
                                                         {routine.objective}
                                                     </span>
-                                                    <span className="text-[9px] font-black uppercase tracking-widest bg-white/5 px-2 py-1 rounded-md text-slate-500">
+                                                    <span className={`text-[9px] font-black uppercase tracking-widest px-2 py-1 rounded-md ${viewMode === 'deleted' ? 'bg-slate-100 text-slate-500' : 'bg-white/5 text-slate-500'
+                                                        }`}>
                                                         {routine.level}
                                                     </span>
                                                 </div>
@@ -163,49 +274,63 @@ const StudentWorkoutsView: React.FC = () => {
                                                         label: 'Compartilhar',
                                                         icon: 'share',
                                                         onClick: () => {
-                                                            // TODO: Implementar compartilhamento
-                                                            console.log('Compartilhar:', routine.id);
+                                                            setSelectedWorkout(routine);
+                                                            setIsShareModalOpen(true);
                                                         }
                                                     },
                                                     {
                                                         label: 'Clonar',
                                                         icon: 'content_copy',
                                                         onClick: () => {
-                                                            // TODO: Implementar clonagem
-                                                            console.log('Clonar:', routine.id);
+                                                            setSelectedWorkout(routine);
+                                                            setIsCloneModalOpen(true);
                                                         }
                                                     },
                                                     {
                                                         label: 'Editar',
                                                         icon: 'edit',
-                                                        onClick: () => {
-                                                            navigate(`/routine/${routine.id}/edit`);
-                                                        }
+                                                        onClick: () => navigate(`/routine/${routine.id}/edit`)
                                                     },
-                                                    {
+                                                    viewMode === 'deleted' ? {
+                                                        label: 'Recuperar',
+                                                        icon: 'settings_backup_restore',
+                                                        onClick: () => handleUpdateStatus(routine.id, 'active')
+                                                    } : {
                                                         label: 'Arquivar',
                                                         icon: 'archive',
-                                                        onClick: () => {
-                                                            // TODO: Implementar arquivamento
-                                                            console.log('Arquivar:', routine.id);
-                                                        }
+                                                        onClick: () => handleUpdateStatus(routine.id, 'archived')
                                                     },
-                                                    {
+                                                    viewMode !== 'deleted' ? {
                                                         label: 'Excluir',
                                                         icon: 'delete',
                                                         onClick: () => {
-                                                            // TODO: Implementar exclusão com confirmação
-                                                            console.log('Excluir:', routine.id);
+                                                            setSelectedWorkout(routine);
+                                                            setIsDeleteModalOpen(true);
+                                                        },
+                                                        variant: 'danger'
+                                                    } : {
+                                                        label: 'Excluir permanentemente',
+                                                        icon: 'delete_forever',
+                                                        onClick: () => {
+                                                            // Logic for permanent delete if needed
+                                                            console.log('Delete permanently:', routine.id);
                                                         },
                                                         variant: 'danger'
                                                     }
                                                 ]}
+                                                trigger={
+                                                    <span className={`material-symbols-outlined ${viewMode === 'deleted' ? 'text-slate-400' : 'text-slate-700'}`}>more_vert</span>
+                                                }
                                             />
                                         </div>
                                     ))
                                 ) : (
-                                    <div className="text-center py-10 opacity-30">
-                                        <p className="font-black uppercase tracking-widest text-[10px]">Nenhuma rotina encontrada</p>
+                                    <div className="text-center py-20 opacity-30">
+                                        <p className="font-black uppercase tracking-widest text-[10px]">
+                                            {viewMode === 'active' ? 'Nenhuma rotina ativa' :
+                                                viewMode === 'archived' ? 'Nenhuma rotina arquivada' :
+                                                    'Nenhuma rotina excluída'}
+                                        </p>
                                     </div>
                                 )}
                             </div>
@@ -218,6 +343,30 @@ const StudentWorkoutsView: React.FC = () => {
                     )}
                 </div>
             </main>
+
+            {/* Modals */}
+            {selectedWorkout && (
+                <>
+                    <ShareWorkoutModal
+                        isOpen={isShareModalOpen}
+                        onClose={() => setIsShareModalOpen(false)}
+                        workoutName={selectedWorkout.name}
+                        workoutId={selectedWorkout.id}
+                    />
+                    <CloneWorkoutModal
+                        isOpen={isCloneModalOpen}
+                        onClose={() => setIsCloneModalOpen(false)}
+                        workout={selectedWorkout}
+                        onClone={handleClone}
+                    />
+                    <DeleteWorkoutModal
+                        isOpen={isDeleteModalOpen}
+                        onClose={() => setIsDeleteModalOpen(false)}
+                        workoutName={selectedWorkout.name}
+                        onConfirm={() => handleUpdateStatus(selectedWorkout.id, 'deleted')}
+                    />
+                </>
+            )}
         </div>
     );
 };
