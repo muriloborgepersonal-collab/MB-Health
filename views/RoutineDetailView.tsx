@@ -10,6 +10,7 @@ import {
     ArrowUpDown, Plus, ChevronDown, ChevronUp,
     Loader2
 } from 'lucide-react';
+import { AddWorkoutDayModal } from '@/components/ui/AddWorkoutDayModal';
 
 interface WorkoutDay {
     id: string;
@@ -29,6 +30,7 @@ export default function RoutineDetailView() {
     const [loading, setLoading] = useState(true);
     const [isAddingWorkout, setIsAddingWorkout] = useState(false);
     const [showInstructions, setShowInstructions] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const student = students.find(s => s.id === routine?.student_id);
 
@@ -66,24 +68,54 @@ export default function RoutineDetailView() {
         fetchRoutineData();
     }, [id]);
 
-    const handleAddWorkout = async () => {
+    const handleSaveWorkout = async (formData: { name: string; subtitle: string; instructions: string; copyFromId?: string }) => {
         if (!id) return;
         setIsAddingWorkout(true);
         try {
-            const nextNumber = workoutDays.length + 1;
-            const { data, error } = await supabase
+            const { data: newDay, error: insertError } = await supabase
                 .from('workout_days')
                 .insert([{
                     workout_id: id,
-                    name: `Treino ${nextNumber}`,
-                    subtitle: 'Novo Treino',
-                    instructions: ''
+                    name: formData.name,
+                    subtitle: formData.subtitle,
+                    instructions: formData.instructions
                 }])
                 .select()
                 .single();
 
-            if (error) throw error;
-            setWorkoutDays(prev => [...prev, data]);
+            if (insertError) throw insertError;
+
+            // If copyFromId is provided, copy exercises from that day
+            if (formData.copyFromId) {
+                const { data: sourceExercises, error: fetchError } = await supabase
+                    .from('exercises')
+                    .select('*')
+                    .eq('workout_day_id', formData.copyFromId);
+
+                if (fetchError) throw fetchError;
+
+                if (sourceExercises && sourceExercises.length > 0) {
+                    const clonedExercises = sourceExercises.map(ex => ({
+                        name: ex.name,
+                        sets: ex.sets,
+                        reps: ex.reps,
+                        load: ex.load,
+                        rest: ex.rest,
+                        video_url: ex.video_url,
+                        thumbnail_url: ex.thumbnail_url,
+                        workout_id: id,
+                        workout_day_id: newDay.id
+                    }));
+
+                    const { error: cloneError } = await supabase
+                        .from('exercises')
+                        .insert(clonedExercises);
+
+                    if (cloneError) throw cloneError;
+                }
+            }
+
+            setWorkoutDays(prev => [...prev, newDay]);
         } catch (error) {
             console.error('Error adding workout day:', error);
             alert('Erro ao adicionar treino.');
@@ -200,7 +232,7 @@ export default function RoutineDetailView() {
                     <Button
                         variant="premium"
                         className="flex-1 gap-2 h-14 rounded-2xl text-[10px] uppercase font-black tracking-widest"
-                        onClick={handleAddWorkout}
+                        onClick={() => setIsModalOpen(true)}
                         disabled={isAddingWorkout}
                     >
                         {isAddingWorkout ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
@@ -210,11 +242,12 @@ export default function RoutineDetailView() {
 
                 {/* Workout List */}
                 <div className="space-y-4">
-                    {workoutDays.map((day) => (
+                    {workoutDays.map((day: any) => (
                         <WorkoutCard
                             key={day.id}
                             title={day.name}
-                            subtitle={day.instructions || 'Sem subtítulo cadastrado'}
+                            subtitle={day.subtitle || 'Sem nome definido'}
+                            instructions={day.instructions}
                             onClick={() => navigate(`/editor/${routine.id}?dayId=${day.id}`)}
                         />
                     ))}
@@ -226,6 +259,17 @@ export default function RoutineDetailView() {
                     )}
                 </div>
             </div>
+
+            {/* Modal */}
+            <AddWorkoutDayModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                routineId={id || ''}
+                routineType={routine?.type || ''}
+                studentId={routine?.student_id || ''}
+                existingDaysCount={workoutDays.length}
+                onSave={handleSaveWorkout}
+            />
         </div>
     );
 }
@@ -233,10 +277,11 @@ export default function RoutineDetailView() {
 interface WorkoutCardProps {
     title: string;
     subtitle: string;
+    instructions?: string;
     onClick: () => void;
 }
 
-function WorkoutCard({ title, subtitle, onClick }: WorkoutCardProps) {
+function WorkoutCard({ title, subtitle, instructions, onClick }: WorkoutCardProps) {
     const [expanded, setExpanded] = useState(false);
 
     return (
@@ -262,8 +307,8 @@ function WorkoutCard({ title, subtitle, onClick }: WorkoutCardProps) {
                 </button>
 
                 {expanded && (
-                    <div className="text-xs font-bold text-slate-400 bg-white/5 p-4 rounded-2xl border border-white/5 animate-kinetic-reveal">
-                        Sem orientações específicas cadastradas para este treino.
+                    <div className="text-xs font-bold text-slate-400 bg-white/5 p-4 rounded-2xl border border-white/5 animate-kinetic-reveal whitespace-pre-wrap">
+                        {instructions || 'Sem orientações específicas cadastradas para este treino.'}
                     </div>
                 )}
 
