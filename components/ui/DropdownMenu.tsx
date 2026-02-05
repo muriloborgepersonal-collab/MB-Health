@@ -55,15 +55,15 @@ export const DropdownMenu: React.FC<DropdownMenuProps> = ({ items, trigger }) =>
             </button>
 
             {isOpen && (
-                <div className="absolute right-0 top-full mt-2 z-50 min-w-[200px] bg-card-dark border border-white/10 rounded-2xl shadow-2xl overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+                <div className="absolute right-0 top-[-8px] z-50 min-w-[200px] bg-black border border-white/10 rounded-2xl shadow-2xl overflow-hidden animate-in fade-in slide-in-from-top-1 duration-200">
                     <div className="py-2">
                         {items.map((item, index) => (
                             <button
                                 key={index}
                                 onClick={(e) => handleItemClick(e, item.onClick)}
                                 className={`w-full flex items-center gap-3 px-4 py-3 text-left transition-all ${item.variant === 'danger'
-                                        ? 'text-red-400 hover:bg-red-500/10 hover:text-red-300'
-                                        : 'text-slate-300 hover:bg-white/5 hover:text-white'
+                                    ? 'text-red-400 hover:bg-red-500/10 hover:text-red-300'
+                                    : 'text-slate-300 hover:bg-white/5 hover:text-white'
                                     }`}
                             >
                                 <span className={`material-symbols-outlined text-xl ${item.variant === 'danger' ? 'text-red-400' : 'text-slate-500'
