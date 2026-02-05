@@ -77,10 +77,10 @@ const StudentWorkoutsView: React.FC = () => {
 
     const handleClone = async (cloneData: any) => {
         try {
-            // First get the original workout with its exercises
+            // First get the original workout
             const { data: originalWorkout, error: fetchError } = await supabase
                 .from('workouts')
-                .select('*, workout_exercises(*)')
+                .select('*')
                 .eq('id', cloneData.originalWorkoutId)
                 .single();
 
@@ -96,31 +96,69 @@ const StudentWorkoutsView: React.FC = () => {
                     objective: originalWorkout.objective,
                     level: originalWorkout.level,
                     date_range: `${new Date(cloneData.startDate).toLocaleDateString()} - ${new Date(cloneData.endDate).toLocaleDateString()}`,
-                    status: 'active'
+                    status: 'active',
+                    instructions: originalWorkout.instructions,
+                    allow_pdf: originalWorkout.allow_pdf,
+                    show_time: originalWorkout.show_time,
+                    expire_on_end: originalWorkout.expire_on_end,
+                    hide_before_start: originalWorkout.hide_before_start
                 }])
                 .select()
                 .single();
 
             if (createError) throw createError;
 
-            // Clone exercises if they exist
-            if (originalWorkout.workout_exercises && originalWorkout.workout_exercises.length > 0) {
-                const exercisesToInsert = originalWorkout.workout_exercises.map((ex: any) => ({
-                    workout_id: newWorkout.id,
-                    exercise_id: ex.exercise_id,
-                    sets: ex.sets,
-                    reps: ex.reps,
-                    load: ex.load,
-                    rest: ex.rest,
-                    order: ex.order,
-                    notes: ex.notes
-                }));
+            // Clone workout days
+            const { data: originalDays, error: daysError } = await supabase
+                .from('workout_days')
+                .select('*')
+                .eq('workout_id', originalWorkout.id);
 
-                const { error: exercisesError } = await supabase
-                    .from('workout_exercises')
-                    .insert(exercisesToInsert);
+            if (daysError) throw daysError;
 
-                if (exercisesError) throw exercisesError;
+            if (originalDays && originalDays.length > 0) {
+                for (const day of originalDays) {
+                    const { data: newDay, error: newDayError } = await supabase
+                        .from('workout_days')
+                        .insert([{
+                            workout_id: newWorkout.id,
+                            name: day.name,
+                            subtitle: day.subtitle,
+                            instructions: day.instructions
+                        }])
+                        .select()
+                        .single();
+
+                    if (newDayError) throw newDayError;
+
+                    // Clone exercises for this day
+                    const { data: originalExercises, error: exercisesError } = await supabase
+                        .from('exercises')
+                        .select('*')
+                        .eq('workout_day_id', day.id);
+
+                    if (exercisesError) throw exercisesError;
+
+                    if (originalExercises && originalExercises.length > 0) {
+                        const exercisesToInsert = originalExercises.map(ex => ({
+                            name: ex.name,
+                            sets: ex.sets,
+                            reps: ex.reps,
+                            load: ex.load,
+                            rest: ex.rest,
+                            video_url: ex.video_url,
+                            thumbnail_url: ex.thumbnail_url,
+                            workout_id: newWorkout.id,
+                            workout_day_id: newDay.id
+                        }));
+
+                        const { error: insertExercisesError } = await supabase
+                            .from('exercises')
+                            .insert(exercisesToInsert);
+
+                        if (insertExercisesError) throw insertExercisesError;
+                    }
+                }
             }
 
             if (cloneData.studentId === id) {
